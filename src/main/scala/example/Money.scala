@@ -1,13 +1,10 @@
 package example
 
-import java.util.{Locale, Currency}
+import java.util.{ Currency, Locale }
 
-final class Money(val amount: BigDecimal, val currency: Currency)
-  extends Ordered[Money]
-    with Serializable {
+final class Money(val amount: BigDecimal, val currency: Currency) extends Ordered[Money] with Serializable {
 
-  require(amount.scale == currency.getDefaultFractionDigits,
-    "Scale of amount does not match currency")
+  require(amount.scale == currency.getDefaultFractionDigits, "Scale of amount does not match currency")
 
   lazy val abs: Money = Money(amount.abs, currency)
 
@@ -101,8 +98,7 @@ final class Money(val amount: BigDecimal, val currency: Currency)
 
   private def checkHasSameCurrencyAs(aMoney: Money): Unit = {
     if (!hasSameCurrencyAs(aMoney)) {
-      throw new ClassCastException(
-        aMoney.toString() + " is not same currency as " + this.toString())
+      throw new ClassCastException(aMoney.toString() + " is not same currency as " + this.toString())
     }
   }
 
@@ -111,8 +107,8 @@ final class Money(val amount: BigDecimal, val currency: Currency)
   override def equals(other: Any): Boolean = other match {
     case that: Money =>
       (that canEqual this) &&
-        amount == that.amount &&
-        currency == that.currency
+      amount == that.amount &&
+      currency == that.currency
     case _ => false
   }
 
@@ -156,9 +152,7 @@ object Money {
   def adjustBy(amount: BigDecimal, currency: Currency): Money =
     adjustBy(amount, currency, BigDecimal.RoundingMode.UNNECESSARY)
 
-  def adjustBy(rawAmount: BigDecimal,
-               currency: Currency,
-               roundingMode: BigDecimal.RoundingMode.Value): Money = {
+  def adjustBy(rawAmount: BigDecimal, currency: Currency, roundingMode: BigDecimal.RoundingMode.Value): Money = {
     val amount =
       rawAmount.setScale(currency.getDefaultFractionDigits, roundingMode)
     new Money(amount, currency)
@@ -167,9 +161,7 @@ object Money {
   def adjustBy(dblAmount: Double, currency: Currency): Money =
     adjustBy(dblAmount, currency, DefaultRoundingMode)
 
-  def adjustRound(dblAmount: Double,
-                  currency: Currency,
-                  roundingMode: BigDecimal.RoundingMode.Value): Money = {
+  def adjustRound(dblAmount: Double, currency: Currency, roundingMode: BigDecimal.RoundingMode.Value): Money = {
     val rawAmount = BigDecimal(dblAmount)
     adjustBy(rawAmount, currency, roundingMode)
   }

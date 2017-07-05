@@ -5,5 +5,3 @@ trait AggregateId {
   type AggregateType <: Aggregate
   val value: IdType
 }
-
-

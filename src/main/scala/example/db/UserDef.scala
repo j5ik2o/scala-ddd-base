@@ -20,4 +20,3 @@ trait UserDaoComponent {
   object UserDao extends TableQuery(UserDef)
 
 }
-
