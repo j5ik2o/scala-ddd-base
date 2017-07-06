@@ -1,13 +1,15 @@
 package example.db
 
+import com.github.j5ik2o.scala.ddd.functional.DaoRecord
 import slick.lifted.ProvenShape
 
 trait UserDaoComponent {
+
   val profile: slick.jdbc.JdbcProfile
 
   import profile.api._
 
-  case class UserRecord(id: Long, name: String)
+  case class UserRecord(id: Long, name: String) extends DaoRecord
 
   case class UserDef(tag: Tag) extends Table[UserRecord](tag, "users") {
     def id = column[Long]("ID", O.PrimaryKey)
@@ -18,5 +20,4 @@ trait UserDaoComponent {
   }
 
   object UserDao extends TableQuery(UserDef)
-
 }
