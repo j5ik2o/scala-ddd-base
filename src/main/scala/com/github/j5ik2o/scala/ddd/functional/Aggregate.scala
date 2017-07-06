@@ -7,7 +7,7 @@ trait Aggregate {
 
   type IdType <: AggregateId
 
-  val id: Option[IdType]
+  val id: IdType
 
   protected val tag: ClassTag[AggregateType]
 

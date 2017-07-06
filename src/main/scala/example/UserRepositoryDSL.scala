@@ -9,7 +9,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class UserRepository {
+trait UserRepositoryDSL {
 
   def store(aggregate: User): Free[AggregateRepositoryDSL, Unit] =
     Free.liftF[AggregateRepositoryDSL, Unit](Store(aggregate))
@@ -21,8 +21,9 @@ class UserRepository {
 
 }
 
-class UserRepositoryInterpreter(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends UserDaoComponent {
+class UserRepository(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+    extends UserDaoComponent
+    with UserRepositoryDSL {
 
   import profile.api._
 
@@ -38,10 +39,11 @@ class UserRepositoryInterpreter(val profile: JdbcProfile, val db: JdbcProfile#Ba
 
   }
 
-  protected def convertToRecord(aggregate: User): UserRecord = UserRecord(aggregate.id.map(_.value), aggregate.name)
-  protected def convertToAggregate(record: UserRecord): User = User(record.id.map(UserId), record.name)
+  protected def convertToRecord(aggregate: User): UserRecord = UserRecord(aggregate.id.value, aggregate.name)
 
-  private def step(implicit ec: ExecutionContext) = new (AggregateRepositoryDSL ~> DBIO) {
+  protected def convertToAggregate(record: UserRecord): User = User(UserId(record.id), record.name)
+
+  private def interpreter(implicit ec: ExecutionContext) = new (AggregateRepositoryDSL ~> DBIO) {
     override def apply[A](fa: AggregateRepositoryDSL[A]): DBIO[A] = fa match {
       case ResolveById(id) =>
         val action =
@@ -49,15 +51,15 @@ class UserRepositoryInterpreter(val profile: JdbcProfile, val db: JdbcProfile#Ba
         action.asInstanceOf[DBIO[A]]
       case Store(aggregate) =>
         val action = UserDao.insertOrUpdate(convertToRecord(aggregate.asInstanceOf[User]))
-        action.asInstanceOf[DBIO[A]]
+        action.map(_ => ()).asInstanceOf[DBIO[A]]
       case Delete(id) =>
         val action = UserDao.filter(_.id === id.value.asInstanceOf[Long]).delete
-        action.asInstanceOf[DBIO[A]]
+        action.map(_ => ()).asInstanceOf[DBIO[A]]
     }
   }
 
   def run[A](program: Free[AggregateRepositoryDSL, A])(implicit ec: ExecutionContext): Future[A] = {
-    val result = program.foldMap(step)
+    val result = program.foldMap(interpreter)
     db.run(result)
   }
 
