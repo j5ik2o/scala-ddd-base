@@ -1,7 +1,7 @@
 package com.github.j5ik2o.scala.ddd.functional
 
 trait AggregateId {
-  type IdType
+  type IdValueType
   type AggregateType <: Aggregate
-  val value: IdType
+  val value: IdValueType
 }
