@@ -52,15 +52,12 @@ trait Repository extends AggregateIO with DBIOMonadInstance {
   }
 
   protected def store[A](aggregate: AggregateType)(implicit ec: ExecutionContext): DBIO[A] = {
-    val action = dao.insertOrUpdate(convertToRecord(aggregate))
-    action
-      .flatMap { v =>
-        if (v == 1)
-          DBIO.successful(())
-        else
-          DBIO.failed(new Exception())
-      }
-      .asInstanceOf[DBIO[A]]
+    val record = convertToRecord(aggregate)
+    val action = (for {
+      n <- dao.filter(_.id === aggregate.id.value).update(record)
+      _ <- if (n == 0) dao.forceInsert(record) else DBIO.successful(n)
+    } yield ()).transactionally
+    action.asInstanceOf[DBIO[A]]
   }
 
   protected def deleteById[A](id: IdType)(implicit ec: ExecutionContext): DBIO[A] = {
