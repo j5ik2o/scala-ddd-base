@@ -1,10 +1,18 @@
 package example
 
+import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Suite}
+import org.scalatest.time.{ Millis, Seconds, Span }
+import org.scalatest.{ BeforeAndAfter, BeforeAndAfterAll, TestSuite }
+import slick.basic.DatabaseConfig
+import slick.jdbc.SetParameter.SetUnit
+import slick.jdbc.{ JdbcProfile, SQLActionBuilder }
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ Await, Future }
 
 trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with ScalaFutures {
-  self: Suite with FlywayWithMySQLSpecSupport =>
+  this: TestSuite with FlywayWithMySQLSpecSupport =>
 
   override implicit def patienceConfig: PatienceConfig =
     PatienceConfig(timeout = scaled(Span(5, Seconds)), interval = scaled(Span(15, Millis)))
@@ -14,8 +22,6 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
   private var _profile: JdbcProfile = _
 
   def jdbcPort: Int = mySQLdConfig.port.get
-
-  implicit lazy val ioContext = DBIOContext(dbConfig.db.ioExecutionContext)
 
   val tables: Seq[String]
 
@@ -35,18 +41,18 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     val config = ConfigFactory.parseString(s"""
-                                              |astraea {
+                                              |free {
                                               |  profile = "slick.jdbc.MySQLProfile$$"
                                               |  db {
                                               |    connectionPool = disabled
                                               |    driver = "com.mysql.jdbc.Driver"
-                                              |    url = "jdbc:mysql://localhost:$jdbcPort/astraea?useSSL=false"
-                                              |    user = "astraea"
+                                              |    url = "jdbc:mysql://localhost:$jdbcPort/free?useSSL=false"
+                                              |    user = "free"
                                               |    password = "passwd"
                                               |  }
                                               |}
       """.stripMargin)
-    _dbConfig = DatabaseConfig.forConfig[JdbcProfile]("astraea", config)
+    _dbConfig = DatabaseConfig.forConfig[JdbcProfile]("free", config)
     _profile = dbConfig.profile
   }
 

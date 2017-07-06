@@ -7,14 +7,14 @@ trait UserDaoComponent {
 
   import profile.api._
 
-  case class UserRecord(id: Option[Long], name: String)
+  case class UserRecord(id: Long, name: String)
 
   case class UserDef(tag: Tag) extends Table[UserRecord](tag, "users") {
-    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+    def id = column[Long]("ID", O.PrimaryKey)
 
     def name = column[String]("NAME")
 
-    override def * : ProvenShape[UserRecord] = (id.?, name) <> (UserRecord.tupled, UserRecord.unapply)
+    override def * : ProvenShape[UserRecord] = (id, name) <> (UserRecord.tupled, UserRecord.unapply)
   }
 
   object UserDao extends TableQuery(UserDef)
