@@ -1,4 +1,4 @@
-package example.db
+package com.github.j5ik2o.scala.ddd.functional.slick.db
 
 import com.github.j5ik2o.scala.ddd.functional.DaoRecord
 import slick.lifted.ProvenShape

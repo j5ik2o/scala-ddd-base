@@ -2,10 +2,10 @@ package com.github.j5ik2o.scala.ddd.functional
 
 import scala.reflect.ClassTag
 
-trait Aggregate {
+trait Aggregate { self =>
   type AggregateType <: Aggregate
 
-  type IdType <: AggregateId
+  type IdType <: AggregateId { type AggregateType = self.AggregateType }
 
   val id: IdType
 

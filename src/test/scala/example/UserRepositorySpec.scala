@@ -1,27 +1,44 @@
 package example
 
 import org.scalatest.FunSpec
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class UserRepositorySpec extends FunSpec with FlywayWithMySQLSpecSupport with Slick3SpecSupport {
   override val tables: Seq[String] = Seq("users")
 
   describe("UserRepository") {
     it("should be able to store & resolve & delete") {
-      val user       = User(UserId(1L), "kato")
       val repository = new UserRepository(dbConfig.profile, dbConfig.db)
-      val program = for {
-        _       <- repository.store(user)
-        result1 <- repository.resolveBy(user.id)
-        _       <- repository.deleteBy(user.id)
-        result2 <- repository.resolveBy(user.id)
+      import repository.profile.api._
+      val user1 = User(UserId(1L), "kato")
+      val user2 = User(UserId(2L), "junichi")
+
+      val program1 = for {
+        _       <- repository.store(user1)
+        result1 <- repository.resolveBy(user1.id)
+        _       <- repository.deleteBy(user1.id)
+        result2 <- repository.resolveBy(user1.id)
       } yield (result1, result2)
-      val f      = repository.run(program)
+
+      val program2 = for {
+        _       <- repository.store(user2)
+        result1 <- repository.resolveBy(user2.id)
+        _       <- repository.deleteBy(user2.id)
+        result2 <- repository.resolveBy(user2.id)
+      } yield (result1, result2)
+
+      val dbIO1: repository.DBIOA[(Option[User], Option[User])] = repository.eval(program1)
+      val dbIO2: repository.DBIOA[(Option[User], Option[User])] = repository.eval(program2)
+
+      val f: Future[Seq[(Option[User], Option[User])]] =
+        repository.db.run(DBIO.sequence(Seq(dbIO1, dbIO2)).transactionally)
+
       val result = f.futureValue
       println(result)
-      assert(result._1.nonEmpty)
-      assert(result._1.get === user)
-      assert(result._2.isEmpty)
+      assert(result.contains((Some(user1), None)))
+      assert(result.contains((Some(user2), None)))
     }
   }
 }

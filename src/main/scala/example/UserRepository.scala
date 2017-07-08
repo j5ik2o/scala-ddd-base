@@ -1,7 +1,7 @@
 package example
 
 import com.github.j5ik2o.scala.ddd.functional.Repository
-import example.db.UserDaoComponent
+import com.github.j5ik2o.scala.ddd.functional.slick.db.UserDaoComponent
 import slick.jdbc.JdbcProfile
 
 class UserRepository(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
