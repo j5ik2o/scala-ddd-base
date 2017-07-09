@@ -2,6 +2,7 @@ lazy val commonSettings = Seq(
   organization := "com.github.j5ik2o",
   version := "1.0.0-SNAPSHOT",
   scalaVersion := "2.12.2",
+  crossScalaVersions := Seq("2.11.11", "2.12.2"),
   scalacOptions ++= Seq(
     "-feature",
     "-deprecation",
@@ -74,4 +75,4 @@ lazy val root = (project in file("."))
   .settings(
     name := "scala-ddd-base-functional"
   )
-  .aggregate(core)
+  .aggregate(core, cats, slick)
