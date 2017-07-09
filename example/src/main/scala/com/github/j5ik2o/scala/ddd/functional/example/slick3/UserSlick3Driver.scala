@@ -14,7 +14,6 @@ class UserSlick3Driver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Dat
   override type RecordType      = UserRecord
   override type TableType       = UserDef
   override protected val dao = UserDao
-
   override type SingleResultType[A] = Option[A]
 
   override protected def convertToRecord(aggregate: User): UserRecord =

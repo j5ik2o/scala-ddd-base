@@ -9,6 +9,8 @@ class UserSkinnyORMDriver extends SkinnyORMDriver {
   override type AggregateType   = User
   override type RecordType      = UserRecord
   override val dao = UserDao
+  override type EvalType[A]    = Either[Exception, A]
+  override type RealizeType[A] = EvalType[A]
 
   override protected def convertToRecord(aggregate: User): UserRecord =
     UserRecord(id = aggregate.id.value, name = aggregate.name)
@@ -19,4 +21,5 @@ class UserSkinnyORMDriver extends SkinnyORMDriver {
   override protected def toNamedValues(record: UserRecord): Seq[(Symbol, Any)] = Seq(
     'name -> record.name
   )
+
 }

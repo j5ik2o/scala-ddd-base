@@ -3,7 +3,7 @@ package com.github.j5ik2o.scala.ddd.functional.slick
 import com.github.j5ik2o.scala.ddd.functional.cats.Driver
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 
 trait Slick3Driver extends Driver with CatsDBIOMonadInstance {
   val profile: JdbcProfile
@@ -18,8 +18,10 @@ trait Slick3Driver extends Driver with CatsDBIOMonadInstance {
     type TableElementType = RecordType
   }
 
-  override type DSL[_]        = DBIO[_]
-  override type IOContextType = ExecutionContext
+  override type DSL[_]         = DBIO[_]
+  override type EvalType[_]    = DBIO[_]
+  override type RealizeType[_] = Future[_]
+  override type IOContextType  = ExecutionContext
   protected val dao: TableQuery[TableType]
 
   protected def convertToRecord(aggregate: AggregateType): RecordType
