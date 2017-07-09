@@ -1,0 +1,17 @@
+<configuration>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%level] [%date{ISO8601}] [%thread] [%logger{36}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="console" />
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="async"/>
+    </root>
+
+</configuration>
