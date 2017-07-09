@@ -106,4 +106,4 @@ lazy val root = (project in file("."))
   .settings(
     name := "scala-ddd-base-functional"
   )
-  .aggregate(core, cats, slick)
+  .aggregate(core, cats, slick, example)
