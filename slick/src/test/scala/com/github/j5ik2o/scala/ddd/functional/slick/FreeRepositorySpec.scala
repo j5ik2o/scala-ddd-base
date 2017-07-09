@@ -1,7 +1,9 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
+import com.github.j5ik2o.scala.ddd.functional.slick.test.FlywayWithMySQLSpecSupport
 import org.scalatest.FreeSpec
 import org.scalatest.concurrent.ScalaFutures
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class FreeRepositorySpec extends FreeSpec with FlywayWithMySQLSpecSupport with Slick3SpecSupport with ScalaFutures {

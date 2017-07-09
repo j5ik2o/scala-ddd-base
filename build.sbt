@@ -49,6 +49,12 @@ lazy val core = (project in file("core"))
     name := "scala-ddd-base-functional-core"
   )
 
+lazy val test = (project in file("test"))
+  .settings(commonSettings)
+  .settings(
+    name := "scala-ddd-base-functional-test"
+  )
+
 lazy val cats = (project in file("cats"))
   .settings(commonSettings)
   .settings(
@@ -68,7 +74,7 @@ lazy val slick = (project in file("slick"))
       "com.typesafe.slick" %% "slick-hikaricp" % "3.2.0"
     )
   )
-  .dependsOn(core, cats)
+  .dependsOn(core, cats, test % "test->test")
 
 lazy val root = (project in file("."))
   .settings(commonSettings)
