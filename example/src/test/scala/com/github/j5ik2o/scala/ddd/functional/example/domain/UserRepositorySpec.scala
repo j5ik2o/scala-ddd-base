@@ -37,20 +37,17 @@ class UserRepositorySpec
       }
     }
     "should be able to store and resolve, when Future" in {
-      val driver = new UserFutureDriver(dbConfig.profile, dbConfig.db)
-      new CatsDBIOMonadInstance {
-        override val profile: JdbcProfile = driver.profile
-        val repository                    = new UserRepositoryByFuture(driver)
-        val program = for {
-          _  <- repository.store(User(UserId(1), "kato"))
-          r1 <- repository.resolveBy(UserId(1))
-          _  <- repository.deleteById(UserId(1))
-          r2 <- repository.resolveBy(UserId(1))
-        } yield (r1, r2)
-        val future = repository.run(program)
-        val result = future.futureValue
-        println(result)
-      }
+      val driver     = new UserFutureDriver(dbConfig.profile, dbConfig.db)
+      val repository = new UserRepositoryByFuture(driver)
+      val program = for {
+        _  <- repository.store(User(UserId(1), "kato"))
+        r1 <- repository.resolveBy(UserId(1))
+        _  <- repository.deleteById(UserId(1))
+        r2 <- repository.resolveBy(UserId(1))
+      } yield (r1, r2)
+      val future = repository.run(program)
+      val result = future.futureValue
+      println(result)
     }
 //    "when skinnyorm" in {
 //      "should be able to store and resolve" in {
