@@ -1,11 +1,13 @@
-package com.github.j5ik2o.scala.ddd.functional.slick
+package com.github.j5ik2o.scala.ddd.functional.example.slick3
 
-import com.github.j5ik2o.scala.ddd.functional.slick.db.UserDaoComponent
+import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
+import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, Slick3Driver }
 import slick.jdbc.JdbcProfile
 
 class UserSlick3Driver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
     extends Slick3Driver
-    with UserDaoComponent {
+    with UserDaoComponent
+    with CatsDBIOMonadInstance {
 
   override type AggregateIdType = UserId
   override type AggregateType   = User

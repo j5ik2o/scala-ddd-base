@@ -1,11 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
-import com.github.j5ik2o.scala.ddd.functional.{ AggregateDeletable, AggregateRepository }
+import com.github.j5ik2o.scala.ddd.functional.cats.Driver
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-trait Slick3Driver extends AggregateRepository with AggregateDeletable {
+trait Slick3Driver extends Driver with CatsDBIOMonadInstance {
   val profile: JdbcProfile
   val db: JdbcProfile#Backend#Database
 

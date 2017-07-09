@@ -35,11 +35,10 @@ lazy val commonSettings = Seq(
     "Seasar2 Repository" at "http://maven.seasar.org/maven2"
   ),
   libraryDependencies ++= Seq(
-    "org.scalatest"     %% "scalatest"           % "3.0.1" % Test,
-    "com.github.j5ik2o" %% "scalatestplus-db"    % "1.0.5" % Test,
-    "mysql"             % "mysql-connector-java" % "5.1.42" % Test,
-    "ch.qos.logback"    % "logback-classic"      % "1.2.3" % "provided",
-    "org.slf4j"         % "slf4j-api"            % "1.7.21"
+    "org.scalatest"  %% "scalatest"           % "3.0.1" % Test,
+    "mysql"          % "mysql-connector-java" % "5.1.42" % Test,
+    "ch.qos.logback" % "logback-classic"      % "1.2.3" % "provided",
+    "org.slf4j"      % "slf4j-api"            % "1.7.21"
   ),
   updateOptions := updateOptions.value.withCachedResolution(true)
 )
@@ -53,8 +52,12 @@ lazy val core = (project in file("core"))
 lazy val test = (project in file("test"))
   .settings(commonSettings)
   .settings(
-    name := "scala-ddd-base-functional-test"
+    name := "scala-ddd-base-functional-test",
+    libraryDependencies ++= Seq(
+      "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.5" % Test
+    )
   )
+  .dependsOn(core)
 
 lazy val cats = (project in file("cats"))
   .settings(commonSettings)
@@ -66,6 +69,16 @@ lazy val cats = (project in file("cats"))
   )
   .dependsOn(core)
 
+lazy val skinnyOrm = (project in file("skinny-orm"))
+  .settings(commonSettings)
+  .settings(
+    name := "scala-ddd-base-functional-skinny-orm",
+    libraryDependencies ++= Seq(
+      "org.skinny-framework" %% "skinny-orm" % "2.3.7"
+    )
+  )
+  .dependsOn(core, cats, test % "test->test")
+
 lazy val slick = (project in file("slick"))
   .settings(commonSettings)
   .settings(
@@ -76,6 +89,17 @@ lazy val slick = (project in file("slick"))
     )
   )
   .dependsOn(core, cats, test % "test->test")
+
+lazy val example = (project in file("example"))
+  .settings(commonSettings)
+  .settings(
+    name := "scala-ddd-base-functional-example"
+  )
+  .dependsOn(core,
+             cats,
+             slick     % "compile->compile;test->test",
+             skinnyOrm % "compile->compile;test->test",
+             test      % "test->test")
 
 lazy val root = (project in file("."))
   .settings(commonSettings)

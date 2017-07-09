@@ -4,13 +4,13 @@ import cats.free.Free
 import cats.~>
 import com.github.j5ik2o.scala.ddd.functional._
 
-trait FreeIOBaseFeature extends AggregateIO with AggregateRepositoryAPIs {
+trait FreeIOBaseFeature extends AggregateIO with AggregateRepositoryAPIs { self =>
 
   type DSL[A] = Free[AggregateRepositoryDSL, A]
   type EvalType[_]
   type RealizeType[_]
 
-  def interpreter: (AggregateRepositoryDSL ~> EvalType)
+  protected def interpreter: (AggregateRepositoryDSL ~> EvalType)
 
   def eval[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContext): EvalType[A]
 

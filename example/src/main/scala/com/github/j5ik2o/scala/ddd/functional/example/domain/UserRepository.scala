@@ -1,19 +1,14 @@
-package com.github.j5ik2o.scala.ddd.functional.slick
+package com.github.j5ik2o.scala.ddd.functional.example.domain
 
 import cats.free.Free
 import cats.~>
 import com.github.j5ik2o.scala.ddd.functional.cats.{ FreeIODeleteFeature, FreeIORepositoryFeature }
-import slick.jdbc.JdbcProfile
+import com.github.j5ik2o.scala.ddd.functional.example.slick3.UserSlick3Driver
+import slick.dbio.DBIO
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class UserRepository(val driver: UserSlick3Driver)
-    extends FreeIORepositoryFeature
-    with FreeIODeleteFeature
-    with CatsDBIOMonadInstance {
-
-  import driver.profile.api._
-
+class UserRepository(val driver: UserSlick3Driver) extends FreeIORepositoryFeature with FreeIODeleteFeature {
   override type IdValueType     = Long
   override type AggregateIdType = UserId
   override type AggregateType   = User
@@ -21,7 +16,7 @@ class UserRepository(val driver: UserSlick3Driver)
   override type RealizeType[A]  = Future[A]
   override type IOContext       = ExecutionContext
 
-  override lazy val interpreter: AggregateRepositoryDSL ~> EvalType =
+  override protected lazy val interpreter: AggregateRepositoryDSL ~> EvalType =
     new (AggregateRepositoryDSL ~> EvalType) {
       override def apply[A](fa: AggregateRepositoryDSL[A]): EvalType[A] = fa match {
         case s @ Store(aggregate) =>
@@ -33,13 +28,7 @@ class UserRepository(val driver: UserSlick3Driver)
       }
     }
 
-  override val profile: JdbcProfile = driver.profile
+  override def eval[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: ExecutionContext): DBIO[A] = ???
 
-  override def realize[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContext): RealizeType[A] =
-    driver.db.run(eval(program))
-
-  override def eval[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContext): EvalType[A] = {
-    program.foldMap(interpreter)
-  }
-
+  override def realize[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: ExecutionContext): Future[A] = ???
 }

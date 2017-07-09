@@ -10,7 +10,7 @@ import slick.jdbc.SetParameter.SetUnit
 import slick.jdbc.{ JdbcProfile, SQLActionBuilder }
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with ScalaFutures {
   this: TestSuite with FlywayWithMySQLSpecSupport =>
@@ -22,6 +22,8 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
 
   private var _profile: JdbcProfile = _
 
+  private var _ec: ExecutionContext = _
+
   def jdbcPort: Int = mySQLdConfig.port.get
 
   val tables: Seq[String]
@@ -30,8 +32,9 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
 
   protected def profile = _profile
 
+  implicit def ec: ExecutionContext = _ec
+
   after {
-    implicit val ec = dbConfig.db.executor.executionContext
     val futures = tables.map { table =>
       val q = SQLActionBuilder(List(s"TRUNCATE TABLE $table"), SetUnit).asUpdate
       dbConfig.db.run(q)
@@ -55,6 +58,7 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
       """.stripMargin)
     _dbConfig = DatabaseConfig.forConfig[JdbcProfile]("free", config)
     _profile = dbConfig.profile
+    _ec = dbConfig.db.executor.executionContext
   }
 
   override protected def afterAll(): Unit = {

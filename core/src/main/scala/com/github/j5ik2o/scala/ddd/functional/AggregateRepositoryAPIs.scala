@@ -7,4 +7,5 @@ trait AggregateRepositoryAPIs { this: AggregateIO =>
       extends AggregateRepositoryDSL[Option[AggregateType]]
   case class Store(aggregate: AggregateType)(implicit val ctx: IOContext) extends AggregateRepositoryDSL[Unit]
   case class Delete(id: AggregateIdType)(implicit val ctx: IOContext)     extends AggregateRepositoryDSL[Unit]
+
 }
