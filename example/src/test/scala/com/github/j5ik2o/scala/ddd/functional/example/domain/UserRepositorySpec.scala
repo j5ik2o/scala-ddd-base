@@ -1,6 +1,6 @@
 package com.github.j5ik2o.scala.ddd.functional.example.domain
 
-import com.github.j5ik2o.scala.ddd.functional.example.slick3.UserSlick3Driver
+import com.github.j5ik2o.scala.ddd.functional.example.slick3.UserDBIODriver
 import com.github.j5ik2o.scala.ddd.functional.skinnyorm.SkinnyORMSpecSupport
 import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, Slick3SpecSupport }
 import com.github.j5ik2o.scala.ddd.functional.slick.test.FlywayWithMySQLSpecSupport
@@ -19,7 +19,7 @@ class UserRepositorySpec
 
   "UserRepository" - {
     "should be able to store and resolve" in {
-      val driver = new UserSlick3Driver(dbConfig.profile, dbConfig.db)
+      val driver = new UserDBIODriver(dbConfig.profile, dbConfig.db)
       new CatsDBIOMonadInstance {
         override val profile: JdbcProfile = driver.profile
         val repository                    = new UserRepository(driver)

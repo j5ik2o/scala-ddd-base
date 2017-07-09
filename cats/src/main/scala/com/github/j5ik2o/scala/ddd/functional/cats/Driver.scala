@@ -6,4 +6,9 @@ trait Driver extends AggregateRepository with AggregateDeletable {
   type EvalType[A]
   type RealizeType[_]
 
+  type RecordType
+
+  protected def convertToRecord(aggregate: AggregateType): RecordType
+
+  protected def convertToAggregate(record: SingleResultType[RecordType]): SingleResultType[AggregateType]
 }
