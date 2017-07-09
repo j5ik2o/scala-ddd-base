@@ -5,7 +5,7 @@ import scala.reflect.ClassTag
 trait Aggregate { self =>
   type AggregateType <: Aggregate
 
-  type IdType <: AggregateId { type AggregateType = self.AggregateType }
+  type IdType <: AggregateId
 
   val id: IdType
 

@@ -1,14 +1,12 @@
-package com.github.j5ik2o.scala.ddd.functional
+package com.github.j5ik2o.scala.ddd.functional.slick
 
 import cats.Monad
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-trait DBIOMonadInstance {
-
+trait CatsDBIOMonadInstance {
   val profile: JdbcProfile
-
   import profile.api._
 
   implicit def dbIOMonad(implicit ec: ExecutionContext) = new Monad[DBIO] {

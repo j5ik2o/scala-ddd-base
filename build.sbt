@@ -67,7 +67,7 @@ lazy val slick = (project in file("slick"))
       "com.typesafe.slick" %% "slick-hikaricp" % "3.2.0"
     )
   )
-  .dependsOn(core)
+  .dependsOn(core, cats)
 
 lazy val root = (project in file("."))
   .settings(commonSettings)

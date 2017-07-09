@@ -1,4 +1,4 @@
-package example
+package com.github.j5ik2o.scala.ddd.functional.slick
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
