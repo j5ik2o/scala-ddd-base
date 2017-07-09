@@ -8,13 +8,13 @@ trait FreeIOBaseFeature extends AggregateIO { self =>
 
   type DSL[A] = Free[AggregateRepositoryDSL, A]
   type EvalType[_]
-  type RealizeType[_]
+  //type RealizeType[_]
   type DriverType <: Driver {
     type AggregateIdType = self.AggregateIdType
     type AggregateType   = self.AggregateType
     type IOContextType   = self.IOContextType
-    type EvalType[_]     = self.EvalType[_]
-    type RealizeType[_]  = self.RealizeType[_]
+    // type EvalType[_]     = self.EvalType[_]
+    //type RealizeType[_]  = self.RealizeType[_]
   }
 
   def driver: DriverType

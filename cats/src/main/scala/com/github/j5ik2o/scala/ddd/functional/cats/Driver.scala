@@ -4,7 +4,7 @@ import com.github.j5ik2o.scala.ddd.functional.{ AggregateDeletable, AggregateRep
 
 trait Driver extends AggregateRepository with AggregateDeletable {
   type EvalType[A]
-  type RealizeType[_]
+//  type RealizeType[_]
 
   type RecordType
 
