@@ -10,8 +10,8 @@ trait SkinnyORMDriver extends Driver {
 
   val dao: SkinnyCRUDMapperWithId[IdValueType, RecordType]
 
-  override type DSL[A]    = Either[Exception, A]
-  override type IOContext = DBSession
+  override type DSL[A]        = Either[Exception, A]
+  override type IOContextType = DBSession
 
   override type SingleResultType[A] = Option[A]
 
@@ -21,7 +21,7 @@ trait SkinnyORMDriver extends Driver {
 
   protected def toNamedValues(record: RecordType): Seq[(Symbol, Any)]
 
-  override def store(aggregate: AggregateType)(implicit ctx: IOContext): Either[Exception, Unit] = {
+  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): Either[Exception, Unit] = {
     try {
       DB.localTx { dbSession =>
         val namedValues = toNamedValues(convertToRecord(aggregate))

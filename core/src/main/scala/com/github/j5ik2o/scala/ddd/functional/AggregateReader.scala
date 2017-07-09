@@ -4,6 +4,6 @@ trait AggregateReader extends AggregateIO {
 
   type SingleResultType[_]
 
-  def resolveBy(id: AggregateIdType)(implicit ctx: IOContext): DSL[SingleResultType[AggregateType]]
+  def resolveBy(id: AggregateIdType)(implicit ctx: IOContextType): DSL[SingleResultType[AggregateType]]
 
 }

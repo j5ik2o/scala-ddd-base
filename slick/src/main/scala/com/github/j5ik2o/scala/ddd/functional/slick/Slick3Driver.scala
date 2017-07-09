@@ -18,8 +18,8 @@ trait Slick3Driver extends Driver with CatsDBIOMonadInstance {
     type TableElementType = RecordType
   }
 
-  override type DSL[_]    = DBIO[_]
-  override type IOContext = ExecutionContext
+  override type DSL[_]        = DBIO[_]
+  override type IOContextType = ExecutionContext
   protected val dao: TableQuery[TableType]
 
   protected def convertToRecord(aggregate: AggregateType): RecordType

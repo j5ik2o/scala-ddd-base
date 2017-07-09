@@ -12,21 +12,21 @@ trait FreeIOBaseFeature extends AggregateIO with AggregateRepositoryAPIs { self 
 
   protected def interpreter: (AggregateRepositoryDSL ~> EvalType)
 
-  def eval[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContext): EvalType[A]
+  def eval[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContextType): EvalType[A]
 
-  def realize[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContext): RealizeType[A]
+  def realize[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContextType): RealizeType[A]
 
 }
 
 trait FreeIOWriteFeature extends FreeIOBaseFeature with AggregateWriter {
 
-  override def store(aggregate: AggregateType)(implicit ctx: IOContext): Free[AggregateRepositoryDSL, Unit] =
+  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, Unit] =
     Free.liftF[AggregateRepositoryDSL, Unit](Store(aggregate)(ctx))
 
 }
 
 trait FreeIODeleteFeature extends FreeIOBaseFeature with FreeIOWriteFeature with AggregateDeletable {
-  override def deleteById(id: AggregateIdType)(implicit ctx: IOContext): Free[AggregateRepositoryDSL, Unit] =
+  override def deleteById(id: AggregateIdType)(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, Unit] =
     Free.liftF[AggregateRepositoryDSL, Unit](Delete(id)(ctx))
 }
 
@@ -36,7 +36,7 @@ trait FreeIOReadFeature extends FreeIOBaseFeature with AggregateReader {
 
   override def resolveBy(
       id: AggregateIdType
-  )(implicit ctx: IOContext): Free[AggregateRepositoryDSL, SingleResultType[AggregateType]] =
+  )(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, SingleResultType[AggregateType]] =
     Free.liftF[AggregateRepositoryDSL, SingleResultType[AggregateType]](ResolveById(id)(ctx))
 
 }
