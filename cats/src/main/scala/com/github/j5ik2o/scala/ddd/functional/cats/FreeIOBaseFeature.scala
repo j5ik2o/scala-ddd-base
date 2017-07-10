@@ -7,6 +7,7 @@ import com.github.j5ik2o.scala.ddd.functional._
 import scala.language.higherKinds
 
 trait FreeIOBaseFeature extends AggregateIO { self =>
+  import AggregateRepositoryDSL._
 
   type DSL[A] = Free[AggregateRepositoryDSL, A]
   type EvalType[_]

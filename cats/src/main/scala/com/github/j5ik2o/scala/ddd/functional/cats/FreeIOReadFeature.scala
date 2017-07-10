@@ -1,9 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.cats
 
 import cats.free.Free
-import com.github.j5ik2o.scala.ddd.functional.{ AggregateReader, AggregateRepositoryDSL, ResolveById }
+import com.github.j5ik2o.scala.ddd.functional.{ AggregateReader, AggregateRepositoryDSL }
 
 trait FreeIOReadFeature extends FreeIOBaseFeature with AggregateReader {
+
+  import AggregateRepositoryDSL._
 
   override type SingleResultType[A] = Option[A]
 
