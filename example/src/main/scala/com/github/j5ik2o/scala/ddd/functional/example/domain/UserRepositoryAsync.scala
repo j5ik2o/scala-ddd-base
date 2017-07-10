@@ -5,7 +5,7 @@ import com.github.j5ik2o.scala.ddd.functional.example.driver.UserFutureStorageDr
 
 import scala.concurrent.Future
 
-trait UserRepositoryAsync extends UserRepository { self =>
+trait UserRepositoryAsync extends UserRepositoryBase { self =>
   override type IOContextType <: AggregateFutureIOContext
   override type DriverType <: UserFutureStorageDriver {
     type AggregateIdType = self.AggregateIdType
