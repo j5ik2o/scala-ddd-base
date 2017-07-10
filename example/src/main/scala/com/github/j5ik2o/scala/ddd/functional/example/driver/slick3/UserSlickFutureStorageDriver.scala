@@ -1,13 +1,13 @@
 package com.github.j5ik2o.scala.ddd.functional.example.driver.slick3
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.example.driver.UserFutureDriver
-import com.github.j5ik2o.scala.ddd.functional.slick.SlickFutureDriver
+import com.github.j5ik2o.scala.ddd.functional.example.driver.UserFutureStorageDriver
+import com.github.j5ik2o.scala.ddd.functional.slick.SlickFutureStorageDriver
 import slick.jdbc.JdbcProfile
 
-class UserSlickFutureDriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends UserFutureDriver
-    with SlickFutureDriver
+class UserSlickFutureStorageDriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+    extends UserFutureStorageDriver
+    with SlickFutureStorageDriver
     with UserDaoComponent {
   override type AggregateIdType = UserId
   override type AggregateType   = User

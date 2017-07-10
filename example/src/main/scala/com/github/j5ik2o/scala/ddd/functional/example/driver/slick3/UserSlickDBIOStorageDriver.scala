@@ -1,11 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.example.driver.slick3
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, SlickDBIODriver }
+import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, SlickDBIOStorageDriver }
 import slick.jdbc.JdbcProfile
 
-class UserSlickDBIODriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends SlickDBIODriver
+class UserSlickDBIOStorageDriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+    extends SlickDBIOStorageDriver
     with UserDaoComponent
     with CatsDBIOMonadInstance {
 

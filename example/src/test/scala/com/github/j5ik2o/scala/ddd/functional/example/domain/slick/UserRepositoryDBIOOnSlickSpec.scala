@@ -1,7 +1,7 @@
 package com.github.j5ik2o.scala.ddd.functional.example.domain.slick
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.example.driver.slick3.UserSlickDBIODriver
+import com.github.j5ik2o.scala.ddd.functional.example.driver.slick3.UserSlickDBIOStorageDriver
 import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOImplicits, Slick3SpecSupport, SlickFutureIOContext }
 import com.github.j5ik2o.scala.ddd.functional.slick.test.FlywayWithMySQLSpecSupport
 import org.scalatest.FreeSpec
@@ -16,7 +16,7 @@ class UserRepositoryDBIOOnSlickSpec
 
   "UserRepositoryDBIOOnSlick" - {
     "should be able to store and resolve, when DBIO" in {
-      val driver    = new UserSlickDBIODriver(dbConfig.profile, dbConfig.db)
+      val driver    = new UserSlickDBIOStorageDriver(dbConfig.profile, dbConfig.db)
       val implicits = CatsDBIOImplicits(driver.profile)
       import implicits._
       implicit val ctx = SlickFutureIOContext(ec)

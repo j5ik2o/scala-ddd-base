@@ -1,7 +1,7 @@
 package com.github.j5ik2o.scala.ddd.functional.example.domain.skinnyorm
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.example.driver.skinnyorm.UserSkinnyORMFutureDriver
+import com.github.j5ik2o.scala.ddd.functional.example.driver.skinnyorm.UserSkinnyORMFutureStorageDriver
 import com.github.j5ik2o.scala.ddd.functional.skinnyorm.{ SkinnyORMFutureIOContext, SkinnyORMSpecSupport }
 import com.github.j5ik2o.scala.ddd.functional.slick.test.FlywayWithMySQLSpecSupport
 import org.scalatest.FreeSpec
@@ -19,7 +19,7 @@ class UserRepositoryAsyncOnSkinnyORMSpec
 
   "UserRepositoryAsyncOnSkinnyORM" - {
     "should be able to store and resolve" in {
-      val driver       = new UserSkinnyORMFutureDriver()
+      val driver       = new UserSkinnyORMFutureStorageDriver()
       val repository   = new UserRepositoryAsyncOnSkinnyORM(driver)
       implicit val ctx = SkinnyORMFutureIOContext(ec, AutoSession)
       val program = for {

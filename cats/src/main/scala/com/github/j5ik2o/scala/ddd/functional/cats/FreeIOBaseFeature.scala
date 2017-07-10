@@ -4,11 +4,13 @@ import cats.free.Free
 import cats.{ ~>, Monad }
 import com.github.j5ik2o.scala.ddd.functional._
 
+import scala.language.higherKinds
+
 trait FreeIOBaseFeature extends AggregateIO { self =>
 
   type DSL[A] = Free[AggregateRepositoryDSL, A]
   type EvalType[_]
-  type DriverType <: Driver {
+  type DriverType <: StorageDriver {
     type AggregateIdType = self.AggregateIdType
     type AggregateType   = self.AggregateType
     type IOContextType   = self.IOContextType
@@ -39,28 +41,3 @@ trait FreeIOBaseFeature extends AggregateIO { self =>
   }
 
 }
-
-trait FreeIOWriteFeature extends FreeIOBaseFeature with AggregateWriter {
-
-  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, Unit] =
-    Free.liftF[AggregateRepositoryDSL, Unit](Store(aggregate))
-
-}
-
-trait FreeIODeleteFeature extends FreeIOBaseFeature with FreeIOWriteFeature with AggregateDeletable {
-  override def deleteById(id: AggregateIdType)(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, Unit] =
-    Free.liftF[AggregateRepositoryDSL, Unit](Delete(id))
-}
-
-trait FreeIOReadFeature extends FreeIOBaseFeature with AggregateReader {
-
-  override type SingleResultType[A] = Option[A]
-
-  override def resolveBy(
-      id: AggregateIdType
-  )(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, SingleResultType[AggregateType]] =
-    Free.liftF[AggregateRepositoryDSL, SingleResultType[AggregateType]](ResolveById(id))
-
-}
-
-trait FreeIORepositoryFeature extends FreeIOReadFeature with FreeIOWriteFeature
