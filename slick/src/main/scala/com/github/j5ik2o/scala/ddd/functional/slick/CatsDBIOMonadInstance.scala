@@ -22,3 +22,5 @@ trait CatsDBIOMonadInstance {
   }
 
 }
+
+case class CatsDBIOImplicits(profile: JdbcProfile) extends CatsDBIOMonadInstance
