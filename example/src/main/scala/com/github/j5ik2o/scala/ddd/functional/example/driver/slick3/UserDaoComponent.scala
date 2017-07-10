@@ -1,4 +1,4 @@
-package com.github.j5ik2o.scala.ddd.functional.example.slick3
+package com.github.j5ik2o.scala.ddd.functional.example.driver.slick3
 
 import slick.lifted.ProvenShape
 

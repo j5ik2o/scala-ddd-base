@@ -1,4 +1,4 @@
-package com.github.j5ik2o.scala.ddd.functional.example.skinnyorm
+package com.github.j5ik2o.scala.ddd.functional.example.driver.skinnyorm
 
 import scalikejdbc.{ autoConstruct, WrappedResultSet }
 import skinny.orm.{ Alias, SkinnyCRUDMapperWithId }

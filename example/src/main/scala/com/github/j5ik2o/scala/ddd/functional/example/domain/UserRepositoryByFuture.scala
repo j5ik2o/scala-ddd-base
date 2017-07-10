@@ -1,7 +1,7 @@
 package com.github.j5ik2o.scala.ddd.functional.example.domain
 
 import com.github.j5ik2o.scala.ddd.functional.cats.{ FreeIODeleteFeature, FreeIORepositoryFeature }
-import com.github.j5ik2o.scala.ddd.functional.example.slick3.UserSlickFutureDriver
+import com.github.j5ik2o.scala.ddd.functional.example.driver.slick3.UserSlickFutureDriver
 
 import scala.concurrent.{ ExecutionContext, Future }
 

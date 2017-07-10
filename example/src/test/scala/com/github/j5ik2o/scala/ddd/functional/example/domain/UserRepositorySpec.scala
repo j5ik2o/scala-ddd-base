@@ -1,6 +1,6 @@
 package com.github.j5ik2o.scala.ddd.functional.example.domain
 
-import com.github.j5ik2o.scala.ddd.functional.example.slick3.{ UserSlickDBIODriver, UserSlickFutureDriver }
+import com.github.j5ik2o.scala.ddd.functional.example.driver.slick3.{ UserSlickDBIODriver, UserSlickFutureDriver }
 import com.github.j5ik2o.scala.ddd.functional.skinnyorm.SkinnyORMSpecSupport
 import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, Slick3SpecSupport }
 import com.github.j5ik2o.scala.ddd.functional.slick.test.FlywayWithMySQLSpecSupport

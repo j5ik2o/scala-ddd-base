@@ -1,4 +1,4 @@
-package com.github.j5ik2o.scala.ddd.functional.example.skinnyorm
+package com.github.j5ik2o.scala.ddd.functional.example.driver.skinnyorm
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
 import com.github.j5ik2o.scala.ddd.functional.skinnyorm.SkinnyORMDriver
