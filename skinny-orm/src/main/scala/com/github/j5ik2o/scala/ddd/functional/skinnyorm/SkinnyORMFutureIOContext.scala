@@ -5,4 +5,4 @@ import scalikejdbc.DBSession
 
 import scala.concurrent.ExecutionContext
 
-case class SkinnyORMFutureContext(ec: ExecutionContext, dBSession: DBSession) extends AggregateFutureIOContext
+case class SkinnyORMFutureIOContext(ec: ExecutionContext, dBSession: DBSession) extends AggregateFutureIOContext

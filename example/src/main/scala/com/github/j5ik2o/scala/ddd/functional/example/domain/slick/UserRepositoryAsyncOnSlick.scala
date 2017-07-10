@@ -1,12 +1,10 @@
-package com.github.j5ik2o.scala.ddd.functional.example.domain
+package com.github.j5ik2o.scala.ddd.functional.example.domain.slick
 
+import com.github.j5ik2o.scala.ddd.functional.example.domain.UserRepositoryAsync
 import com.github.j5ik2o.scala.ddd.functional.example.driver.slick3.UserSlickFutureDriver
 import com.github.j5ik2o.scala.ddd.functional.slick.SlickFutureIOContext
 
-import scala.concurrent.Future
-
-class UserRepositoryByFuture(val driver: UserSlickFutureDriver) extends UserRepository {
+class UserRepositoryAsyncOnSlick(val driver: UserSlickFutureDriver) extends UserRepositoryAsync {
   override type IOContextType = SlickFutureIOContext
   override type DriverType    = UserSlickFutureDriver
-  override type EvalType[A]   = Future[A]
 }

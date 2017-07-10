@@ -12,7 +12,7 @@ trait SkinnyORMDriver extends FutureDriver {
 
   val dao: SkinnyCRUDMapperWithId[IdValueType, RecordType]
 
-  override type IOContextType = SkinnyORMFutureContext
+  override type IOContextType = SkinnyORMFutureIOContext
 
   override type SingleResultType[A] = Option[A]
 
