@@ -5,6 +5,8 @@ import skinny.orm.{ Alias, SkinnyCRUDMapperWithId }
 
 object UserDao extends SkinnyCRUDMapperWithId[Long, UserRecord] {
 
+  override def tableName: String = "users"
+
   override def defaultAlias: Alias[UserRecord] = createAlias("u")
 
   override def idToRawValue(id: Long): Any = id

@@ -1,18 +1,18 @@
 package com.github.j5ik2o.scala.ddd.functional.skinnyorm
 
-import com.github.j5ik2o.scala.ddd.functional.cats.FutureDriver
+import com.github.j5ik2o.scala.ddd.functional.cats.FutureStorageDriver
 import scalikejdbc.DB
 import skinny.orm.SkinnyCRUDMapperWithId
 
 import scala.concurrent.Future
 
-trait SkinnyORMDriver extends FutureDriver {
+trait SkinnyORMStorageDriver extends FutureStorageDriver {
   type RecordType
   override type IdValueType = Long
 
   val dao: SkinnyCRUDMapperWithId[IdValueType, RecordType]
 
-  override type IOContextType = SkinnyORMFutureContext
+  override type IOContextType = SkinnyORMFutureIOContext
 
   override type SingleResultType[A] = Option[A]
 
