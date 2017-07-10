@@ -1,10 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
-import scala.concurrent.{ ExecutionContext, Future }
+import com.github.j5ik2o.scala.ddd.functional.cats.FutureDriver
 
-trait SlickFutureDriver extends SlickDriver {
+import scala.concurrent.ExecutionContext
+
+trait SlickFutureDriver extends SlickDriver with FutureDriver {
   import profile.api._
-  override type DSL[_] = Future[_]
 
   override def store(aggregate: AggregateType)(implicit ctx: ExecutionContext): DSL[Unit] = {
     val record = convertToRecord(aggregate)
