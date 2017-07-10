@@ -1,10 +1,10 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 
-trait DBIODriver extends SlickDriver with CatsDBIOMonadInstance {
+trait SlickFutureDriver extends SlickDriver {
   import profile.api._
-  override type DSL[_] = DBIO[_]
+  override type DSL[_] = Future[_]
 
   override def store(aggregate: AggregateType)(implicit ctx: ExecutionContext): DSL[Unit] = {
     val record = convertToRecord(aggregate)
@@ -12,7 +12,7 @@ trait DBIODriver extends SlickDriver with CatsDBIOMonadInstance {
       n <- dao.filter(_.id === aggregate.id.value).update(record)
       _ <- if (n == 0) dao.forceInsert(record) else DBIO.successful(n)
     } yield ()).transactionally
-    action.asInstanceOf[DSL[Unit]]
+    db.run(action)
   }
 
   override def resolveBy(id: AggregateIdType)(implicit ctx: ExecutionContext): DSL[Option[AggregateType]] = {
@@ -21,20 +21,21 @@ trait DBIODriver extends SlickDriver with CatsDBIOMonadInstance {
         .filter(_.id === id.value)
         .result
         .headOption
-        .map(e => convertToAggregate(e.asInstanceOf[SingleResultType[RecordType]]))
-    action.asInstanceOf[DSL[Option[AggregateType]]]
+        .map(e => convertToAggregate(e))
+    db.run(action)
   }
 
   override def deleteById(id: AggregateIdType)(implicit ec: ExecutionContext): DSL[Unit] = {
     val action = dao.filter(_.id === id.value).delete
-    action
-      .flatMap { v =>
-        if (v == 1)
-          DBIO.successful(())
-        else
-          DBIO.failed(new Exception())
-      }
+    db.run(
+        action
+          .flatMap { v =>
+            if (v == 1)
+              DBIO.successful(())
+            else
+              DBIO.failed(new Exception())
+          }
+      )
       .asInstanceOf[DSL[Unit]]
   }
-
 }

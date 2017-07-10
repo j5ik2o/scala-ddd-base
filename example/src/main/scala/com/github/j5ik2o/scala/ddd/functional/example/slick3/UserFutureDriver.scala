@@ -1,11 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.example.slick3
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, FutureDriver }
+import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, SlickFutureDriver }
 import slick.jdbc.JdbcProfile
 
 class UserFutureDriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends FutureDriver
+    extends SlickFutureDriver
     with UserDaoComponent
     with CatsDBIOMonadInstance {
   override type AggregateIdType = UserId

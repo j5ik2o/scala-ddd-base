@@ -1,11 +1,11 @@
 package com.github.j5ik2o.scala.ddd.functional.example.slick3
 
 import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
-import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, DBIODriver }
+import com.github.j5ik2o.scala.ddd.functional.slick.{ CatsDBIOMonadInstance, SlickDBIODriver }
 import slick.jdbc.JdbcProfile
 
 class UserDBIODriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends DBIODriver
+    extends SlickDBIODriver
     with UserDaoComponent
     with CatsDBIOMonadInstance {
 
@@ -14,7 +14,6 @@ class UserDBIODriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Datab
   override type RecordType      = UserRecord
   override type TableType       = UserDef
   override protected val dao = UserDao
-  override type SingleResultType[A] = Option[A]
 
   override protected def convertToRecord(aggregate: User): UserRecord =
     UserRecord(id = aggregate.id.value, name = aggregate.name)

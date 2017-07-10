@@ -15,6 +15,7 @@ trait SlickDriver extends Driver {
     def id: Rep[AggregateType#IdType#IdValueType]
     type TableElementType = RecordType
   }
-  override type IOContextType = ExecutionContext
+  override type SingleResultType[A] = Option[A]
+  override type IOContextType       = ExecutionContext
   protected val dao: TableQuery[TableType]
 }
