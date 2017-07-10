@@ -1,30 +1,10 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
-import com.github.j5ik2o.scala.ddd.functional.{ AggregateDeletable, AggregateRepository }
-import slick.jdbc.JdbcProfile
-
 import scala.concurrent.ExecutionContext
 
-trait Slick3Driver extends AggregateRepository with AggregateDeletable {
-  val profile: JdbcProfile
-  val db: JdbcProfile#Backend#Database
-
+trait SlickDBIODriver extends SlickDriver {
   import profile.api._
-
-  type RecordType
-  override type IdValueType = Long
-  type TableType <: Table[RecordType] {
-    def id: Rep[AggregateType#IdType#IdValueType]
-    type TableElementType = RecordType
-  }
-
-  override type DSL[_]    = DBIO[_]
-  override type IOContext = ExecutionContext
-  protected val dao: TableQuery[TableType]
-
-  protected def convertToRecord(aggregate: AggregateType): RecordType
-
-  protected def convertToAggregate(record: SingleResultType[RecordType]): SingleResultType[AggregateType]
+  override type DSL[_] = DBIO[_]
 
   override def store(aggregate: AggregateType)(implicit ctx: ExecutionContext): DSL[Unit] = {
     val record = convertToRecord(aggregate)
