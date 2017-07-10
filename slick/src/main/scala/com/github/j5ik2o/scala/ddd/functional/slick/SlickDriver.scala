@@ -3,8 +3,6 @@ package com.github.j5ik2o.scala.ddd.functional.slick
 import com.github.j5ik2o.scala.ddd.functional.cats.Driver
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
-
 trait SlickDriver extends Driver {
   val profile: JdbcProfile
   val db: JdbcProfile#Backend#Database
@@ -16,6 +14,6 @@ trait SlickDriver extends Driver {
     type TableElementType = RecordType
   }
   override type SingleResultType[A] = Option[A]
-  override type IOContextType       = ExecutionContext
+  override type IOContextType       = SlickFutureIOContext
   protected val dao: TableQuery[TableType]
 }
