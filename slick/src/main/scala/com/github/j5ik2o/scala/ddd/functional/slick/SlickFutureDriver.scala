@@ -2,12 +2,10 @@ package com.github.j5ik2o.scala.ddd.functional.slick
 
 import com.github.j5ik2o.scala.ddd.functional.cats.FutureDriver
 
-import scala.concurrent.ExecutionContext
-
 trait SlickFutureDriver extends SlickDriver with FutureDriver {
   import profile.api._
 
-  override def store(aggregate: AggregateType)(implicit ctx: ExecutionContext): DSL[Unit] = {
+  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): DSL[Unit] = {
     val record = convertToRecord(aggregate)
     val action = (for {
       n <- dao.filter(_.id === aggregate.id.value).update(record)
@@ -16,7 +14,7 @@ trait SlickFutureDriver extends SlickDriver with FutureDriver {
     db.run(action)
   }
 
-  override def resolveBy(id: AggregateIdType)(implicit ctx: ExecutionContext): DSL[Option[AggregateType]] = {
+  override def resolveBy(id: AggregateIdType)(implicit ctx: IOContextType): DSL[Option[AggregateType]] = {
     val action =
       dao
         .filter(_.id === id.value)
@@ -26,7 +24,7 @@ trait SlickFutureDriver extends SlickDriver with FutureDriver {
     db.run(action)
   }
 
-  override def deleteById(id: AggregateIdType)(implicit ec: ExecutionContext): DSL[Unit] = {
+  override def deleteById(id: AggregateIdType)(implicit ctx: IOContextType): DSL[Unit] = {
     val action = dao.filter(_.id === id.value).delete
     db.run(
         action

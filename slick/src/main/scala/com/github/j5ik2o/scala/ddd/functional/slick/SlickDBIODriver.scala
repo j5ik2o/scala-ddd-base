@@ -1,12 +1,10 @@
 package com.github.j5ik2o.scala.ddd.functional.slick
 
-import scala.concurrent.ExecutionContext
-
 trait SlickDBIODriver extends SlickDriver {
   import profile.api._
   override type DSL[_] = DBIO[_]
 
-  override def store(aggregate: AggregateType)(implicit ctx: ExecutionContext): DSL[Unit] = {
+  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): DSL[Unit] = {
     val record = convertToRecord(aggregate)
     val action = (for {
       n <- dao.filter(_.id === aggregate.id.value).update(record)
@@ -15,17 +13,17 @@ trait SlickDBIODriver extends SlickDriver {
     action.asInstanceOf[DSL[Unit]]
   }
 
-  override def resolveBy(id: AggregateIdType)(implicit ctx: ExecutionContext): DSL[Option[AggregateType]] = {
+  override def resolveBy(id: AggregateIdType)(implicit ctx: IOContextType): DSL[Option[AggregateType]] = {
     val action =
       dao
         .filter(_.id === id.value)
         .result
         .headOption
-        .map(e => convertToAggregate(e.asInstanceOf[SingleResultType[RecordType]]))
+        .map(convertToAggregate)
     action.asInstanceOf[DSL[Option[AggregateType]]]
   }
 
-  override def deleteById(id: AggregateIdType)(implicit ec: ExecutionContext): DSL[Unit] = {
+  override def deleteById(id: AggregateIdType)(implicit ctx: IOContextType): DSL[Unit] = {
     val action = dao.filter(_.id === id.value).delete
     action
       .flatMap { v =>
