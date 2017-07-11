@@ -11,7 +11,7 @@ trait FreeIOReadFeature extends FreeIOBaseFeature with AggregateReader {
 
   override def resolveBy(
       id: AggregateIdType
-  )(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, SingleResultType[AggregateType]] =
+  )(implicit ctx: IOContextType): DSL[SingleResultType[AggregateType]] =
     Free.liftF[AggregateRepositoryDSL, SingleResultType[AggregateType]](ResolveById(id))
 
 }

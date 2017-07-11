@@ -7,7 +7,7 @@ trait FreeIOWriteFeature extends FreeIOBaseFeature with AggregateWriter {
 
   import AggregateRepositoryDSL._
 
-  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): Free[AggregateRepositoryDSL, Unit] =
+  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): DSL[Unit] =
     Free.liftF[AggregateRepositoryDSL, Unit](Store(aggregate))
 
 }
