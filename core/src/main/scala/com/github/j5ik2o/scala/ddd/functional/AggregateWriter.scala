@@ -2,6 +2,6 @@ package com.github.j5ik2o.scala.ddd.functional
 
 trait AggregateWriter extends AggregateIO {
 
-  def store(aggregate: AggregateType)(implicit ctx: IOContextType): DSL[Unit]
+  def store(aggregate: AggregateType): DSL[Unit]
 
 }

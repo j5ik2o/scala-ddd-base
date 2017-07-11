@@ -1,4 +1,6 @@
-package com.github.j5ik2o.scala.ddd.functional
+package com.github.j5ik2o.scala.ddd.functional.driver
+
+import com.github.j5ik2o.scala.ddd.functional.{ Aggregate, AggregateId }
 
 trait AggregateIO { self =>
   type IdValueType

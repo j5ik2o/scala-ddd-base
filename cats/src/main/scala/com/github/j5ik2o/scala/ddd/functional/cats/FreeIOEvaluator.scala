@@ -14,6 +14,7 @@ trait FreeIOEvaluator extends AggregateIO { self =>
     type AggregateType   = self.AggregateType
     type IOContextType   = self.IOContextType
   }
+
   val driver: DriverType
 
   protected def interpreter(implicit ctx: IOContextType): (AggregateRepositoryDSL ~> EvalType) =

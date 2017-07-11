@@ -4,7 +4,7 @@ import com.github.j5ik2o.scala.ddd.functional.example.domain.{ User, UserId }
 import com.github.j5ik2o.scala.ddd.functional.example.driver.UserFutureStorageDriver
 import com.github.j5ik2o.scala.ddd.functional.skinnyorm.SkinnyORMStorageDriver
 
-class UserSkinnyORMFutureStorageDriver extends UserFutureStorageDriver with SkinnyORMStorageDriver {
+case class UserSkinnyORMFutureStorageDriver() extends UserFutureStorageDriver with SkinnyORMStorageDriver {
 
   override type AggregateIdType = UserId
   override type AggregateType   = User

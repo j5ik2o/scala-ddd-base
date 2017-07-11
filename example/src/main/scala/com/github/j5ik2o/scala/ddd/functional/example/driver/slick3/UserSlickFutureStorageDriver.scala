@@ -5,10 +5,11 @@ import com.github.j5ik2o.scala.ddd.functional.example.driver.UserFutureStorageDr
 import com.github.j5ik2o.scala.ddd.functional.slick.SlickFutureStorageDriver
 import slick.jdbc.JdbcProfile
 
-class UserSlickFutureStorageDriver(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+case class UserSlickFutureStorageDriver(profile: JdbcProfile, db: JdbcProfile#Backend#Database)
     extends UserFutureStorageDriver
     with SlickFutureStorageDriver
     with UserDaoComponent {
+
   override type AggregateIdType = UserId
   override type AggregateType   = User
   override type RecordType      = UserRecord

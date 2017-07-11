@@ -7,7 +7,7 @@ trait FreeIODeleteFeature extends FreeIOBaseFeature with FreeIOWriteFeature with
 
   import AggregateRepositoryDSL._
 
-  override def deleteById(id: AggregateIdType)(implicit ec: IOContextType): DSL[Unit] =
+  override def deleteById(id: AggregateIdType): DSL[Unit] =
     Free.liftF[AggregateRepositoryDSL, Unit](Delete(id))
 
 }
