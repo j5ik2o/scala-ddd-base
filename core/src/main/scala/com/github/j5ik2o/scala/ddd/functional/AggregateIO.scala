@@ -11,5 +11,4 @@ trait AggregateIO { self =>
     type AggregateType = self.AggregateType
   }
   type DSL[_]
-  type IOContextType
 }
