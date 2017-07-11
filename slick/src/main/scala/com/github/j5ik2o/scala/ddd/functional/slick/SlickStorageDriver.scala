@@ -13,7 +13,6 @@ trait SlickStorageDriver extends StorageDriver {
     def id: Rep[AggregateType#IdType#IdValueType]
     type TableElementType = RecordType
   }
-  override type SingleResultType[A] = Option[A]
-  override type IOContextType       = SlickFutureIOContext
+
   protected val dao: TableQuery[TableType]
 }

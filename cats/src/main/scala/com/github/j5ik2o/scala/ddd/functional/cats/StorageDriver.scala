@@ -7,5 +7,5 @@ trait StorageDriver extends AggregateRepository with AggregateDeletable {
 
   protected def convertToRecord(aggregate: AggregateType): RecordType
 
-  protected def convertToAggregate(record: SingleResultType[RecordType]): SingleResultType[AggregateType]
+  protected def convertToAggregate(record: Option[RecordType]): Option[AggregateType]
 }

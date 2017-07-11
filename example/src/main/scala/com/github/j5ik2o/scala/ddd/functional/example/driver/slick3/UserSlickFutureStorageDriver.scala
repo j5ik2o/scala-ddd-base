@@ -15,7 +15,6 @@ case class UserSlickFutureStorageDriver(profile: JdbcProfile, db: JdbcProfile#Ba
   override type RecordType      = UserRecord
   override type TableType       = UserDef
   override protected val dao = UserDao
-  override type SingleResultType[A] = Option[A]
 
   override protected def convertToRecord(aggregate: User): UserRecord =
     UserRecord(id = aggregate.id.value, name = aggregate.name)

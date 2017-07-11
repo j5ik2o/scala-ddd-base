@@ -14,30 +14,29 @@ trait FreeIOEvaluator extends AggregateIO { self =>
   type DriverType <: StorageDriver {
     type AggregateIdType = self.AggregateIdType
     type AggregateType   = self.AggregateType
-    type IOContextType   = self.IOContextType
   }
 
   val driver: DriverType
 
-  protected def interpreter(implicit ctx: IOContextType): (AggregateRepositoryDSL ~> EvalType) =
+  protected def interpreter: (AggregateRepositoryDSL ~> EvalType) =
     new (AggregateRepositoryDSL ~> EvalType) {
       override def apply[A](fa: AggregateRepositoryDSL[A]): EvalType[A] = fa match {
         case Store(aggregate) =>
           driver
-            .store(aggregate.asInstanceOf[AggregateType])(ctx.asInstanceOf[IOContextType])
+            .store(aggregate.asInstanceOf[AggregateType])
             .asInstanceOf[EvalType[A]]
         case ResolveById(id) =>
           driver
-            .resolveBy(id.asInstanceOf[AggregateIdType])(ctx.asInstanceOf[IOContextType])
+            .resolveBy(id.asInstanceOf[AggregateIdType])
             .asInstanceOf[EvalType[A]]
         case Delete(id) =>
           driver
-            .deleteById(id.asInstanceOf[AggregateIdType])(ctx.asInstanceOf[IOContextType])
+            .deleteById(id.asInstanceOf[AggregateIdType])
             .asInstanceOf[EvalType[A]]
       }
     }
 
-  def run[A](program: Free[AggregateRepositoryDSL, A])(implicit ctx: IOContextType, M: Monad[EvalType]): EvalType[A] = {
+  def run[A](program: Free[AggregateRepositoryDSL, A])(implicit M: Monad[EvalType]): EvalType[A] = {
     program.foldMap(interpreter)
   }
 }

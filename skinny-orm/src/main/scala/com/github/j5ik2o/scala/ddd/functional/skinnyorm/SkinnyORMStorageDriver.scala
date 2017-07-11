@@ -1,28 +1,29 @@
 package com.github.j5ik2o.scala.ddd.functional.skinnyorm
 
-import com.github.j5ik2o.scala.ddd.functional.cats.FutureStorageDriver
+import cats.data.Kleisli
+import com.github.j5ik2o.scala.ddd.functional.cats.StorageDriver
 import scalikejdbc.DB
 import skinny.orm.SkinnyCRUDMapperWithId
 
 import scala.concurrent.Future
 
-trait SkinnyORMStorageDriver extends FutureStorageDriver {
+trait SkinnyORMStorageDriver extends StorageDriver {
   type RecordType
   override type IdValueType = Long
+  override type DSL[A]      = Kleisli[Future, SkinnyORMFutureIOContext, A]
 
   val dao: SkinnyCRUDMapperWithId[IdValueType, RecordType]
 
-  override type IOContextType = SkinnyORMFutureIOContext
-
-  override type SingleResultType[A] = Option[A]
+  private def withContext[A](body: SkinnyORMFutureIOContext => Future[A]): DSL[A] =
+    Kleisli[Future, SkinnyORMFutureIOContext, A](body)
 
   protected def convertToRecord(aggregate: AggregateType): RecordType
 
-  protected def convertToAggregate(record: SingleResultType[RecordType]): SingleResultType[AggregateType]
+  protected def convertToAggregate(record: Option[RecordType]): Option[AggregateType]
 
   protected def toNamedValues(record: RecordType): Seq[(Symbol, Any)]
 
-  override def store(aggregate: AggregateType)(implicit ctx: IOContextType): Future[Unit] = {
+  override def store(aggregate: AggregateType): DSL[Unit] = withContext[Unit] { ctx =>
     implicit val ec = ctx.ec
     Future {
       DB.localTx { dbSession =>
@@ -37,19 +38,21 @@ trait SkinnyORMStorageDriver extends FutureStorageDriver {
     }
   }
 
-  override def resolveBy(id: AggregateIdType)(implicit ctx: IOContextType): Future[Option[AggregateType]] = {
-    implicit val ec = ctx.ec
-    Future {
-      convertToAggregate(dao.findById(id.value))
+  override def resolveBy(id: AggregateIdType): DSL[Option[AggregateType]] =
+    withContext[Option[AggregateType]] { ctx =>
+      implicit val ec = ctx.ec
+      Future {
+        convertToAggregate(dao.findById(id.value))
+      }
     }
-  }
 
-  override def deleteById(id: AggregateIdType)(implicit ctx: IOContextType): Future[Unit] = {
-    implicit val ec = ctx.ec
-    Future {
-      dao.deleteById(id.value)
-      ()
+  override def deleteById(id: AggregateIdType): DSL[Unit] =
+    withContext[Unit] { ctx =>
+      implicit val ec = ctx.ec
+      Future {
+        dao.deleteById(id.value)
+        ()
+      }
     }
-  }
 
 }
