@@ -5,7 +5,7 @@ import skinny.orm._
 
 trait SkinnyDaoSupport {
 
-  trait Record {
+  trait Record extends Product {
     val id: Long
   }
 
@@ -14,14 +14,20 @@ trait SkinnyDaoSupport {
   }
 
   trait Dao[R <: Record] extends SkinnyCRUDMapper[R] {
-//    override def extract(rs: WrappedResultSet, n: ResultName[R]): R =
-//      autoConstruct(rs, n)
 
     protected def toNamedValues(record: R): Seq[(Symbol, Any)]
+
     def create(record: R)(implicit session: DBSession): Long =
       createWithAttributes(toNamedValues(record): _*)
-    def update(record: R)(implicit session: DBSession): Int =
-      updateById(record.id).withAttributes(toNamedValues(record): _*)
+
+    def createAll(records: Seq[R])(implicit session: DBSession): Seq[Long] =
+      records.map(create)
+
+    def update(record: R)(implicit session: DBSession): Long =
+      updateById(record.id).withAttributes(toNamedValues(record): _*).toLong
+
+    def updateAll(records: Seq[R])(implicit session: DBSession): Seq[Long] =
+      records.map(update)
 
   }
 

@@ -104,7 +104,7 @@ lazy val skinny = (project in file("skinny")).settings(
     name := "scala-ddd-base-skinny",
     libraryDependencies ++= Seq(
       "io.monix" %% "monix" % "3.0.0-RC1",
-      "org.skinny-framework" %% "skinny-orm"      % "2.6.0",
+      "org.skinny-framework" %% "skinny-orm" % "2.6.0",
     ),
   )
 ) dependsOn core
@@ -182,7 +182,7 @@ lazy val example = (project in file("example")).settings(
       .value,
     compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value
   )
-).dependsOn(core,slick,flyway)
+).dependsOn(core, slick, skinny, flyway)
   .disablePlugins(WixMySQLPlugin)
 
 lazy val `root` = (project in file("."))

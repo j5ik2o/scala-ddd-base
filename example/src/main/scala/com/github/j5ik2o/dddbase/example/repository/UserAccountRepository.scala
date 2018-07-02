@@ -1,11 +1,11 @@
 package com.github.j5ik2o.dddbase.example.repository
 
-import com.github.j5ik2o.dddbase.example.dao.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.slick._
 import com.github.j5ik2o.dddbase._
 import monix.eval.Task
 import _root_.slick.jdbc.JdbcProfile
+import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature
+import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 
 trait UserAccountRepository[M[_]]
     extends AggregateSingleReader[M]
@@ -20,16 +20,28 @@ trait UserAccountRepository[M[_]]
 object UserAccountRepository {
 
   def ofSlick(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[Task] =
-    new UserAccountRepositoryOnJDBC(profile, db)
+    new UserAccountRepositoryOnSlick(profile, db)
 
-  private class UserAccountRepositoryOnJDBC(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+//  private class Skinny
+//      extends UserAccountRepository[AggregateIOBaseFeature.RIO]
+//      with skinny.AggregateSingleReadFeature {
+//    override type RecordType = this.type
+//    override type DaoType = this.type
+//    override protected val dao: Skinny.this.type = _
+//
+//
+//    override protected def convertToAggregate(record: Skinny.this.type): RIO[UserAccount] = ???
+//
+//  }
+
+  private class UserAccountRepositoryOnSlick(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
       extends UserAccountRepository[Task]
-      with AggregateSingleReadFeature
-      with AggregateMultiReadFeature
-      with AggregateSingleWriteFeature
-      with AggregateMultiWriteFeature
-      with AggregateSoftDeleteFeature
-      with UserAccountComponent {
+      with slick.AggregateSingleReadFeature
+      with slick.AggregateMultiReadFeature
+      with slick.AggregateSingleWriteFeature
+      with slick.AggregateMultiWriteFeature
+      with slick.AggregateSoftDeleteFeature
+      with com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent {
 
     override type RecordType = UserAccountRecord
     override type TableType  = UserAccounts
