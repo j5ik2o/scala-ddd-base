@@ -40,7 +40,7 @@ val coreSettings = Seq(
         </license>
       </licenses>
       <scm>
-        <url>git@github.com:j5ik2o/scala-ddd-base.it</url>
+        <url>git@github.com:j5ik2o/scala-ddd-base.git</url>
         <connection>scm:git:github.com/j5ik2o/scala-ddd-base</connection>
         <developerConnection>scm:git:git@github.com:j5ik2o/scala-ddd-base.git</developerConnection>
       </scm>
@@ -51,7 +51,7 @@ val coreSettings = Seq(
         </developer>
       </developers>
   },
-  // publishTo in ThisBuild := sonatypePublishTo.value,
+  publishTo in ThisBuild := sonatypePublishTo.value,
   credentials := {
     val ivyCredentials = (baseDirectory in LocalRootProject).value / ".credentials"
     Credentials(ivyCredentials) :: Nil
@@ -95,6 +95,16 @@ lazy val slick = (project in file("slick")).settings(
       "io.monix" %% "monix" % "3.0.0-RC1",
       "com.typesafe.slick" %% "slick" % slickVersion,
       "com.typesafe.slick" %% "slick-hikaricp" % slickVersion
+    ),
+  )
+) dependsOn core
+
+lazy val skinny = (project in file("skinny")).settings(
+  coreSettings ++ Seq(
+    name := "scala-ddd-base-skinny",
+    libraryDependencies ++= Seq(
+      "io.monix" %% "monix" % "3.0.0-RC1",
+      "org.skinny-framework" %% "skinny-orm"      % "2.6.0",
     ),
   )
 ) dependsOn core
