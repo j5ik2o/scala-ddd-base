@@ -9,12 +9,12 @@ import com.github.j5ik2o.dddbase.slick._
 import monix.eval.Task
 
 class UserAccountRepositoryOnSlick(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends UserAccountRepository[UserAccountRepository.BySlick]
+    extends UserAccountRepository[UserAccountRepository.BySlickWithTask]
     with AggregateSingleReadFeature
     with AggregateMultiReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature
-    with AggregateSoftDeleteFeature
+    with AggregateSingleSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

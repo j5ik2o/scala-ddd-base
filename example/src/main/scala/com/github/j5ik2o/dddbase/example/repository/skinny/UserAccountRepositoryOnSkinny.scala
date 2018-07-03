@@ -4,18 +4,18 @@ import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.skinny.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinny
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinnyWithTask
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task
 
 class UserAccountRepositoryOnSkinny
-    extends UserAccountRepository[BySkinny]
+    extends UserAccountRepository[BySkinnyWithTask]
     with AggregateSingleReadFeature
     with AggregateMultiReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature
-    with AggregateSoftDeleteFeature
+    with AggregateSingleSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

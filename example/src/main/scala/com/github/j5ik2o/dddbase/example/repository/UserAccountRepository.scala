@@ -1,7 +1,7 @@
 package com.github.j5ik2o.dddbase.example.repository
 
 import _root_.slick.jdbc.JdbcProfile
-import cats.data.ReaderT
+import cats.data.{EitherT, ReaderT}
 import cats.free.Free
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
@@ -16,23 +16,23 @@ trait UserAccountRepository[M[_]]
     with AggregateMultiReader[M]
     with AggregateSingleWriter[M]
     with AggregateMultiWriter[M]
-    with AggregateSoftDeletable[M] {
+    with AggregateSingleSoftDeletable[M] {
   override type IdType        = UserAccountId
   override type AggregateType = UserAccount
 }
 
 object UserAccountRepository {
 
-  type BySlick[A]  = Task[A]
-  type BySkinny[A] = ReaderT[Task, DBSession, A]
-  type ByFree[A]   = Free[UserRepositoryDSL, A]
+  type BySlickWithTask[A]  = Task[A]
+  type BySkinnyWithTask[A] = ReaderT[Task, DBSession, A]
+  type ByFree[A]           = Free[UserRepositoryDSL, A]
 
-  def bySlick(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlick] =
+  def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlickWithTask] =
     new UserAccountRepositoryOnSlick(profile, db)
 
-  def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryOnSkinny
+  def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryOnSkinny
 
-  implicit val skinny: UserAccountRepository[BySkinny] = bySkinny
+  implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask
 
   implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryOnFree
 

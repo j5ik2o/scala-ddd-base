@@ -1,12 +1,12 @@
 package com.github.j5ik2o.dddbase.skinny
 
 import cats.data.ReaderT
-import com.github.j5ik2o.dddbase.AggregateSoftDeletable
+import com.github.j5ik2o.dddbase.AggregateSingleSoftDeletable
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import scalikejdbc._
 
-trait AggregateSoftDeleteFeature extends AggregateSoftDeletable[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO] with AggregateBaseReadFeature {
 
   protected final val DELETE = "deleted"
 

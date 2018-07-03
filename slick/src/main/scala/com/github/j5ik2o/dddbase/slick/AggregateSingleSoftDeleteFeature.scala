@@ -1,11 +1,11 @@
 package com.github.j5ik2o.dddbase.slick
 
-import com.github.j5ik2o.dddbase.AggregateSoftDeletable
+import com.github.j5ik2o.dddbase.AggregateSingleSoftDeletable
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import slick.lifted.{Rep, TableQuery}
 
-trait AggregateSoftDeleteFeature extends AggregateSoftDeletable[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO] with AggregateBaseReadFeature {
 
   override type RecordType <: SlickDaoSupport#SoftDeletableRecord
   override type TableType <: SlickDaoSupport#TableBase[RecordType] with SlickDaoSupport#SoftDeletableTableSupport[
