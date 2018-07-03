@@ -192,4 +192,4 @@ lazy val `root` = (project in file("."))
   .settings(
     name := "scala-ddd-base-project"
   )
-  .aggregate(core, slick, example)
+  .aggregate(core, slick, skinny, example)
