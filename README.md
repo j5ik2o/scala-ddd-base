@@ -1,6 +1,30 @@
 # scala-ddd-base
 
+`scala-ddd-base` is provide traits to support for ddd repositories and aggregates.
+
+## Installation
+
+Add the following to your sbt build (Scala 2.12.x):
+
+### Release Version
+
+```scala
+resolvers += "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/"
+
+libraryDependencies += "com.github.j5ik2o" %% "scala-ddd-base" % "1.0.0"
+```
+
+### Snapshot Version
+
+```scala
+resolvers += "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
+libraryDependencies += "com.github.j5ik2o" %% "scala-ddd-base" % "1.0.0-SNAPSHOT"
+```
+
 ## Core traits
+
+The following provides basic abstract methods.
 
 - AggregateSingleReader
 - AggregateSingleWriter
@@ -10,6 +34,8 @@
 - AggregateMultiDeletable
 
 ## Support traits
+
+The following provides an implementation for each ORM.
 
 ### Slick
 
@@ -29,6 +55,8 @@
 
 
 ## Example
+
+Please mix in the core and support traits to your implementation.
 
 ```scala
 trait UserAccountRepository[M[_]]
