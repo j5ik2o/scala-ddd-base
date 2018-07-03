@@ -6,7 +6,7 @@ import com.github.j5ik2o.dddbase.example.model.{UserAccount, UserAccountId}
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.ByFree
 
-object UserAccountRepositoryOnFree extends UserAccountRepository[ByFree] {
+object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 
   override def resolveById(id: UserAccountId): ByFree[UserAccount] = liftF(ResolveById(id))
 

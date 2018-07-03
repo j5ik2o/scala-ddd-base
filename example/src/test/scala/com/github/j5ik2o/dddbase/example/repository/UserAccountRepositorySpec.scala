@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 import cats.free.Free
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.{ByFree, BySlickWithTask}
-import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryOnFree, UserRepositoryDSL}
+import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryByFree, UserRepositoryDSL}
 import com.github.j5ik2o.dddbase.example.repository.util.{
   FlywayWithMySQLSpecSupport,
   SkinnySpecSupport,
@@ -87,7 +87,7 @@ class UserAccountRepositorySpec
         } yield result
 
         val skinny     = UserAccountRepository.bySkinnyWithTask
-        val evalResult = UserAccountRepositoryOnFree.evaluate(skinny)(program)
+        val evalResult = UserAccountRepositoryByFree.evaluate(skinny)(program)
         val result     = evalResult.run(AutoSession).runAsync.futureValue
         result shouldBe userAccount
       }
@@ -99,7 +99,7 @@ class UserAccountRepositorySpec
         } yield result
 
         val slick                         = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
-        val evalResult: Task[UserAccount] = UserAccountRepositoryOnFree.evaluate(slick)(program)
+        val evalResult: Task[UserAccount] = UserAccountRepositoryByFree.evaluate(slick)(program)
         val result                        = evalResult.runAsync.futureValue
         result shouldBe userAccount
       }

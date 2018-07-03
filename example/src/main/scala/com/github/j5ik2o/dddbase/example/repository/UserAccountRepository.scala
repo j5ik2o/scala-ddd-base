@@ -5,9 +5,9 @@ import cats.data.{EitherT, ReaderT}
 import cats.free.Free
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryOnFree, UserRepositoryDSL}
-import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryOnSkinny
-import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryOnSlick
+import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryByFree, UserRepositoryDSL}
+import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinnyWithTask
+import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickWithTask
 import monix.eval.Task
 import scalikejdbc.DBSession
 
@@ -28,13 +28,13 @@ object UserAccountRepository {
   type ByFree[A]           = Free[UserRepositoryDSL, A]
 
   def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlickWithTask] =
-    new UserAccountRepositoryOnSlick(profile, db)
+    new UserAccountRepositoryBySlickWithTask(profile, db)
 
-  def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryOnSkinny
+  def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryBySkinnyWithTask
 
   implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask
 
-  implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryOnFree
+  implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryByFree
 
   def apply[M[_]](implicit F: UserAccountRepository[M]): UserAccountRepository[M] = F
 

@@ -9,7 +9,7 @@ import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task
 
-class UserAccountRepositoryOnSkinny
+class UserAccountRepositoryBySkinnyWithTask
     extends UserAccountRepository[BySkinnyWithTask]
     with AggregateSingleReadFeature
     with AggregateMultiReadFeature
