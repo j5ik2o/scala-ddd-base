@@ -7,14 +7,16 @@ import monix.eval.Task
 import scalikejdbc.DBSession
 
 trait AggregateSingleWriteFeature extends AggregateSingleWriter[RIO] with AggregateBaseWriteFeature {
-  override def store(aggregate: AggregateType): RIO[Int] = {
-    convertToRecord(aggregate)
-      .flatMap { record =>
-        ReaderT { implicit dbSession: DBSession =>
-          Task {
-            dao.create(record).toInt
-          }
+
+  override def store(aggregate: AggregateType): RIO[Long] = {
+    for {
+      record <- convertToRecord(aggregate)
+      result <- ReaderT[Task, DBSession, Long] { implicit dbSession =>
+        Task {
+          dao.createOrUpdate(record)
         }
       }
+    } yield result
   }
+
 }

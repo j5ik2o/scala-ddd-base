@@ -9,10 +9,13 @@ import scalikejdbc.DBSession
 trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with AggregateBaseReadFeature {
 
   override def resolveById(id: IdType): RIO[AggregateType] =
-    ReaderT[Task, DBSession, RecordType] { implicit dbSession: DBSession =>
-      Task {
-        dao.findById(id.value).getOrElse(throw AggregateNotFoundException(id))
+    for {
+      record <- ReaderT[Task, DBSession, RecordType] { implicit dbSession: DBSession =>
+        Task {
+          dao.findBy(byCondition(id)).getOrElse(throw AggregateNotFoundException(id))
+        }
       }
-    }.flatMap(convertToAggregate)
+      aggregate <- convertToAggregate(record)
+    } yield aggregate
 
 }

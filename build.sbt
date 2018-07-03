@@ -60,9 +60,11 @@ val coreSettings = Seq(
   scalafmtTestOnCompile in ThisBuild := true,
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-core" % "1.1.0",
+    "org.typelevel" %% "cats-free" % "1.1.0",
     "com.beachape" %% "enumeratum" % "1.5.13",
-    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
     "org.slf4j" % "slf4j-api" % "1.7.25",
+    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
     "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
     "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.5" % Test
   )

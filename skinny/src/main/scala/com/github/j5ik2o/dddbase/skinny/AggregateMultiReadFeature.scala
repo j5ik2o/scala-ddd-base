@@ -5,18 +5,18 @@ import com.github.j5ik2o.dddbase.AggregateMultiReader
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import scalikejdbc.DBSession
+import scalikejdbc._
 
 trait AggregateMultiReadFeature extends AggregateMultiReader[RIO] with AggregateBaseReadFeature {
-  override def resolveMulti(ids: Seq[IdType]): RIO[Seq[AggregateType]] = {
-    ReaderT[Task, DBSession, Seq[RecordType]] { implicit dbSession =>
-      Task {
-        dao.findAllByIds(ids.map(_.value): _*)
-      }
-    }.flatMap { results =>
-      ReaderT { implicit dbSession =>
-        Task.sequence(results.map(convertToAggregate(_)(dbSession)))
-      }
-    }
+
+  override def resolveMulti(ids: Seq[IdType]): RIO[Seq[AggregateType]] = ReaderT[Task, DBSession, Seq[AggregateType]] {
+    implicit dbSession: DBSession =>
+      for {
+        results <- Task {
+          dao.findAllBy(byConditions(ids))
+        }
+        aggregates <- Task.sequence(results.map(convertToAggregate(_)(dbSession)))
+      } yield aggregates
   }
 
 }

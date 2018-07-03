@@ -5,20 +5,19 @@ import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 
 trait AggregateMultiWriteFeature extends AggregateMultiWriter[RIO] with AggregateBaseWriteFeature {
-  import profile.api._
 
-  override def storeMulti(aggregates: Seq[AggregateType]): RIO[Int] =
-    Task.unit
-      .flatMap { _ =>
-        Task.traverse(aggregates)(convertToRecord)
+  override def storeMulti(aggregates: Seq[AggregateType]): RIO[Long] =
+    for {
+      records <- Task.traverse(aggregates) { aggregate =>
+        convertToRecord(aggregate)
       }
-      .flatMap { records =>
-        Task.deferFutureAction { implicit ec =>
-          db.run(DBIO.sequence(records.foldLeft(Seq.empty[DBIO[Int]]) {
-              case (result, record) =>
-                result :+ dao.insertOrUpdate(record)
-            }))
-            .map(_.sum)
-        }
+      result <- Task.deferFutureAction { implicit ec =>
+        import profile.api._
+        db.run(DBIO.sequence(records.foldLeft(Seq.empty[DBIO[Long]]) {
+            case (result, record) =>
+              result :+ dao.insertOrUpdate(record).map(_.toLong)
+          }))
+          .map(_.sum)
       }
+    } yield result
 }

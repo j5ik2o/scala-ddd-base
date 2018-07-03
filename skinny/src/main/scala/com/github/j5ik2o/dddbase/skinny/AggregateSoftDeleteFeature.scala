@@ -1,0 +1,24 @@
+package com.github.j5ik2o.dddbase.skinny
+
+import cats.data.ReaderT
+import com.github.j5ik2o.dddbase.AggregateSoftDeletable
+import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
+import monix.eval.Task
+import scalikejdbc._
+
+trait AggregateSoftDeleteFeature extends AggregateSoftDeletable[RIO] with AggregateBaseReadFeature {
+
+  protected final val DELETE = "deleted"
+
+  override def softDelete(id: IdType): RIO[Long] = ReaderT { implicit dbSession =>
+    Task {
+      dao.updateById(id.value).withAttributes('status -> DELETE).toLong
+    }
+  }
+
+  override protected def byCondition(id: IdType): SQLSyntax =
+    super.byCondition(id).and.ne(dao.defaultAlias.status, DELETE)
+
+  override protected def byConditions(ids: Seq[IdType]): SQLSyntax =
+    super.byConditions(ids).and.ne(dao.defaultAlias.status, DELETE)
+}

@@ -63,6 +63,10 @@ trait ${className}Component extends SkinnyDaoSupport {
 
   object ${className}Dao extends Dao[${className}Record] {
 
+      override def useAutoIncrementPrimaryKey: Boolean = false
+
+      override val tableName: String = "${tableName}"
+
       override protected def toNamedValues(record: ${className}Record): Seq[(Symbol, Any)] = Seq(
 <#list columns as column>       '${column.name} -> record.${column.propertyName}<#if column.name?ends_with("id") || column.name?ends_with("Id")>.value</#if><#if column_has_next>,</#if>
 </#list>

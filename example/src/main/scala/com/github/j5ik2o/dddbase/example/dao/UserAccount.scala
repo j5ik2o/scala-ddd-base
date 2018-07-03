@@ -60,6 +60,10 @@ package skinny {
 
     object UserAccountDao extends Dao[UserAccountRecord] {
 
+      override def useAutoIncrementPrimaryKey: Boolean = false
+
+      override val tableName: String = "user_account"
+
       override protected def toNamedValues(record: UserAccountRecord): Seq[(Symbol, Any)] = Seq(
         'status     -> record.status,
         'email      -> record.email,

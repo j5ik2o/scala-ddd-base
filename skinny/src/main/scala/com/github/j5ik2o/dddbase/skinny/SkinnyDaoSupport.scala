@@ -17,8 +17,16 @@ trait SkinnyDaoSupport {
 
     protected def toNamedValues(record: R): Seq[(Symbol, Any)]
 
+    def createOrUpdate(record: R): Long =
+      DB localTx { implicit dbSession =>
+        if (countBy(sqls.eq(defaultAlias.id, record.id)) == 1)
+          update(record)
+        else
+          create(record)
+      }
+
     def create(record: R)(implicit session: DBSession): Long =
-      createWithAttributes(toNamedValues(record): _*)
+      createWithAttributes(('id -> record.id) +: toNamedValues(record): _*)
 
     def createAll(records: Seq[R])(implicit session: DBSession): Seq[Long] =
       records.map(create)

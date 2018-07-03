@@ -11,19 +11,12 @@ import slick.jdbc.{JdbcProfile, SQLActionBuilder}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with ScalaFutures {
+trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with ScalaFutures with JdbcSpecSupport {
   self: Suite with FlywayWithMySQLSpecSupport =>
-
-  override implicit def patienceConfig: PatienceConfig =
-    PatienceConfig(timeout = scaled(Span(30, Seconds)), interval = scaled(Span(15, Millis)))
 
   private var _dbConfig: DatabaseConfig[JdbcProfile] = _
 
   private var _profile: JdbcProfile = _
-
-  def jdbcPort: Int = mySQLdConfig.port.get
-
-  val tables: Seq[String]
 
   protected def dbConfig = _dbConfig
 
@@ -35,7 +28,7 @@ trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with Scala
       val q = SQLActionBuilder(List(s"TRUNCATE TABLE $table"), SetUnit).asUpdate
       dbConfig.db.run(q)
     }
-    Await.result(Future.sequence(futures), Duration.Inf)
+    Future.sequence(futures).futureValue
   }
 
   override protected def beforeAll(): Unit = {

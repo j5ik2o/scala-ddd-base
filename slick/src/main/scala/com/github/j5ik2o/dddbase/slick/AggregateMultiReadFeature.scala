@@ -8,12 +8,10 @@ trait AggregateMultiReadFeature extends AggregateMultiReader[RIO] with Aggregate
   import profile.api._
 
   override def resolveMulti(ids: Seq[IdType]): RIO[Seq[AggregateType]] =
-    Task
-      .deferFutureAction { implicit ec =>
+    for {
+      results <- Task.deferFuture {
         db.run(dao.filter(byConditions(ids)).result)
       }
-      .flatMap { records =>
-        Task.traverse(records)(convertToAggregate)
-      }
-
+      aggregates <- Task.traverse(results)(convertToAggregate(_))
+    } yield aggregates
 }
