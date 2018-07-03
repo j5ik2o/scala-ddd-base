@@ -34,7 +34,7 @@ object UserAccountRepository {
 
   implicit val skinny: UserAccountRepository[BySkinny] = bySkinny
 
-  implicit val free: UserAccountRepository[ByFree] = new UserAccountRepositoryOnFree
+  implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryOnFree
 
   def apply[M[_]](implicit F: UserAccountRepository[M]): UserAccountRepository[M] = F
 

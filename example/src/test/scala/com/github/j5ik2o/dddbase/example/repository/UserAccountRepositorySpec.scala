@@ -85,7 +85,7 @@ class UserAccountRepositorySpec
         } yield result
 
         val skinny     = UserAccountRepository.bySkinny
-        val evalResult = UserAccountRepositoryOnFree.eval(skinny)(program)
+        val evalResult = UserAccountRepositoryOnFree.evaluate(skinny)(program)
         val result     = evalResult.run(AutoSession).runAsync.futureValue
         result shouldBe userAccount
       }
@@ -97,7 +97,7 @@ class UserAccountRepositorySpec
         } yield result
 
         val slick      = UserAccountRepository.bySlick(dbConfig.profile, dbConfig.db)
-        val evalResult = UserAccountRepositoryOnFree.eval(slick)(program)
+        val evalResult = UserAccountRepositoryOnFree.evaluate(slick)(program)
         val result     = evalResult.runAsync.futureValue
         result shouldBe userAccount
       }
