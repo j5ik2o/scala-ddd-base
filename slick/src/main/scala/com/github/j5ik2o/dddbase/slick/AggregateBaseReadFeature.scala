@@ -5,7 +5,7 @@ import slick.lifted.Rep
 
 trait AggregateBaseReadFeature extends AggregateIOBaseFeature {
 
-  protected def convertToAggregate(record: RecordType): RIO[AggregateType]
+  protected def convertToAggregate: RecordType => RIO[AggregateType]
 
   protected def byCondition(id: IdType): TableType => Rep[Boolean] = {
     import profile.api._

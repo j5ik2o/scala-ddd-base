@@ -1,8 +1,9 @@
 package com.github.j5ik2o.dddbase.example.repository
 
 import _root_.slick.jdbc.JdbcProfile
-import cats.data.{EitherT, ReaderT}
+import cats.data.ReaderT
 import cats.free.Free
+import cats.{~>, Id, Monad}
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryByFree, UserRepositoryDSL}

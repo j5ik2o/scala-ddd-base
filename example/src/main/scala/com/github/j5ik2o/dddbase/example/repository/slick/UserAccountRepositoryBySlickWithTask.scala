@@ -1,6 +1,7 @@
 package com.github.j5ik2o.dddbase.example.repository.slick
 
 import _root_.slick.jdbc.JdbcProfile
+import cats.{~>, Id}
 import com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
@@ -21,7 +22,7 @@ class UserAccountRepositoryBySlickWithTask(val profile: JdbcProfile, val db: Jdb
   override type TableType  = UserAccounts
   override protected val dao = UserAccountDao
 
-  override protected def convertToAggregate(record: UserAccountRecord): RIO[UserAccount] =
+  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     Task.pure {
       UserAccount(
         id = UserAccountId(record.id),
@@ -34,8 +35,9 @@ class UserAccountRepositoryBySlickWithTask(val profile: JdbcProfile, val db: Jdb
         updatedAt = record.updatedAt
       )
     }
+  }
 
-  override protected def convertToRecord(aggregate: UserAccount): RIO[UserAccountRecord] =
+  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
     Task.pure {
       UserAccountRecord(
         id = aggregate.id.value,
@@ -48,5 +50,6 @@ class UserAccountRepositoryBySlickWithTask(val profile: JdbcProfile, val db: Jdb
         updatedAt = aggregate.updatedAt
       )
     }
+  }
 
 }

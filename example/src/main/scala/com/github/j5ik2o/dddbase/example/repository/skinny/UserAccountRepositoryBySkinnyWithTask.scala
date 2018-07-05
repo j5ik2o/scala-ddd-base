@@ -22,7 +22,7 @@ class UserAccountRepositoryBySkinnyWithTask
   override type DaoType    = UserAccountDao.type
   override protected val dao: UserAccountDao.type = UserAccountDao
 
-  override protected def convertToAggregate(record: UserAccountRecord): RIO[UserAccount] =
+  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     ReaderT { _ =>
       Task.pure {
         UserAccount(
@@ -37,8 +37,9 @@ class UserAccountRepositoryBySkinnyWithTask
         )
       }
     }
+  }
 
-  override protected def convertToRecord(aggregate: UserAccount): RIO[UserAccountRecord] =
+  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
     ReaderT { _ =>
       Task.pure {
         UserAccountRecord(
@@ -53,4 +54,5 @@ class UserAccountRepositoryBySkinnyWithTask
         )
       }
     }
+  }
 }

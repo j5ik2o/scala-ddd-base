@@ -12,7 +12,6 @@ releaseProcess := Seq[ReleaseStep](
   runClean,
   setReleaseVersion,
   commitReleaseVersion,
-  updateReadmeProcess,
   tagRelease,
   releaseStepCommandAndRemaining("+publishSigned"),
   setNextVersion,
