@@ -4,6 +4,7 @@ val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
   scalaVersion := "2.12.6",
+  crossScalaVersions ++= Seq("2.11.11", "2.12.6"),
   scalacOptions ++= {
     Seq(
       "-feature",
@@ -58,6 +59,10 @@ val coreSettings = Seq(
   },
   scalafmtOnCompile in ThisBuild := true,
   scalafmtTestOnCompile in ThisBuild := true,
+  resolvers ++= Seq(
+    "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
+    "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/"
+  ),
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-core" % "1.1.0",
     "org.typelevel" %% "cats-free" % "1.1.0",
