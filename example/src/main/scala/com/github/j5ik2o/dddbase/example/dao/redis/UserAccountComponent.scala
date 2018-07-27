@@ -8,7 +8,6 @@ import com.github.j5ik2o.reactive.redis.{ReaderTTask, RedisConnection, Result}
 import monix.eval.Task
 import io.circe.syntax._
 import io.circe.generic.auto._
-import cats.implicits._
 import io.circe.{Decoder, Encoder}
 import io.circe.parser._
 import cats.implicits._
@@ -19,6 +18,7 @@ trait UserAccountComponent extends RedisDaoSupport {
   implicit val zonedDateTimeDecoder: Decoder[ZonedDateTime] = Decoder[Long].map { ts =>
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault())
   }
+
   case class UserAccountRecord(id: String,
                                status: String,
                                email: String,
@@ -76,8 +76,8 @@ trait UserAccountComponent extends RedisDaoSupport {
         .get(id)
         .map {
           _.value.flatMap { v =>
-            val r = parse(v).flatMap { json =>
-              json.as[UserAccountRecord].map { v =>
+            val r = parse(v).leftMap(error => new Exception(error.message)).flatMap { json =>
+              json.as[UserAccountRecord].leftMap(error => new Exception(error.message)).map { v =>
                 if (v.status == DELETED)
                   None
                 else
@@ -87,8 +87,8 @@ trait UserAccountComponent extends RedisDaoSupport {
             r match {
               case Right(v) =>
                 v
-              case Left(error) =>
-                throw new Exception(error.getMessage)
+              case Left(ex) =>
+                throw ex
             }
           }
         }
