@@ -39,10 +39,10 @@ object UserAccountRepository {
 
   def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryBySkinnyWithTask
 
-  def onRedisWithTask(implicit actorSystem: ActorSystem): UserAccountRepository[OnRedisWithTask] =
+  def onRedisWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnRedisWithTask =
     new UserAccountRepositoryOnRedisWithTask()
 
-  def onMemcachedWithTask(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcachedWithTask] =
+  def onMemcachedWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnMemcachedWithTask =
     new UserAccountRepositoryOnMemcachedWithTask()
 
   implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask

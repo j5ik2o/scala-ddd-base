@@ -27,6 +27,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{FreeSpecLike, Matchers}
 import scalikejdbc.AutoSession
+import scala.concurrent.duration._
 
 class UserAccountRepositorySpec
     extends TestKit(ActorSystem("UserAccountRepositorySpec"))
