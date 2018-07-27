@@ -1,0 +1,31 @@
+# Scala CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/sample-config/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      SBT_OPTS: -Xss2m -Xms1g -Xmx3g -XX:MaxMetaspaceSize=512m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "build.sbt" }}
+      - run:  sbt +test:compile
+
+      - save_cache:
+          paths:
+            - "~/.ivy2/cache"
+            - "~/.sbt"
+          key: v1-dependencies--{{ checksum "build.sbt" }}
+      - run: sbt +test
