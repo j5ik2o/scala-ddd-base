@@ -1,5 +1,9 @@
 # scala-ddd-base
 
+[![CircleCI](https://circleci.com/gh/j5ik2o/scala-ddd-base.svg?style=svg)](https://circleci.com/gh/j5ik2o/scala-ddd-base)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base_2.12)
+[![License: MIT](http://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+
 `scala-ddd-base` is provide traits to support for ddd repositories and aggregates.
 
 ## Installation
