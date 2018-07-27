@@ -13,3 +13,9 @@ addSbtPlugin("com.chatwork" % "sbt-wix-embedded-mysql" % "1.0.9")
 addSbtPlugin("jp.co.septeni-original" % "sbt-dao-generator" % "1.0.8")
 
 addSbtPlugin("io.github.davidmweber" % "flyway-sbt" % "5.0.0")
+
+resolvers ++= Seq("Seasar2 Repository" at "http://maven.seasar.org/maven2")
+
+libraryDependencies ++= Seq(
+  "org.seasar.util" % "s2util" % "0.0.1"
+)
