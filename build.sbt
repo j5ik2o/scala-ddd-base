@@ -100,7 +100,7 @@ val dbDriver     = "com.mysql.jdbc.Driver"
 val dbName       = "dddbase"
 val dbUser       = "dddbase"
 val dbPassword   = "passwd"
-val dbPort       = 3310
+val dbPort: Int  = Utils.RandomPortSupport.temporaryServerPort()
 val dbUrl        = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
 val slickVersion = "3.2.0"
 
