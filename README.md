@@ -49,9 +49,7 @@ The following provides basic abstract methods.
 
 ## Support traits
 
-The following provides an implementation for each ORM.
-
-### Slick
+The following provides an implementation for each ORM/KVS.
 
 - AggregateSingleReadFeature
 - AggregateSingleWriteFeature
@@ -59,14 +57,12 @@ The following provides an implementation for each ORM.
 - AggregateMultiWriteFeature
 - AggregateSingleDeleteFeature
 
-### SkinnyORM
+The supported ORM/KVS is below.
 
-- AggregateSingleReadFeature
-- AggregateSingleWriteFeature
-- AggregateMultiReadFeature
-- AggregateMultiWriteFeature
-- AggregateSingleDeleteFeature
-
+- Slick(JDBC)
+- SkinnyORM(JDBC)
+- Redis(reactive-redis-core)
+- Memcached(reactive-memcached-core)
 
 ## Example
 
