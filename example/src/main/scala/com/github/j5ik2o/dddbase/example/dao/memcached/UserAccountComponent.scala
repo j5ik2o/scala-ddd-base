@@ -1,5 +1,6 @@
 package com.github.j5ik2o.dddbase.example.dao.memcached
 import java.time.{Instant, ZoneId, ZonedDateTime}
+import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import cats.data.ReaderT
@@ -11,6 +12,8 @@ import io.circe.parser.parse
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder}
 import monix.eval.Task
+
+import scala.concurrent.duration.Duration
 
 trait UserAccountComponent extends MemcachedDaoSupport {
   implicit val zonedDateTimeEncoder: Encoder[ZonedDateTime] = Encoder[Long].contramap(_.toInstant.toEpochMilli)
@@ -38,55 +41,56 @@ trait UserAccountComponent extends MemcachedDaoSupport {
 
     val DELETED = "DELETED"
 
-    private def internalSet(record: UserAccountRecord): ReaderT[Task, MemcachedConnection, Int] =
-      memcachedClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
+    private def internalSet(record: UserAccountRecord, expire: Duration): ReaderT[Task, MemcachedConnection, Int] =
+      memcachedClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""), expire)
 
     override def setMulti(
-        records: Seq[UserAccountRecord]
+        records: Seq[(UserAccountRecord, Duration)]
     ): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
       Task
         .traverse(records) { record =>
-          set(record).run(con)
+          set(record._1, record._2).run(con)
         }
         .map(_.count(_ > 0))
     }
 
     override def set(
-        record: UserAccountRecord
+        record: UserAccountRecord,
+        expire: Duration
     ): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
-      internalSet(record).run(con).map(_ => 1L)
+      internalSet(record, expire).run(con).map(_ => 1L)
     }
 
     override def getMulti(
         ids: Seq[String]
-    ): ReaderT[Task, MemcachedConnection, Seq[UserAccountRecord]] = ReaderT { con =>
+    ): ReaderT[Task, MemcachedConnection, Seq[(UserAccountRecord, Duration)]] = ReaderT { con =>
       Task
         .traverse(ids) { id =>
           get(id).run(con)
         }
-        .map(_.foldLeft(Seq.empty[UserAccountRecord]) {
+        .map(_.foldLeft(Seq.empty[(UserAccountRecord, Duration)]) {
           case (result, e) =>
             result ++ e.map(Seq(_)).getOrElse(Seq.empty)
         })
     }
 
-    private def internalGet(id: String): ReaderT[Task, MemcachedConnection, Option[UserAccountRecord]] =
+    private def internalGet(id: String): ReaderT[Task, MemcachedConnection, Option[(UserAccountRecord, Duration)]] =
       memcachedClient
         .get(id)
         .map {
           _.flatMap { v =>
             val r = parse(v.value.replaceAll("\\\\\"", "\"")).leftMap(error => new Exception(error.message)).flatMap {
               json =>
-                json.as[UserAccountRecord].leftMap(error => new Exception(error.message)).map { v =>
-                  if (v.status == DELETED)
+                json.as[UserAccountRecord].leftMap(error => new Exception(error.message)).map { e =>
+                  if (e.status == DELETED)
                     None
                   else
-                    Some(v)
+                    Some((e, Duration(v.expire, TimeUnit.SECONDS)))
                 }
             }
             r match {
               case Right(v) =>
-                v
+                (v)
               case Left(ex) =>
                 throw ex
             }
@@ -95,7 +99,7 @@ trait UserAccountComponent extends MemcachedDaoSupport {
 
     override def get(
         id: String
-    ): ReaderT[Task, MemcachedConnection, Option[UserAccountRecord]] = ReaderT { con =>
+    ): ReaderT[Task, MemcachedConnection, Option[(UserAccountRecord, Duration)]] = ReaderT { con =>
       internalGet(id).run(con)
     }
 
@@ -109,7 +113,7 @@ trait UserAccountComponent extends MemcachedDaoSupport {
 
       get(id).flatMap {
         case Some(v) =>
-          set(v.withStatus(DELETED))
+          set(v._1.withStatus(DELETED), Duration.Inf)
         case None =>
           ReaderTTask.pure(0L)
       }

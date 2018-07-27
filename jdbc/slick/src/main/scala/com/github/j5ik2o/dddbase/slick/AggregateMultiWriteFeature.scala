@@ -1,12 +1,15 @@
 package com.github.j5ik2o.dddbase.slick
 
-import com.github.j5ik2o.dddbase.AggregateMultiWriter
+import com.github.j5ik2o.dddbase.{AggregateMultiWriter, NullStoreOption, StoreOption}
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 
 trait AggregateMultiWriteFeature extends AggregateMultiWriter[RIO] with AggregateBaseWriteFeature {
 
-  override def storeMulti(aggregates: Seq[AggregateType]): RIO[Long] =
+  override type SMO = StoreOption
+  override val defaultStoreMultiOption: StoreOption = NullStoreOption
+
+  override def storeMulti(aggregates: Seq[AggregateType], storeMultiOption: SMO): RIO[Long] =
     for {
       records <- Task.traverse(aggregates) { aggregate =>
         convertToRecord(aggregate)

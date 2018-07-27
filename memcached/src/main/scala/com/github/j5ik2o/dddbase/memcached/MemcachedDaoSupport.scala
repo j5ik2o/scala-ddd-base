@@ -4,6 +4,8 @@ import cats.data.ReaderT
 import com.github.j5ik2o.reactive.memcached.{MemcachedClient, MemcachedConnection}
 import monix.eval.Task
 
+import scala.concurrent.duration.Duration
+
 trait MemcachedDaoSupport {
   trait Record {
     val id: String
@@ -21,13 +23,13 @@ trait MemcachedDaoSupport {
 
     protected lazy val memcachedClient = MemcachedClient()
 
-    def set(record: R): ReaderT[Task, MemcachedConnection, Long]
+    def set(record: R, expire: Duration): ReaderT[Task, MemcachedConnection, Long]
 
-    def setMulti(records: Seq[R]): ReaderT[Task, MemcachedConnection, Long]
+    def setMulti(records: Seq[(R, Duration)]): ReaderT[Task, MemcachedConnection, Long]
 
-    def get(id: String): ReaderT[Task, MemcachedConnection, Option[R]]
+    def get(id: String): ReaderT[Task, MemcachedConnection, Option[(R, Duration)]]
 
-    def getMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Seq[R]]
+    def getMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Seq[(R, Duration)]]
 
     def delete(id: String): ReaderT[Task, MemcachedConnection, Long]
 

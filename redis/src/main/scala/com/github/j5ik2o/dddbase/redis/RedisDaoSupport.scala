@@ -4,6 +4,8 @@ import cats.data.ReaderT
 import com.github.j5ik2o.reactive.redis.{RedisClient, RedisConnection}
 import monix.eval.Task
 
+import scala.concurrent.duration.Duration
+
 trait RedisDaoSupport {
 
   trait Record {
@@ -22,9 +24,9 @@ trait RedisDaoSupport {
 
     protected lazy val redisClient = RedisClient()
 
-    def set(record: R): ReaderT[Task, RedisConnection, Long]
+    def set(record: R, expire: Duration): ReaderT[Task, RedisConnection, Long]
 
-    def setMulti(records: Seq[R]): ReaderT[Task, RedisConnection, Long]
+    def setMulti(records: Seq[(R, Duration)]): ReaderT[Task, RedisConnection, Long]
 
     def get(id: String): ReaderT[Task, RedisConnection, Option[R]]
 

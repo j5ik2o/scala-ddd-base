@@ -2,6 +2,7 @@ package com.github.j5ik2o.dddbase.example.repository.free
 
 import cats.free.Free.liftF
 import cats.{~>, Monad}
+import com.github.j5ik2o.dddbase.{NullStoreOption, StoreOption}
 import com.github.j5ik2o.dddbase.example.model.{UserAccount, UserAccountId}
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.ByFree
@@ -12,9 +13,14 @@ object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 
   override def resolveMulti(ids: Seq[UserAccountId]): ByFree[Seq[UserAccount]] = liftF(ResolveMulti(ids))
 
-  override def store(aggregate: UserAccount): ByFree[Long] = liftF(Store(aggregate))
+  override type SO  = StoreOption
+  override type SMO = StoreOption
+  override val defaultStoreOption      = NullStoreOption
+  override val defaultStoreMultiOption = NullStoreOption
 
-  override def storeMulti(aggregates: Seq[UserAccount]): ByFree[Long] = liftF(StoreMulti(aggregates))
+  override def store(aggregate: UserAccount, option: SO): ByFree[Long] = liftF(Store(aggregate))
+  override def storeMulti(aggregates: Seq[UserAccount], storeMultiOption: SMO): ByFree[Long] =
+    liftF(StoreMulti(aggregates))
 
   override def softDelete(id: UserAccountId): ByFree[Long] = liftF(SoftDelete(id))
 
@@ -35,5 +41,4 @@ object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 
   def evaluate[M[_]: Monad, A](evaluator: UserAccountRepository[M])(program: ByFree[A]): M[A] =
     program.foldMap(interpreter(evaluator))
-
 }

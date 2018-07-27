@@ -13,7 +13,7 @@ trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with Aggrega
       record <- ReaderT[Task, MemcachedConnection, RecordType] { con =>
         dao.get(id.value.toString).run(con).flatMap {
           case Some(v) =>
-            Task.pure(v)
+            Task.pure(v._1)
           case None =>
             Task.raiseError(AggregateNotFoundException(id))
         }

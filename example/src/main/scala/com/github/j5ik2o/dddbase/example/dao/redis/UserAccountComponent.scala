@@ -12,6 +12,8 @@ import io.circe.{Decoder, Encoder}
 import io.circe.parser._
 import cats.implicits._
 
+import scala.concurrent.duration.{Duration, FiniteDuration}
+
 trait UserAccountComponent extends RedisDaoSupport {
 
   implicit val zonedDateTimeEncoder: Encoder[ZonedDateTime] = Encoder[Long].contramap(_.toInstant.toEpochMilli)
@@ -39,23 +41,29 @@ trait UserAccountComponent extends RedisDaoSupport {
 
     val DELETED = "DELETED"
 
-    private def internalSet(record: UserAccountRecord): ReaderT[Task, RedisConnection, Result[Unit]] =
-      redisClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
+    private def internalSet(record: UserAccountRecord, expire: Duration): ReaderT[Task, RedisConnection, Result[Unit]] =
+      if (expire.isFinite())
+        redisClient.setEx(record.id,
+                          FiniteDuration(expire._1, expire._2),
+                          record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
+      else
+        redisClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
 
     override def setMulti(
-        records: Seq[UserAccountRecord]
+        records: Seq[(UserAccountRecord, Duration)]
     ): ReaderT[Task, RedisConnection, Long] = ReaderT { con =>
       Task
         .traverse(records) { record =>
-          set(record).run(con)
+          set(record._1, record._2).run(con)
         }
         .map(_.count(_ > 0))
     }
 
     override def set(
-        record: UserAccountRecord
+        record: UserAccountRecord,
+        expire: Duration
     ): ReaderT[Task, RedisConnection, Long] = ReaderT { con =>
-      internalSet(record).run(con).map(_ => 1L)
+      internalSet(record, expire).run(con).map(_ => 1L)
     }
 
     override def getMulti(
@@ -109,7 +117,7 @@ trait UserAccountComponent extends RedisDaoSupport {
 
       get(id).flatMap {
         case Some(v) =>
-          set(v.withStatus(DELETED))
+          set(v.withStatus(DELETED), Duration.Inf)
         case None =>
           ReaderTTask.pure(0L)
       }

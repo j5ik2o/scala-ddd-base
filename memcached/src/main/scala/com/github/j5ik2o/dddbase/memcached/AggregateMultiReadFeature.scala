@@ -12,7 +12,7 @@ trait AggregateMultiReadFeature extends AggregateMultiReader[RIO] with Aggregate
     ReaderT[Task, MemcachedConnection, Seq[AggregateType]] { con =>
       for {
         results    <- dao.getMulti(ids.map(_.value.toString)).run(con)
-        aggregates <- Task.sequence(results.map(convertToAggregate(_)(con)))
+        aggregates <- Task.sequence(results.map(v => convertToAggregate(v._1)(con)))
       } yield aggregates
     }
 
