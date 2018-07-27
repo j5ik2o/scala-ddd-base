@@ -5,29 +5,42 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/my-project
     docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
-
-    working_directory: ~/repo
-
-    environment:
-      SBT_OPTS: -Xss2m -Xms1g -Xmx3g -XX:MaxMetaspaceSize=512m
-      TERM: dumb
-
+    - image: codestar/circleci-scala-sbt-git:scala-2.12.6-sbt-1.1.6
     steps:
-      - run: sudo apt-get update -qq && sudo apt-get install -y libaio1
+    - checkout
 
-      - checkout
+    - restore_cache:
+        keys:
+        - my-project-{{ checksum "project/build.sbt" }}-{{ checksum "build.sbt" }}
+        - my-project
 
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "build.sbt" }}
-      - run:  sbt +test:compile
+    - run:
+        command:
+          sbt +test:compile exit
 
-      - save_cache:
-          paths:
-            - "~/.ivy2/cache"
-            - "~/.sbt"
-          key: v1-dependencies--{{ checksum "build.sbt" }}
-      - run: sbt +test
+    - save_cache:
+        key: my-project-{{ checksum "project/build.sbt" }}-{{ checksum "build.sbt" }}
+        paths:
+        - target/resolution-cache
+        - target/streams
+        - project/target/resolution-cache
+        - project/target/streams
+        - ~/.sbt
+        - ~/.iv2/cache
+        - ~/.m2
+    - save_cache:
+        # Changing this to a different key is the only way to remove old dependencies from the cache and/or generate a more up-to-date cache
+        key: my-project
+        paths:
+        - ~/.sbt
+        - ~/.iv2/cache
+        - ~/.m2
+
+    - run:
+        command:
+          sbt +test exit
+
+    - store_test_results:
+        path: target/test-reports

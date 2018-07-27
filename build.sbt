@@ -104,36 +104,45 @@ val dbPort       = 3310
 val dbUrl        = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
 val slickVersion = "3.2.0"
 
-lazy val slick = (project in file("jdbc/slick")).settings(
-  coreSettings ++ Seq(
-    name := "scala-ddd-base-slick",
-    libraryDependencies ++= Seq(
-      "io.monix"           %% "monix"          % "3.0.0-RC1",
-      "com.typesafe.slick" %% "slick"          % slickVersion,
-      "com.typesafe.slick" %% "slick-hikaricp" % slickVersion
+lazy val slick = (project in file("jdbc/slick"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-slick",
+      libraryDependencies ++= Seq(
+        "io.monix"           %% "monix"          % "3.0.0-RC1",
+        "com.typesafe.slick" %% "slick"          % slickVersion,
+        "com.typesafe.slick" %% "slick-hikaricp" % slickVersion
+      )
     )
   )
-) dependsOn core
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
 
-lazy val skinny = (project in file("jdbc/skinny")).settings(
-  coreSettings ++ Seq(
-    name := "scala-ddd-base-skinny",
-    libraryDependencies ++= Seq(
-      "io.monix"             %% "monix"      % "3.0.0-RC1",
-      "org.skinny-framework" %% "skinny-orm" % "2.6.0"
+lazy val skinny = (project in file("jdbc/skinny"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-skinny",
+      libraryDependencies ++= Seq(
+        "io.monix"             %% "monix"      % "3.0.0-RC1",
+        "org.skinny-framework" %% "skinny-orm" % "2.6.0"
+      )
     )
   )
-) dependsOn core
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
 
-lazy val redis = (project in file("redis")).settings(
-  coreSettings ++ Seq(
-    name := "scala-ddd-base-redis",
-    libraryDependencies ++= Seq(
-      "io.monix"          %% "monix"               % "3.0.0-RC1",
-      "com.github.j5ik2o" %% "reactive-redis-core" % "1.0.10"
+lazy val redis = (project in file("redis"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-redis",
+      libraryDependencies ++= Seq(
+        "io.monix"          %% "monix"               % "3.0.0-RC1",
+        "com.github.j5ik2o" %% "reactive-redis-core" % "1.0.10"
+      )
     )
   )
-) dependsOn core
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
 
 lazy val flyway = (project in file("flyway"))
   .settings(coreSettings)
