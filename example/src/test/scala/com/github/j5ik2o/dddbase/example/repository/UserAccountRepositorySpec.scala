@@ -15,6 +15,13 @@ import com.github.j5ik2o.dddbase.example.repository.util.{
   SkinnySpecSupport,
   Slick3SpecSupport
 }
+import com.github.j5ik2o.reactive.memcached.{
+  MemcachedConnection,
+  MemcachedConnectionPool,
+  MemcachedSpecSupport,
+  PeerConfig => MemcachedPeerConfig
+}
+import com.github.j5ik2o.reactive.redis.{PeerConfig => RedisPeerConfig}
 import com.github.j5ik2o.reactive.redis._
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
@@ -28,6 +35,7 @@ class UserAccountRepositorySpec
     with Slick3SpecSupport
     with SkinnySpecSupport
     with RedisSpecSupport
+    with MemcachedSpecSupport
     with Matchers {
 
   override val tables: Seq[String] = Seq("user_account")
@@ -89,12 +97,32 @@ class UserAccountRepositorySpec
     "redis" - {
       "test" in {
         val repos      = UserAccountRepository.onRedisWithTask
-        val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
+        val peerConfig = RedisPeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
         val connectionPool =
           RedisConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
                                                  peerConfig,
                                                  RedisConnection(_, _),
                                                  reSizer = Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
+        connectionPool
+          .withConnectionF { con =>
+            (for {
+              _ <- repos.store(userAccount)
+              r <- repos.resolveById(userAccount.id)
+            } yield r).run(con)
+          }
+          .runAsync
+          .futureValue
+      }
+    }
+    "memcached" - {
+      "test" in {
+        val repos      = UserAccountRepository.onMemcachedWithTask
+        val peerConfig = MemcachedPeerConfig(new InetSocketAddress("127.0.0.1", memcachedTestServer.getPort))
+        val connectionPool =
+          MemcachedConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
+                                                     peerConfig,
+                                                     MemcachedConnection(_, _),
+                                                     reSizer = Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
         connectionPool
           .withConnectionF { con =>
             (for {

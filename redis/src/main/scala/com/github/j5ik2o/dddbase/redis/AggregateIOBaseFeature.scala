@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.redis
+
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.{AggregateIO, AggregateLongId}

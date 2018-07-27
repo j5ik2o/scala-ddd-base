@@ -7,9 +7,11 @@ import cats.free.Free
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryByFree, UserRepositoryDSL}
+import com.github.j5ik2o.dddbase.example.repository.memcached.UserAccountRepositoryOnMemcachedWithTask
 import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedisWithTask
 import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinnyWithTask
 import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickWithTask
+import com.github.j5ik2o.reactive.memcached.MemcachedConnection
 import com.github.j5ik2o.reactive.redis.RedisConnection
 import monix.eval.Task
 import scalikejdbc.DBSession
@@ -26,10 +28,11 @@ trait UserAccountRepository[M[_]]
 
 object UserAccountRepository {
 
-  type OnRedisWithTask[A]  = ReaderT[Task, RedisConnection, A]
-  type BySlickWithTask[A]  = Task[A]
-  type BySkinnyWithTask[A] = ReaderT[Task, DBSession, A]
-  type ByFree[A]           = Free[UserRepositoryDSL, A]
+  type OnRedisWithTask[A]     = ReaderT[Task, RedisConnection, A]
+  type OnMemcachedWithTask[A] = ReaderT[Task, MemcachedConnection, A]
+  type BySlickWithTask[A]     = Task[A]
+  type BySkinnyWithTask[A]    = ReaderT[Task, DBSession, A]
+  type ByFree[A]              = Free[UserRepositoryDSL, A]
 
   def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlickWithTask] =
     new UserAccountRepositoryBySlickWithTask(profile, db)
@@ -38,6 +41,9 @@ object UserAccountRepository {
 
   def onRedisWithTask(implicit actorSystem: ActorSystem): UserAccountRepository[OnRedisWithTask] =
     new UserAccountRepositoryOnRedisWithTask()
+
+  def onMemcachedWithTask(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcachedWithTask] =
+    new UserAccountRepositoryOnMemcachedWithTask()
 
   implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask
 

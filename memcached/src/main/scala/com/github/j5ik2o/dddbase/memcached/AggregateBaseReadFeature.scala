@@ -1,6 +1,6 @@
-package com.github.j5ik2o.dddbase.redis
+package com.github.j5ik2o.dddbase.memcached
 
-import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
+import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
 
 trait AggregateBaseReadFeature extends AggregateIOBaseFeature {
 

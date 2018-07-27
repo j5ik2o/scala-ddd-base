@@ -144,6 +144,19 @@ lazy val redis = (project in file("redis"))
   .dependsOn(core)
   .disablePlugins(WixMySQLPlugin)
 
+lazy val memcached = (project in file("memcached"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-memcached",
+      libraryDependencies ++= Seq(
+        "io.monix"          %% "monix"                   % "3.0.0-RC1",
+        "com.github.j5ik2o" %% "reactive-memcached-core" % "1.0.4"
+      )
+    )
+  )
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
+
 lazy val flyway = (project in file("flyway"))
   .settings(coreSettings)
   .settings(
@@ -220,15 +233,16 @@ lazy val example = (project in file("example"))
         .value,
       compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value,
       libraryDependencies ++= Seq(
-        "io.circe"          %% "circe-core"          % circeVersion,
-        "io.circe"          %% "circe-generic"       % circeVersion,
-        "io.circe"          %% "circe-parser"        % circeVersion,
-        "com.github.j5ik2o" %% "reactive-redis-test" % "1.0.10" % Test,
-        "com.typesafe.akka" %% "akka-testkit"        % akkaVersion % Test
+        "io.circe"          %% "circe-core"              % circeVersion,
+        "io.circe"          %% "circe-generic"           % circeVersion,
+        "io.circe"          %% "circe-parser"            % circeVersion,
+        "com.github.j5ik2o" %% "reactive-redis-test"     % "1.0.10" % Test,
+        "com.github.j5ik2o" %% "reactive-memcached-test" % "1.0.4" % Test,
+        "com.typesafe.akka" %% "akka-testkit"            % akkaVersion % Test
       )
     )
   )
-  .dependsOn(core, slick, skinny, redis, flyway)
+  .dependsOn(core, slick, skinny, redis, memcached, flyway)
   .disablePlugins(WixMySQLPlugin)
 
 lazy val `root` = (project in file("."))
