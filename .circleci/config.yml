@@ -10,7 +10,7 @@ jobs:
     - image: codestar/circleci-scala-sbt-git:scala-2.12.6-sbt-1.1.6
     steps:
 
-    - run: sudo apt-get update -qq && sudo apt-get install -y libaio1
+    - run: apk add --no-cache libaio1
 
     - checkout
 
