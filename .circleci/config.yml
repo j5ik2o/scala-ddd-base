@@ -16,7 +16,7 @@ jobs:
 
     - restore_cache:
         keys:
-        - my-project-{{ checksum "project/build.sbt" }}-{{ checksum "build.sbt" }}
+        - my-project-{{ checksum "build.sbt" }}
         - my-project
 
     - run:
@@ -24,7 +24,7 @@ jobs:
           sbt +test:compile exit
 
     - save_cache:
-        key: my-project-{{ checksum "project/build.sbt" }}-{{ checksum "build.sbt" }}
+        key: my-project-{{ checksum "build.sbt" }}
         paths:
         - target/resolution-cache
         - target/streams
@@ -33,6 +33,7 @@ jobs:
         - ~/.sbt
         - ~/.iv2/cache
         - ~/.m2
+        - ~/.wixMySQL
     - save_cache:
         # Changing this to a different key is the only way to remove old dependencies from the cache and/or generate a more up-to-date cache
         key: my-project
@@ -40,6 +41,7 @@ jobs:
         - ~/.sbt
         - ~/.iv2/cache
         - ~/.m2
+        - ~/.wixMySQL
 
     - run:
         command:
