@@ -1,27 +1,35 @@
 package com.github.j5ik2o.dddbase.example.repository
 
+import java.net.InetSocketAddress
 import java.time.ZonedDateTime
 
+import akka.actor.ActorSystem
+import akka.routing.DefaultResizer
+import akka.testkit.TestKit
 import cats.free.Free
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.{ByFree, BySlickWithTask}
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.ByFree
 import com.github.j5ik2o.dddbase.example.repository.free.{UserAccountRepositoryByFree, UserRepositoryDSL}
 import com.github.j5ik2o.dddbase.example.repository.util.{
   FlywayWithMySQLSpecSupport,
   SkinnySpecSupport,
   Slick3SpecSupport
 }
+import com.github.j5ik2o.reactive.redis._
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{FreeSpecLike, Matchers}
 import scalikejdbc.AutoSession
 
 class UserAccountRepositorySpec
-    extends FreeSpecLike
+    extends TestKit(ActorSystem("UserAccountRepositorySpec"))
+    with FreeSpecLike
     with FlywayWithMySQLSpecSupport
     with Slick3SpecSupport
     with SkinnySpecSupport
+    with RedisSpecSupport
     with Matchers {
+
   override val tables: Seq[String] = Seq("user_account")
 
   val userAccount = UserAccount(
@@ -76,6 +84,26 @@ class UserAccountRepositorySpec
         val skinnyRepo = UserAccountRepository.bySkinnyWithTask
         val result1    = skinnyRepo.storeMulti(userAccounts).run(AutoSession).runAsync.futureValue
         result1 shouldBe userAccounts.size
+      }
+    }
+    "redis" - {
+      "test" in {
+        val repos      = UserAccountRepository.onRedisWithTask
+        val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
+        val connectionPool =
+          RedisConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
+                                                 peerConfig,
+                                                 RedisConnection(_, _),
+                                                 reSizer = Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
+        connectionPool
+          .withConnectionF { con =>
+            (for {
+              _ <- repos.store(userAccount)
+              r <- repos.resolveById(userAccount.id)
+            } yield r).run(con)
+          }
+          .runAsync
+          .futureValue
       }
     }
     "free" - {
