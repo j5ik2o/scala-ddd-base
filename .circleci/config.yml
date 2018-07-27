@@ -5,7 +5,6 @@ jobs:
     - image: circleci/openjdk:8-jdk
     steps:
     - run: sudo apt-get update -qq && sudo apt-get install -y libaio1
-    - run: sudo hostname "$(hostname | cut -c1-63)"
     - checkout
     - restore_cache:
         key: scala-library-dependencies-{{ checksum "build.sbt" }}
