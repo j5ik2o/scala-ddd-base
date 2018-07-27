@@ -1,4 +1,11 @@
 import scala.concurrent.duration._
+val compileScalaStyle = taskKey[Unit]("compileScalaStyle")
+
+lazy val scalaStyleSettings = Seq(
+  (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
+  compileScalaStyle := scalastyle.in(Compile).toTask("").value,
+  (compile in Compile) := (compile in Compile).dependsOn(compileScalaStyle).value
+)
 
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
@@ -73,7 +80,7 @@ val coreSettings = Seq(
     "ch.qos.logback"    % "logback-classic"   % "1.2.3" % Test,
     "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.5" % Test
   )
-)
+) ++ scalaStyleSettings
 
 val circeVersion    = "0.10.0-M1"
 val akkaHttpVersion = "10.1.1"
@@ -95,7 +102,7 @@ val dbPort       = 3310
 val dbUrl        = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
 val slickVersion = "3.2.0"
 
-lazy val slick = (project in file("slick")).settings(
+lazy val slick = (project in file("jdbc/slick")).settings(
   coreSettings ++ Seq(
     name := "scala-ddd-base-slick",
     libraryDependencies ++= Seq(
@@ -106,7 +113,7 @@ lazy val slick = (project in file("slick")).settings(
   )
 ) dependsOn core
 
-lazy val skinny = (project in file("skinny")).settings(
+lazy val skinny = (project in file("jdbc/skinny")).settings(
   coreSettings ++ Seq(
     name := "scala-ddd-base-skinny",
     libraryDependencies ++= Seq(
