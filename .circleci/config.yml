@@ -16,6 +16,8 @@ jobs:
       TERM: dumb
 
     steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y libaio1
+
       - checkout
 
       - restore_cache:
