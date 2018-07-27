@@ -1,51 +1,16 @@
-# Scala CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/sample-config/ for more details
-#
 version: 2
 jobs:
   build:
-    working_directory: ~/my-project
     docker:
-    - image: codestar/circleci-scala-sbt-git:scala-2.12.6-sbt-1.1.6
+    - image: circleci/openjdk:8-jdk
     steps:
-
-    - run: apk add --no-cache libaio
-
+    - run: sudo apt-get update -qq && sudo apt-get install -y libaio1
+    - run: sudo hostname "$(hostname | cut -c1-63)"
     - checkout
-
     - restore_cache:
-        keys:
-        - my-project-{{ checksum "build.sbt" }}
-        - my-project
-
-    - run:
-        command:
-          sbt +test:compile exit
-
+        key: scala-library-dependencies-{{ checksum "build.sbt" }}
+    - run: sbt +test:compile
     - save_cache:
-        key: my-project-{{ checksum "build.sbt" }}
-        paths:
-        - target/resolution-cache
-        - target/streams
-        - project/target/resolution-cache
-        - project/target/streams
-        - ~/.sbt
-        - ~/.iv2/cache
-        - ~/.m2
-        - ~/.wixMySQL
-    - save_cache:
-        # Changing this to a different key is the only way to remove old dependencies from the cache and/or generate a more up-to-date cache
-        key: my-project
-        paths:
-        - ~/.sbt
-        - ~/.iv2/cache
-        - ~/.m2
-        - ~/.wixMySQL
-
-    - run:
-        command:
-          sbt +test exit
-
-    - store_test_results:
-        path: target/test-reports
+        paths: [ "~/.m2", "~/.ivy2", "~/.cache/coursier" ]
+        key: scala-library-dependencies-{{ checksum "build.sbt" }}
+    - run: sbt +test
