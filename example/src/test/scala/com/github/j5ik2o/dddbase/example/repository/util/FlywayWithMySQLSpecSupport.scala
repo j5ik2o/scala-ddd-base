@@ -2,10 +2,11 @@ package com.github.j5ik2o.dddbase.example.repository.util
 
 import java.io.File
 
-import scala.concurrent.duration._
 import com.github.j5ik2o.scalatestplus.db._
 import com.wix.mysql.distribution.Version._
 import org.scalatest.TestSuite
+
+import scala.concurrent.duration._
 
 trait FlywayWithMySQLSpecSupport extends FlywayWithMySQLdOneInstancePerSuite with RandomPortSupport {
   this: TestSuite =>

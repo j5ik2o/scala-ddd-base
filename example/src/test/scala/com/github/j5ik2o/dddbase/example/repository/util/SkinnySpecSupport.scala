@@ -1,8 +1,8 @@
 package com.github.j5ik2o.dddbase.example.repository.util
 
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Suite}
+import org.scalatest.{ BeforeAndAfter, BeforeAndAfterAll, Suite }
 import scalikejdbc.config.DBs
-import scalikejdbc.{ConnectionPool, GlobalSettings, LoggingSQLAndTimeSettings}
+import scalikejdbc.{ ConnectionPool, GlobalSettings, LoggingSQLAndTimeSettings }
 
 trait SkinnySpecSupport extends BeforeAndAfter with BeforeAndAfterAll with JdbcSpecSupport {
   self: Suite with FlywayWithMySQLSpecSupport =>

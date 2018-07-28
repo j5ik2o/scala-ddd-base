@@ -1,6 +1,4 @@
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-import sbtrelease._
-import Utils._
 
 releaseCrossBuild := true
 

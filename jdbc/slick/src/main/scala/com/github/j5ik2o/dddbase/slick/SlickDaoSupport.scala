@@ -1,6 +1,6 @@
 package com.github.j5ik2o.dddbase.slick
 
-import java.time.{Instant, ZoneId, ZonedDateTime}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 
 trait SlickDaoSupport {
 

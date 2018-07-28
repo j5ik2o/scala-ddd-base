@@ -1,5 +1,6 @@
 package com.github.j5ik2o.dddbase.example.repository.redis
 import akka.actor.ActorSystem
+import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.redis.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
@@ -7,7 +8,6 @@ import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnRedi
 import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.redis._
 import monix.eval.Task
-import cats.data.ReaderT
 
 class UserAccountRepositoryOnRedisWithTask()(implicit system: ActorSystem)
     extends UserAccountRepository[OnRedisWithTask]

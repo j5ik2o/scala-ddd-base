@@ -1,7 +1,7 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.{AggregateSingleWriter, NullStoreOption, StoreOption}
+import com.github.j5ik2o.dddbase.{ AggregateSingleWriter, NullStoreOption, StoreOption }
 import monix.eval.Task
 
 trait AggregateSingleWriteFeature extends AggregateSingleWriter[RIO] with AggregateBaseWriteFeature {

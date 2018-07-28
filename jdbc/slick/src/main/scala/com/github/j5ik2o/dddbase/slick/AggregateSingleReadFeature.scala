@@ -1,7 +1,7 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.{AggregateNotFoundException, AggregateSingleReader}
+import com.github.j5ik2o.dddbase.{ AggregateNotFoundException, AggregateSingleReader }
 import monix.eval.Task
 
 trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with AggregateBaseReadFeature {

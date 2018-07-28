@@ -1,18 +1,19 @@
 package com.github.j5ik2o.dddbase.example.dao.redis
-import java.time.{Instant, ZoneId, ZonedDateTime}
+
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 
 import akka.actor.ActorSystem
-import cats.data.{NonEmptyList, ReaderT}
-import com.github.j5ik2o.dddbase.redis.RedisDaoSupport
-import com.github.j5ik2o.reactive.redis.{ReaderTTask, RedisConnection, Result}
-import monix.eval.Task
-import io.circe.syntax._
-import io.circe.generic.auto._
-import io.circe.{Decoder, Encoder}
-import io.circe.parser._
+import cats.data.{ NonEmptyList, ReaderT }
 import cats.implicits._
+import com.github.j5ik2o.dddbase.redis.RedisDaoSupport
+import com.github.j5ik2o.reactive.redis.{ ReaderTTask, RedisConnection, Result }
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+import io.circe.{ Decoder, Encoder }
+import monix.eval.Task
 
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.{ Duration, FiniteDuration }
 
 trait UserAccountComponent extends RedisDaoSupport {
 
