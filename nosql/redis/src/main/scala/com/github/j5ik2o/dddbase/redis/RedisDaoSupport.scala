@@ -27,7 +27,7 @@ trait RedisDaoSupport {
 
     def set(record: R, expire: Duration): ReaderT[Task, RedisConnection, Long]
 
-    def setMulti(records: Seq[(R, Duration)]): ReaderT[Task, RedisConnection, Long]
+    def setMulti(records: Seq[R], expire: Duration): ReaderT[Task, RedisConnection, Long]
 
     def get(id: String): ReaderT[Task, RedisConnection, Option[R]]
 

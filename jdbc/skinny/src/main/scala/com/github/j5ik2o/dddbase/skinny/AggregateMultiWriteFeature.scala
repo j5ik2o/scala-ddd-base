@@ -8,10 +8,7 @@ import scalikejdbc.DBSession
 
 trait AggregateMultiWriteFeature extends AggregateMultiWriter[RIO] with AggregateBaseWriteFeature {
 
-  override type SMO = StoreOption
-  override val defaultStoreMultiOption: StoreOption = NullStoreOption
-
-  override def storeMulti(aggregates: Seq[AggregateType], storeMultiOption: SMO): RIO[Long] =
+  override def storeMulti(aggregates: Seq[AggregateType]): RIO[Long] =
     ReaderT[Task, DBSession, Long] { dbSession =>
       for {
         records <- Task.traverse(aggregates) { aggregate =>

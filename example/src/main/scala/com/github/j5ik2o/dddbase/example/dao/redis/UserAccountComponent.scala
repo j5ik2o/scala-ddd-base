@@ -51,11 +51,12 @@ trait UserAccountComponent extends RedisDaoSupport {
         redisClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
 
     override def setMulti(
-        records: Seq[(UserAccountRecord, Duration)]
+        records: Seq[UserAccountRecord],
+        expire: Duration
     ): ReaderT[Task, RedisConnection, Long] = ReaderT { con =>
       Task
         .traverse(records) { record =>
-          set(record._1, record._2).run(con)
+          set(record, expire).run(con)
         }
         .map(_.count(_ > 0))
     }

@@ -20,6 +20,8 @@ import org.scalatest.concurrent.ScalaFutures
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
 
+import scala.concurrent.duration.Duration
+
 class UserAccountRepositoryOnMemcachedWithTaskSpec
     extends TestKit(ActorSystem("UserAccountRepositoryOnMemcachedWithTaskSpec"))
     with FreeSpecLike
@@ -28,7 +30,7 @@ class UserAccountRepositoryOnMemcachedWithTaskSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repository = UserAccountRepository.onMemcachedWithTask
+  val repository = UserAccountRepository.onMemcachedWithTask(Duration.Inf)
 
   var connectionPool: MemcachedConnectionPool[Task] = _
 

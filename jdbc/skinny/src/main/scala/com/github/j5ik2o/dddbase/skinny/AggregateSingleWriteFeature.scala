@@ -8,10 +8,7 @@ import scalikejdbc.DBSession
 
 trait AggregateSingleWriteFeature extends AggregateSingleWriter[RIO] with AggregateBaseWriteFeature {
 
-  override type SO = StoreOption
-  override val defaultStoreOption: StoreOption = NullStoreOption
-
-  override def store(aggregate: AggregateType, storeOption: StoreOption): RIO[Long] = {
+  override def store(aggregate: AggregateType): RIO[Long] = {
     for {
       record <- convertToRecord(aggregate)
       result <- ReaderT[Task, DBSession, Long] { implicit dbSession =>

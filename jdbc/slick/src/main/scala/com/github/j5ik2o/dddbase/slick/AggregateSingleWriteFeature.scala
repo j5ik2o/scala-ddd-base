@@ -6,10 +6,7 @@ import monix.eval.Task
 
 trait AggregateSingleWriteFeature extends AggregateSingleWriter[RIO] with AggregateBaseWriteFeature {
 
-  override type SO = StoreOption
-  override val defaultStoreOption: SO = NullStoreOption
-
-  override def store(aggregate: AggregateType, storeOption: SO): RIO[Long] =
+  override def store(aggregate: AggregateType): RIO[Long] =
     for {
       record <- convertToRecord(aggregate)
       result <- Task.deferFutureAction { implicit ec =>
