@@ -126,12 +126,12 @@ object UserAccountRepository {
 }
 ```
 
-- [for Slick3](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
-- [for SkinnyORM](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
-- [for Memcached](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
-- [for Redis](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
-- [for Memory(Guava Cache)](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memory/UserAccountRepositoryOnMemory.scala)
-- [for Free](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/free/UserAccountRepositoryByFree.scala)
+- [for Slick3](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
+- [for SkinnyORM](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
+- [for Memcached](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
+- [for Redis](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
+- [for Memory(Guava Cache)](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memory/UserAccountRepositoryOnMemory.scala)
+- [for Free](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/free/UserAccountRepositoryByFree.scala)
 
 ### Usage
 
