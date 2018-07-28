@@ -82,21 +82,35 @@ trait UserAccountRepository[M[_]]
 
 object UserAccountRepository {
 
-  type BySlickWithTask[A]  = Task[A]
-  type BySkinnyWithTask[A] = ReaderT[Task, DBSession, A]
-  type ByFree[A]   = Free[UserRepositoryDSL, A]
+  type OnRedis[A]     = ReaderT[Task, RedisConnection, A]
+  type OnMemcached[A] = ReaderT[Task, MemcachedConnection, A]
+  type OnMemory[A]    = Task[A]
+  type BySlick[A]     = Task[A]
+  type BySkinny[A]    = ReaderT[Task, DBSession, A]
+  type ByFree[A]      = Free[UserRepositoryDSL, A]
 
-  def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlickWithTask] =
-    new UserAccountRepositoryOnSlick(profile, db)
+  def bySlick(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlick] =
+    new UserAccountRepositoryBySlick(profile, db)
 
-  def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryOnSkinny
+  def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryBySkinny
 
-  implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask
+  def onRedis(
+      expireDuration: Duration
+  )(implicit actorSystem: ActorSystem): UserAccountRepository[OnRedis] =
+    new UserAccountRepositoryOnRedis(expireDuration)
 
-  implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryOnFree
+  def onMemcached(
+      expireDuration: Duration
+  )(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcached] =
+    new UserAccountRepositoryOnMemcached(expireDuration)
 
-  def apply[M[_]](implicit F: UserAccountRepository[M]): UserAccountRepository[M] = F
-
+  def onMemory(minSize: Option[Int] = None,
+               maxSize: Option[Int] = None,
+               expireDuration: Option[Duration] = None,
+               concurrencyLevel: Option[Int] = None,
+               maxWeight: Option[Int] = None): UserAccountRepository[OnMemory] =
+    new UserAccountRepositoryOnMemory(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
+    
 }
 ```
 
