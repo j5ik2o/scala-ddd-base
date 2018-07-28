@@ -2,14 +2,12 @@ package com.github.j5ik2o.dddbase.example.repository.util
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Suite}
+import org.scalatest.{ BeforeAndAfter, BeforeAndAfterAll, Suite }
 import slick.basic.DatabaseConfig
 import slick.jdbc.SetParameter.SetUnit
-import slick.jdbc.{JdbcProfile, SQLActionBuilder}
+import slick.jdbc.{ JdbcProfile, SQLActionBuilder }
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 trait Slick3SpecSupport extends BeforeAndAfter with BeforeAndAfterAll with ScalaFutures with JdbcSpecSupport {
   self: Suite with FlywayWithMySQLSpecSupport =>

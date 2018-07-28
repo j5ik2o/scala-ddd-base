@@ -1,7 +1,7 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature._
-import com.github.j5ik2o.dddbase.{AggregateIO, AggregateLongId}
+import com.github.j5ik2o.dddbase.{ AggregateIO, AggregateLongId }
 import monix.eval.Task
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery

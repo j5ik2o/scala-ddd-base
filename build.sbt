@@ -131,7 +131,7 @@ lazy val skinny = (project in file("jdbc/skinny"))
   .dependsOn(core)
   .disablePlugins(WixMySQLPlugin)
 
-lazy val redis = (project in file("redis"))
+lazy val redis = (project in file("nosql/redis"))
   .settings(
     coreSettings ++ Seq(
       name := "scala-ddd-base-redis",
@@ -144,7 +144,7 @@ lazy val redis = (project in file("redis"))
   .dependsOn(core)
   .disablePlugins(WixMySQLPlugin)
 
-lazy val memcached = (project in file("memcached"))
+lazy val memcached = (project in file("nosql/memcached"))
   .settings(
     coreSettings ++ Seq(
       name := "scala-ddd-base-memcached",
@@ -239,7 +239,8 @@ lazy val example = (project in file("example"))
         "com.github.j5ik2o" %% "reactive-redis-test"     % "1.0.10" % Test,
         "com.github.j5ik2o" %% "reactive-memcached-test" % "1.0.4" % Test,
         "com.typesafe.akka" %% "akka-testkit"            % akkaVersion % Test
-      )
+      ),
+      parallelExecution in Test := false
     )
   )
   .dependsOn(core, slick, skinny, redis, memcached, flyway)

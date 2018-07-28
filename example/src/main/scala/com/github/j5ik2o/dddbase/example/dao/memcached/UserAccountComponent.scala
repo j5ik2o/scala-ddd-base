@@ -1,21 +1,23 @@
 package com.github.j5ik2o.dddbase.example.dao.memcached
-import java.time.{Instant, ZoneId, ZonedDateTime}
+
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import cats.data.ReaderT
 import cats.implicits._
 import com.github.j5ik2o.dddbase.memcached.MemcachedDaoSupport
-import com.github.j5ik2o.reactive.memcached.{MemcachedConnection, ReaderTTask}
+import com.github.j5ik2o.reactive.memcached.{ MemcachedConnection, ReaderTTask }
 import io.circe.generic.auto._
 import io.circe.parser.parse
 import io.circe.syntax._
-import io.circe.{Decoder, Encoder}
+import io.circe.{ Decoder, Encoder }
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 
 trait UserAccountComponent extends MemcachedDaoSupport {
+
   implicit val zonedDateTimeEncoder: Encoder[ZonedDateTime] = Encoder[Long].contramap(_.toInstant.toEpochMilli)
   implicit val zonedDateTimeDecoder: Decoder[ZonedDateTime] = Decoder[Long].map { ts =>
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault())
@@ -45,11 +47,12 @@ trait UserAccountComponent extends MemcachedDaoSupport {
       memcachedClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""), expire)
 
     override def setMulti(
-        records: Seq[(UserAccountRecord, Duration)]
+        records: Seq[UserAccountRecord],
+        expire: Duration
     ): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
       Task
         .traverse(records) { record =>
-          set(record._1, record._2).run(con)
+          set(record, expire).run(con)
         }
         .map(_.count(_ > 0))
     }
@@ -68,7 +71,7 @@ trait UserAccountComponent extends MemcachedDaoSupport {
         .traverse(ids) { id =>
           get(id).run(con)
         }
-        .map(_.foldLeft(Seq.empty[(UserAccountRecord, Duration)]) {
+        .map(_.foldLeft(Seq.empty[ /**/ (UserAccountRecord, Duration)]) {
           case (result, e) =>
             result ++ e.map(Seq(_)).getOrElse(Seq.empty)
         })

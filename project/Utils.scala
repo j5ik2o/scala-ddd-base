@@ -6,6 +6,7 @@ import sbt._
 object Utils {
 
   implicit class SbtLoggerOps(val self: sbt.Logger) extends AnyVal {
+
     def toScalaProcessLogger: scala.sys.process.ProcessLogger = new scala.sys.process.ProcessLogger {
       private val _log                     = new FullLogger(self)
       override def out(s: => String): Unit = _log.info(s)

@@ -3,7 +3,7 @@ package com.github.j5ik2o.dddbase.slick
 import com.github.j5ik2o.dddbase.AggregateSingleSoftDeletable
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
-import slick.lifted.{Rep, TableQuery}
+import slick.lifted.{ Rep, TableQuery }
 
 trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO] with AggregateBaseReadFeature {
 

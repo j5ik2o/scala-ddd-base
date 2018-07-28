@@ -1,7 +1,6 @@
 package com.github.j5ik2o.dddbase.example.repository.slick
 
 import _root_.slick.jdbc.JdbcProfile
-import cats.{~>, Id}
 import com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository

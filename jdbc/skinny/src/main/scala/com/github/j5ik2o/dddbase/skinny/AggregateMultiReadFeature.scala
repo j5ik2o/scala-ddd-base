@@ -5,7 +5,6 @@ import com.github.j5ik2o.dddbase.AggregateMultiReader
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import scalikejdbc.DBSession
-import scalikejdbc._
 
 trait AggregateMultiReadFeature extends AggregateMultiReader[RIO] with AggregateBaseReadFeature {
 

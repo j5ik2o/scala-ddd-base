@@ -2,7 +2,7 @@ package com.github.j5ik2o.dddbase.example.model
 
 import java.time.ZonedDateTime
 
-import com.github.j5ik2o.dddbase.{Aggregate, AggregateLongId}
+import com.github.j5ik2o.dddbase.{ Aggregate, AggregateLongId }
 
 import scala.reflect._
 

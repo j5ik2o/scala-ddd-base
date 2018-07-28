@@ -2,7 +2,7 @@ package com.github.j5ik2o.dddbase.skinny
 
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.{AggregateIO, AggregateLongId}
+import com.github.j5ik2o.dddbase.{ AggregateIO, AggregateLongId }
 import monix.eval.Task
 import scalikejdbc.DBSession
 

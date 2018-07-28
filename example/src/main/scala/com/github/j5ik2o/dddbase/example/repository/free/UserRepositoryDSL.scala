@@ -1,6 +1,6 @@
 package com.github.j5ik2o.dddbase.example.repository.free
 
-import com.github.j5ik2o.dddbase.example.model.{UserAccount, UserAccountId}
+import com.github.j5ik2o.dddbase.example.model.{ UserAccount, UserAccountId }
 
 sealed trait UserRepositoryDSL[A]
 
