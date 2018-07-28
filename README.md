@@ -183,7 +183,7 @@ val resultFuture: Future[UserAccount] = connectionPool
 - for Memory(Guava Cache)
 
 ```scala
-val repository = UserAccountRepository.onMemory(expireDuration = Some(5 minutes))
+val repository = UserAccountRepository.onMemory(expireAfterWrite = Some(5 minutes))
 val resultFuture: Future[UserAccount] = (for {
   _ <- repository.store(userAccount)
   r <- repository.resolveById(userAccount.id)
