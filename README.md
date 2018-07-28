@@ -49,8 +49,10 @@ The following provides basic abstract methods.
 - AggregateSingleWriter
 - AggregateMultiReader
 - AggregateMultiWriter
-- AggregateSingleDeletable
-- AggregateMultiDeletable
+- AggregateSingleSoftDeletable
+- AggregateSingleHardDeletable
+- AggregateMultiSoftDeletable
+- AggregateMultiHardDeletable
 
 ## Support traits
 
@@ -60,14 +62,18 @@ The following provides an implementation for each ORM/KVS.
 - AggregateSingleWriteFeature
 - AggregateMultiReadFeature
 - AggregateMultiWriteFeature
-- AggregateSingleDeleteFeature
+- AggregateSingleSoftDeleteFeature
+- AggregateSingleHardDeleteFeature
+- AggregateMultiSoftDeleteFeature
+- AggregateMultiHardDeleteFeature
 
-The supported ORM/KVS is below.
+The supported ORM/KVS/Cache is below.
 
 - Slick(JDBC)
 - SkinnyORM(JDBC)
 - Redis([reactive-redis-core](https://github.com/j5ik2o/reactive-redis))
 - Memcached([reactive-memcached-core](https://github.com/j5ik2o/reactive-memcached))
+- Memory([Guava Cache](https://github.com/google/guava))
 
 ## Example
 
