@@ -44,10 +44,9 @@ class UserAccountRepositoryByFreeSpec
 
   "UserAccountRepositoryByFree" - {
     "store" in {
-      val free = UserAccountRepository[ByFree]
       val program: Free[UserRepositoryDSL, UserAccount] = for {
-        _      <- free.store(userAccount)
-        result <- free.resolveById(userAccount.id)
+        _      <- UserAccountRepositoryByFree.store(userAccount)
+        result <- UserAccountRepositoryByFree.resolveById(userAccount.id)
       } yield result
       val skinny     = UserAccountRepository.bySkinnyWithTask
       val evalResult = UserAccountRepositoryByFree.evaluate(skinny)(program)

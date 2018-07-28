@@ -157,6 +157,18 @@ lazy val memcached = (project in file("nosql/memcached"))
   .dependsOn(core)
   .disablePlugins(WixMySQLPlugin)
 
+lazy val memory = (project in file("nosql/memory"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-memory",
+      libraryDependencies ++= Seq(
+        "io.monix" %% "monix" % "3.0.0-RC1"
+      )
+    )
+  )
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
+
 lazy val flyway = (project in file("flyway"))
   .settings(coreSettings)
   .settings(
@@ -233,6 +245,7 @@ lazy val example = (project in file("example"))
         .value,
       compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value,
       libraryDependencies ++= Seq(
+        "com.google.guava"  % "guava"                    % "25.1-jre",
         "io.circe"          %% "circe-core"              % circeVersion,
         "io.circe"          %% "circe-generic"           % circeVersion,
         "io.circe"          %% "circe-parser"            % circeVersion,
@@ -243,7 +256,7 @@ lazy val example = (project in file("example"))
       parallelExecution in Test := false
     )
   )
-  .dependsOn(core, slick, skinny, redis, memcached, flyway)
+  .dependsOn(core, slick, skinny, redis, memcached, memory, flyway)
   .disablePlugins(WixMySQLPlugin)
 
 lazy val `root` = (project in file("."))
@@ -251,4 +264,4 @@ lazy val `root` = (project in file("."))
   .settings(
     name := "scala-ddd-base-project"
   )
-  .aggregate(core, slick, skinny, example)
+  .aggregate(core, slick, skinny, redis, memcached, memory, example)

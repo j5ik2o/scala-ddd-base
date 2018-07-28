@@ -1,20 +1,22 @@
-package com.github.j5ik2o.dddbase.example.repository.slick
+package com.github.j5ik2o.dddbase.example.repository.memory
 
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, Slick3SpecSupport }
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemoryWithTask
+import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{ FreeSpec, Matchers }
 import monix.execution.Scheduler.Implicits.global
-import org.scalatest.{ FreeSpecLike, Matchers }
 
-class UserAccountRepositoryBySlickWithTaskSpec
-    extends FreeSpecLike
-    with FlywayWithMySQLSpecSupport
-    with Slick3SpecSupport
+class UserAccountRepositoryOnMemoryWithTaskSpec
+    extends FreeSpec
+    with ScalaFutures
+    with ScalaFuturesSupportSpec
     with Matchers {
 
-  override val tables: Seq[String] = Seq("user_account")
+  val repository = UserAccountRepository.onMemoryWithTask()
 
   val userAccount = UserAccount(
     id = UserAccountId(1L),
@@ -40,9 +42,8 @@ class UserAccountRepositoryBySlickWithTaskSpec
         updatedAt = None
       )
 
-  "UserAccountRepositoryBySlickWithTask" - {
+  "UserAccountRepositoryOnMemoryWithTask" - {
     "store" in {
-      val repository = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
       val result = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
@@ -51,7 +52,6 @@ class UserAccountRepositoryBySlickWithTaskSpec
       result shouldBe userAccount
     }
     "storeMulti" in {
-      val repository = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
       val result = (for {
         _ <- repository.storeMulti(userAccounts)
         r <- repository.resolveMulti(userAccounts.map(_.id))
@@ -60,4 +60,5 @@ class UserAccountRepositoryBySlickWithTaskSpec
       result shouldBe userAccounts
     }
   }
+
 }
