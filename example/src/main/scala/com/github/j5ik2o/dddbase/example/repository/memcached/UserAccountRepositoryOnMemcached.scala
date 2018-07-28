@@ -10,7 +10,7 @@ import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memcached._
 import monix.eval.Task
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit system: ActorSystem)
     extends UserAccountRepository[OnMemcached]
@@ -21,6 +21,8 @@ class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit sy
     with AggregateSingleSoftDeleteFeature
     with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
+
+  require(expireDuration.gteq(1 seconds))
 
   override type RecordType = UserAccountRecord
   override type DaoType    = UserAccountDao
