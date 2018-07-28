@@ -150,7 +150,7 @@ val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runAsync
 - for Memcached
 
 ```scala
-val userAccountRepository: UserAccountRepository[OnMemcached] = UserAccountRepository.onMemcached(Duration.Inf)
+val userAccountRepository: UserAccountRepository[OnMemcached] = UserAccountRepository.onMemcached(expireDuration = 5 minutes)
 val resultFuture: Future[UserAccount] = connectionPool
   .withConnectionF { con =>
     (for {
@@ -164,7 +164,7 @@ val resultFuture: Future[UserAccount] = connectionPool
 - for Redis
 
 ```scala
-val userAccountRepository: UserAccountRepository[OnRedis] = UserAccountRepository.onRedis(Duration.Inf)
+val userAccountRepository: UserAccountRepository[OnRedis] = UserAccountRepository.onRedis(expireDuration = 5 minutes)
 val resultFuture: Future[UserAccount] = connectionPool
   .withConnectionF { con =>
     (for {
@@ -178,7 +178,7 @@ val resultFuture: Future[UserAccount] = connectionPool
 - for Memory
 
 ```scala
-val repository = UserAccountRepository.onMemory()
+val repository = UserAccountRepository.onMemory(expireDuration = Some(5 minutes))
 val resultFuture: Future[UserAccount] = (for {
   _ <- repository.store(userAccount)
   r <- repository.resolveById(userAccount.id)
