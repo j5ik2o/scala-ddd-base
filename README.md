@@ -1,6 +1,7 @@
 # scala-ddd-base
 
 [![CircleCI](https://circleci.com/gh/j5ik2o/scala-ddd-base.svg?style=svg)](https://circleci.com/gh/j5ik2o/scala-ddd-base)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0565a420c74b4c4c8df3e1896b5b0e3e)](https://www.codacy.com/project/j5ik2o/scala-ddd-base/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=j5ik2o/scala-ddd-base&amp;utm_campaign=Badge_Grade_Dashboard)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base_2.12)
 [![License: MIT](http://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
