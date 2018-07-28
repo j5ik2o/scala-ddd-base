@@ -17,12 +17,13 @@ Add the following to your sbt build (Scala 2.11.x, 2.12.x):
 resolvers += "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/"
 
 libraryDependencies ++= Seq(
-  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.6",
-  "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.6"
-  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.6"
-  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.6"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.6"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.6" 
+  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.8",
+  // Please set as necessary
+  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.8"
+  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.8"
+  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.8"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.8"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.8" 
 )
 ```
 
@@ -32,12 +33,13 @@ libraryDependencies ++= Seq(
 resolvers += "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 libraryDependencies ++= Seq(
-  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.6-SNAPSHOT",
-  "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.6-SNAPSHOT"
-  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.6-SNAPSHOT"
-  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.6-SNAPSHOT" 
-  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.6-SNAPSHOT"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.6-SNAPSHOT"
+  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.8-SNAPSHOT",
+  // Please set as necessary
+  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.8-SNAPSHOT"
+  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.8-SNAPSHOT"
+  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.8-SNAPSHOT" 
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.8-SNAPSHOT"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.8-SNAPSHOT"
 )
 ```
 
