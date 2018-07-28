@@ -30,7 +30,7 @@ class UserAccountRepositoryOnMemcachedSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repository = UserAccountRepository.onMemcached(Duration.Inf)
+  val repository = UserAccountRepository.onMemcached(expireDuration = Duration.Inf)
 
   var connectionPool: MemcachedConnectionPool[Task] = _
 

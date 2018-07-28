@@ -5,15 +5,23 @@ import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemory
 import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memory._
+import com.google.common.base.Ticker
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 
-class UserAccountRepositoryOnMemory(minSize: Option[Int] = None,
-                                    maxSize: Option[Int] = None,
-                                    expireDuration: Option[Duration] = None,
-                                    concurrencyLevel: Option[Int] = None,
-                                    maxWeight: Option[Int] = None)
+class UserAccountRepositoryOnMemory(concurrencyLevel: Option[Int] = None,
+                                    expireAfterAccess: Option[Duration] = None,
+                                    expireAfterWrite: Option[Duration] = None,
+                                    initialCapacity: Option[Int] = None,
+                                    maximumSize: Option[Int] = None,
+                                    maximumWeight: Option[Int] = None,
+                                    recordStats: Option[Boolean] = None,
+                                    refreshAfterWrite: Option[Duration] = None,
+                                    softValues: Option[Boolean] = None,
+                                    ticker: Option[Ticker] = None,
+                                    weakKeys: Option[Boolean] = None,
+                                    weakValues: Option[Boolean] = None)
     extends UserAccountRepository[OnMemory]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
@@ -24,8 +32,22 @@ class UserAccountRepositoryOnMemory(minSize: Option[Int] = None,
 
   override type RecordType = UserAccountRecord
   override type DaoType    = UserAccountDao
+
   override protected val dao: UserAccountDao =
-    UserAccountDao(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
+    new UserAccountDao(
+      concurrencyLevel = concurrencyLevel,
+      expireAfterAccess = expireAfterAccess,
+      expireAfterWrite = expireAfterWrite,
+      initialCapacity = initialCapacity,
+      maximumSize = maximumSize,
+      maximumWeight = maximumWeight,
+      recordStats = recordStats,
+      refreshAfterWrite = refreshAfterWrite,
+      softValues = softValues,
+      ticker = ticker,
+      weakKeys = weakKeys,
+      weakValues = weakValues
+    )
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     Task.pure {

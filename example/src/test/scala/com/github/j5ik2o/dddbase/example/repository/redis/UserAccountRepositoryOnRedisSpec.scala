@@ -25,7 +25,7 @@ class UserAccountRepositoryOnRedisSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repository = UserAccountRepository.onRedis(Duration.Inf)
+  val repository = UserAccountRepository.onRedis(expireDuration = Duration.Inf)
 
   var connectionPool: RedisConnectionPool[Task] = _
 

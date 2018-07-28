@@ -20,6 +20,7 @@ class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit sy
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
     with UserAccountComponent {
+
   override type RecordType = UserAccountRecord
   override type DaoType    = UserAccountDao
 

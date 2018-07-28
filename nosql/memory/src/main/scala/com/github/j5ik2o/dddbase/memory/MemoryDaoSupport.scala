@@ -1,8 +1,6 @@
 package com.github.j5ik2o.dddbase.memory
 import monix.eval.Task
 
-import scala.concurrent.duration.Duration
-
 trait MemoryDaoSupport {
 
   trait Record {

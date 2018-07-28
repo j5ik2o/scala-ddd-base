@@ -14,6 +14,7 @@ import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlick
 import com.github.j5ik2o.reactive.memcached.MemcachedConnection
 import com.github.j5ik2o.reactive.redis.RedisConnection
+import com.google.common.base.Ticker
 import monix.eval.Task
 import scalikejdbc.DBSession
 
@@ -53,11 +54,31 @@ object UserAccountRepository {
   )(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcached] =
     new UserAccountRepositoryOnMemcached(expireDuration)
 
-  def onMemory(minSize: Option[Int] = None,
-               maxSize: Option[Int] = None,
-               expireDuration: Option[Duration] = None,
-               concurrencyLevel: Option[Int] = None,
-               maxWeight: Option[Int] = None): UserAccountRepository[OnMemory] =
-    new UserAccountRepositoryOnMemory(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
+  def onMemory(concurrencyLevel: Option[Int] = None,
+               expireAfterAccess: Option[Duration] = None,
+               expireAfterWrite: Option[Duration] = None,
+               initialCapacity: Option[Int] = None,
+               maximumSize: Option[Int] = None,
+               maximumWeight: Option[Int] = None,
+               recordStats: Option[Boolean] = None,
+               refreshAfterWrite: Option[Duration] = None,
+               softValues: Option[Boolean] = None,
+               ticker: Option[Ticker] = None,
+               weakKeys: Option[Boolean] = None,
+               weakValues: Option[Boolean] = None): UserAccountRepository[OnMemory] =
+    new UserAccountRepositoryOnMemory(
+      concurrencyLevel,
+      expireAfterAccess,
+      expireAfterWrite,
+      initialCapacity,
+      maximumSize,
+      maximumWeight,
+      recordStats,
+      refreshAfterWrite,
+      softValues,
+      ticker,
+      weakKeys,
+      weakValues
+    )
 
 }

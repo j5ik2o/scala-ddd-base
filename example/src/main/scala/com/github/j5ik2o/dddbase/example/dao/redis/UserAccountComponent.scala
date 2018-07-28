@@ -13,7 +13,7 @@ import io.circe.syntax._
 import io.circe.{ Decoder, Encoder }
 import monix.eval.Task
 
-import scala.concurrent.duration.{ Duration, FiniteDuration }
+import scala.concurrent.duration._
 
 trait UserAccountComponent extends RedisDaoSupport {
 
@@ -40,15 +40,19 @@ trait UserAccountComponent extends RedisDaoSupport {
       extends Dao[UserAccountRecord]
       with DaoSoftDeletable[UserAccountRecord] {
 
-    val DELETED = "DELETED"
+    val DELETED = "deleted"
 
-    private def internalSet(record: UserAccountRecord, expire: Duration): ReaderT[Task, RedisConnection, Result[Unit]] =
-      if (expire.isFinite())
-        redisClient.setEx(record.id,
-                          FiniteDuration(expire._1, expire._2),
-                          record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
-      else
-        redisClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""))
+    private def internalSet(record: UserAccountRecord,
+                            expire: Duration): ReaderT[Task, RedisConnection, Result[Unit]] = {
+      expire match {
+        case e if e.isFinite() && e.lt(1 seconds) =>
+          redisClient.pSetEx(record.id, FiniteDuration(expire._1, expire._2), toJsonString(record))
+        case e if e.isFinite() && !e.lt(1 seconds) =>
+          redisClient.setEx(record.id, FiniteDuration(expire._1, expire._2), toJsonString(record))
+        case e if !e.isFinite() =>
+          redisClient.set(record.id, toJsonString(record))
+      }
+    }
 
     override def setMulti(
         records: Seq[UserAccountRecord],
@@ -132,4 +136,7 @@ trait UserAccountComponent extends RedisDaoSupport {
     }
   }
 
+  private def toJsonString(record: UserAccountRecord) = {
+    record.asJson.noSpaces.replaceAll("\"", "\\\\\"")
+  }
 }

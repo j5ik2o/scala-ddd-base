@@ -8,10 +8,11 @@ import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpec, Matchers }
+import scala.concurrent.duration._
 
 class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with ScalaFuturesSupportSpec with Matchers {
 
-  val repository = UserAccountRepository.onMemory()
+  val repository = UserAccountRepository.onMemory(expireAfterWrite = Some(5 minutes))
 
   val userAccount = UserAccount(
     id = UserAccountId(1L),
