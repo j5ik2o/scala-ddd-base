@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.memcached
+
 import java.net.InetSocketAddress
 import java.time.ZonedDateTime
 
@@ -27,7 +28,7 @@ class UserAccountRepositoryOnMemcachedWithTaskSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repos = UserAccountRepository.onMemcachedWithTask
+  val repository = UserAccountRepository.onMemcachedWithTask
 
   var connectionPool: MemcachedConnectionPool[Task] = _
 
@@ -70,14 +71,27 @@ class UserAccountRepositoryOnMemcachedWithTaskSpec
       val result = connectionPool
         .withConnectionF { con =>
           (for {
-            _ <- repos.store(userAccount)
-            r <- repos.resolveById(userAccount.id)
+            _ <- repository.store(userAccount)
+            r <- repository.resolveById(userAccount.id)
           } yield r).run(con)
         }
         .runAsync
         .futureValue
 
       result shouldBe userAccount
+    }
+    "storeMulti" in {
+      val result = connectionPool
+        .withConnectionF { con =>
+          (for {
+            _ <- repository.storeMulti(userAccounts)
+            r <- repository.resolveMulti(userAccounts.map(_.id))
+          } yield r).run(con)
+        }
+        .runAsync
+        .futureValue
+
+      result shouldBe userAccounts
     }
   }
 }

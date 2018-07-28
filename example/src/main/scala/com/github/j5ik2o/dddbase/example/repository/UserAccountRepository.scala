@@ -8,6 +8,7 @@ import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.free.{ UserAccountRepositoryByFree, UserRepositoryDSL }
 import com.github.j5ik2o.dddbase.example.repository.memcached.UserAccountRepositoryOnMemcachedWithTask
+import com.github.j5ik2o.dddbase.example.repository.memory.UserAccountRepositoryOnMemoryWithTask
 import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedisWithTask
 import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinnyWithTask
 import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickWithTask
@@ -15,6 +16,8 @@ import com.github.j5ik2o.reactive.memcached.MemcachedConnection
 import com.github.j5ik2o.reactive.redis.RedisConnection
 import monix.eval.Task
 import scalikejdbc.DBSession
+
+import scala.concurrent.duration.Duration
 
 trait UserAccountRepository[M[_]]
     extends AggregateSingleReader[M]
@@ -30,14 +33,15 @@ object UserAccountRepository {
 
   type OnRedisWithTask[A]     = ReaderT[Task, RedisConnection, A]
   type OnMemcachedWithTask[A] = ReaderT[Task, MemcachedConnection, A]
+  type OnMemoryWithTask[A]    = Task[A]
   type BySlickWithTask[A]     = Task[A]
   type BySkinnyWithTask[A]    = ReaderT[Task, DBSession, A]
   type ByFree[A]              = Free[UserRepositoryDSL, A]
 
-  def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlickWithTask] =
+  def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepositoryBySlickWithTask =
     new UserAccountRepositoryBySlickWithTask(profile, db)
 
-  def bySkinnyWithTask: UserAccountRepository[BySkinnyWithTask] = new UserAccountRepositoryBySkinnyWithTask
+  def bySkinnyWithTask: UserAccountRepositoryBySkinnyWithTask = new UserAccountRepositoryBySkinnyWithTask
 
   def onRedisWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnRedisWithTask =
     new UserAccountRepositoryOnRedisWithTask()
@@ -45,10 +49,11 @@ object UserAccountRepository {
   def onMemcachedWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnMemcachedWithTask =
     new UserAccountRepositoryOnMemcachedWithTask()
 
-  implicit val skinny: UserAccountRepository[BySkinnyWithTask] = bySkinnyWithTask
-
-  implicit val free: UserAccountRepository[ByFree] = UserAccountRepositoryByFree
-
-  def apply[M[_]](implicit F: UserAccountRepository[M]): UserAccountRepository[M] = F
+  def onMemoryWithTask(minSize: Option[Int] = None,
+                       maxSize: Option[Int] = None,
+                       expireDuration: Option[Duration] = None,
+                       concurrencyLevel: Option[Int] = None,
+                       maxWeight: Option[Int] = None): UserAccountRepositoryOnMemoryWithTask =
+    new UserAccountRepositoryOnMemoryWithTask(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
 
 }

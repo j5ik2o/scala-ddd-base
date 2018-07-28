@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.redis
+
 import java.net.InetSocketAddress
 import java.time.ZonedDateTime
 
@@ -22,7 +23,7 @@ class UserAccountRepositoryOnRedisWithTaskSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repos = UserAccountRepository.onRedisWithTask
+  val repository = UserAccountRepository.onRedisWithTask
 
   var connectionPool: RedisConnectionPool[Task] = _
 
@@ -66,8 +67,8 @@ class UserAccountRepositoryOnRedisWithTaskSpec
       val result = connectionPool
         .withConnectionF { con =>
           (for {
-            _ <- repos.store(userAccount)
-            r <- repos.resolveById(userAccount.id)
+            _ <- repository.store(userAccount)
+            r <- repository.resolveById(userAccount.id)
           } yield r).run(con)
         }
         .runAsync
@@ -79,8 +80,8 @@ class UserAccountRepositoryOnRedisWithTaskSpec
       val result = connectionPool
         .withConnectionF { con =>
           (for {
-            _ <- repos.storeMulti(userAccounts)
-            r <- repos.resolveMulti(userAccounts.map(_.id))
+            _ <- repository.storeMulti(userAccounts)
+            r <- repository.resolveMulti(userAccounts.map(_.id))
           } yield r).run(con)
         }
         .runAsync

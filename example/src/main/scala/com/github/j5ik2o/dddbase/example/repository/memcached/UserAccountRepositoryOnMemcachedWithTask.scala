@@ -21,7 +21,7 @@ class UserAccountRepositoryOnMemcachedWithTask()(implicit system: ActorSystem)
   override type RecordType = UserAccountRecord
   override type DaoType    = UserAccountDao
 
-  override protected val dao = UserAccountDao()
+  override protected val dao: UserAccountDao = UserAccountDao()
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     ReaderT { _ =>

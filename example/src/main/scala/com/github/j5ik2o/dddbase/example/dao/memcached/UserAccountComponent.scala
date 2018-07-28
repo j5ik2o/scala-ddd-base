@@ -41,7 +41,7 @@ trait UserAccountComponent extends MemcachedDaoSupport {
       extends Dao[UserAccountRecord]
       with DaoSoftDeletable[UserAccountRecord] {
 
-    val DELETED = "DELETED"
+    val DELETED: String = "deleted"
 
     private def internalSet(record: UserAccountRecord, expire: Duration): ReaderT[Task, MemcachedConnection, Int] =
       memcachedClient.set(record.id, record.asJson.noSpaces.replaceAll("\"", "\\\\\""), expire)
@@ -71,7 +71,7 @@ trait UserAccountComponent extends MemcachedDaoSupport {
         .traverse(ids) { id =>
           get(id).run(con)
         }
-        .map(_.foldLeft(Seq.empty[ /**/ (UserAccountRecord, Duration)]) {
+        .map(_.foldLeft(Seq.empty[(UserAccountRecord, Duration)]) {
           case (result, e) =>
             result ++ e.map(Seq(_)).getOrElse(Seq.empty)
         })
