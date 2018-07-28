@@ -114,328 +114,78 @@ object UserAccountRepository {
 }
 ```
 
+- [for Slick3](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
+- [for SkinnyORM](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
+- [for Memcached](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
+- [for Redis](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
+- [for Memory(Guava Cache)](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memory/UserAccountRepositoryOnMemory.scala)
+- [for Free](blob/master/example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/free/UserAccountRepositoryByFree.scala)
+
+### Usage
+
 - for Slick3
 
 ```scala
-class UserAccountRepositoryBySlickWithTask(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
-    extends UserAccountRepository[UserAccountRepository.BySlickWithTask]
-    with AggregateSingleReadFeature
-    with AggregateMultiReadFeature
-    with AggregateSingleWriteFeature
-    with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with UserAccountComponent {
+val userAccountRepository: UserAccountRepository[BySlick] = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
+val resultTask: Task[UserAccount] = for {
+  _ <- userAccountRepository.store(userAccount)
+  result <- userAccountRepository.resolveBy(userAccount.id)
+} yield result
 
-  override type RecordType = UserAccountRecord
-  override type TableType  = UserAccounts
-  override protected val dao = UserAccountDao
-
-  override protected def convertToAggregate(record: UserAccountRecord): RIO[UserAccount] =
-    Task.pure {
-      UserAccount(
-        id = UserAccountId(record.id),
-        status = Status.withName(record.status),
-        emailAddress = EmailAddress(record.email),
-        password = HashedPassword(record.password),
-        firstName = record.firstName,
-        lastName = record.lastName,
-        createdAt = record.createdAt,
-        updatedAt = record.updatedAt
-      )
-    }
-
-  override protected def convertToRecord(aggregate: UserAccount): RIO[UserAccountRecord] =
-    Task.pure {
-      UserAccountRecord(
-        id = aggregate.id.value,
-        status = aggregate.status.entryName,
-        email = aggregate.emailAddress.value,
-        password = aggregate.password.value,
-        firstName = aggregate.firstName,
-        lastName = aggregate.lastName,
-        createdAt = aggregate.createdAt,
-        updatedAt = aggregate.updatedAt
-      )
-    }
-
-}
+val resultFuture: Future[UserAccount] = resultTask.runAsync
 ```
 
 - for SkinnyORM
 
 ```scala
-class UserAccountRepositoryBySkinnyWithTask
-    extends UserAccountRepository[BySkinnyWithTask]
-    with AggregateSingleReadFeature
-    with AggregateMultiReadFeature
-    with AggregateSingleWriteFeature
-    with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with UserAccountComponent {
+val userAccountRepository: UserAccountRepository[BySkinny] = UserAccountRepository.bySkinnyWithTask
+val resultTask: Task[UserAccount] = for {
+  _ <- userAccountRepository.store(userAccount)
+  result <- userAccountRepository.resolveBy(userAccount.id)
+} yield result
 
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao.type
-  override protected val dao: UserAccountDao.type = UserAccountDao
-
-  override protected def convertToAggregate(record: UserAccountRecord): RIO[UserAccount] =
-    ReaderT { _ =>
-      Task.pure {
-        UserAccount(
-          id = UserAccountId(record.id),
-          status = Status.withName(record.status),
-          emailAddress = EmailAddress(record.email),
-          password = HashedPassword(record.password),
-          firstName = record.firstName,
-          lastName = record.lastName,
-          createdAt = record.createdAt,
-          updatedAt = record.updatedAt
-        )
-      }
-    }
-
-  override protected def convertToRecord(aggregate: UserAccount): RIO[UserAccountRecord] =
-    ReaderT { _ =>
-      Task.pure {
-        UserAccountRecord(
-          id = aggregate.id.value,
-          status = aggregate.status.entryName,
-          email = aggregate.emailAddress.value,
-          password = aggregate.password.value,
-          firstName = aggregate.firstName,
-          lastName = aggregate.lastName,
-          createdAt = aggregate.createdAt,
-          updatedAt = aggregate.updatedAt
-        )
-      }
-    }
-}
-```
-
-- for Free
-
-```scala
-object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
-
-  override def resolveById(id: UserAccountId): ByFree[UserAccount] = liftF(ResolveById(id))
-
-  override def resolveMulti(ids: Seq[UserAccountId]): ByFree[Seq[UserAccount]] = liftF(ResolveMulti(ids))
-
-  override def store(aggregate: UserAccount): ByFree[Long] = liftF(Store(aggregate))
-
-  override def storeMulti(aggregates: Seq[UserAccount]): ByFree[Long] = liftF(StoreMulti(aggregates))
-
-  override def softDelete(id: UserAccountId): ByFree[Long] = liftF(SoftDelete(id))
-
-  private def interpreter[M[_]](repo: UserAccountRepository[M]): UserRepositoryDSL ~> M = new (UserRepositoryDSL ~> M) {
-    override def apply[A](fa: UserRepositoryDSL[A]): M[A] = fa match {
-      case ResolveById(id) =>
-        repo.resolveById(id).asInstanceOf[M[A]]
-      case ResolveMulti(ids) =>
-        repo.resolveMulti(ids).asInstanceOf[M[A]]
-      case Store(aggregate) =>
-        repo.store(aggregate).asInstanceOf[M[A]]
-      case StoreMulti(aggregates) =>
-        repo.storeMulti(aggregates).asInstanceOf[M[A]]
-      case SoftDelete(id) =>
-        repo.softDelete(id).asInstanceOf[M[A]]
-    }
-  }
-
-  def evaluate[M[_]: Monad, A](evaluator: UserAccountRepository[M])(program: ByFree[A]): M[A] =
-    program.foldMap(interpreter(evaluator))
-
-}
+val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runAsync
 ```
 
 - for Memcached
 
 ```scala
-class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit system: ActorSystem)
-    extends UserAccountRepository[OnMemcached]
-    with AggregateSingleReadFeature
-    with AggregateSingleWriteFeature
-    with AggregateMultiReadFeature
-    with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with UserAccountComponent {
-
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao
-
-  override protected val dao: UserAccountDao = UserAccountDao()
-
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccount(
-          id = UserAccountId(record.id.toLong),
-          status = Status.withName(record.status),
-          emailAddress = EmailAddress(record.email),
-          password = HashedPassword(record.password),
-          firstName = record.firstName,
-          lastName = record.lastName,
-          createdAt = record.createdAt,
-          updatedAt = record.updatedAt
-        )
-      }
-    }
+val userAccountRepository: UserAccountRepository[OnMemcached] = UserAccountRepository.onMemcached(Duration.Inf)
+val resultFuture: Future[UserAccount] = connectionPool
+  .withConnectionF { con =>
+    (for {
+      _ <- userAccountRepository.store(userAccount)
+      r <- userAccountRepository.resolveById(userAccount.id)
+    } yield r).run(con)
   }
-
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccountRecord(
-          id = aggregate.id.value.toString,
-          status = aggregate.status.entryName,
-          email = aggregate.emailAddress.value,
-          password = aggregate.password.value,
-          firstName = aggregate.firstName,
-          lastName = aggregate.lastName,
-          createdAt = aggregate.createdAt,
-          updatedAt = aggregate.updatedAt
-        )
-      }
-    }
-  }
-
-}
+  .runAsync
 ```
 
 - for Redis
 
 ```scala
-
-class UserAccountRepositoryOnRedis(val expireDuration: Duration)(implicit system: ActorSystem)
-    extends UserAccountRepository[OnRedis]
-    with AggregateSingleReadFeature
-    with AggregateSingleWriteFeature
-    with AggregateMultiReadFeature
-    with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with UserAccountComponent {
-
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao
-
-  override protected val dao = UserAccountDao()
-
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccount(
-          id = UserAccountId(record.id.toLong),
-          status = Status.withName(record.status),
-          emailAddress = EmailAddress(record.email),
-          password = HashedPassword(record.password),
-          firstName = record.firstName,
-          lastName = record.lastName,
-          createdAt = record.createdAt,
-          updatedAt = record.updatedAt
-        )
-      }
-    }
+val userAccountRepository: UserAccountRepository[OnRedis] = UserAccountRepository.onRedis(Duration.Inf)
+val resultFuture: Future[UserAccount] = connectionPool
+  .withConnectionF { con =>
+    (for {
+      _ <- userAccountRepository.store(userAccount)
+      r <- userAccountRepository.resolveById(userAccount.id)
+    } yield r).run(con)
   }
-
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccountRecord(
-          id = aggregate.id.value.toString,
-          status = aggregate.status.entryName,
-          email = aggregate.emailAddress.value,
-          password = aggregate.password.value,
-          firstName = aggregate.firstName,
-          lastName = aggregate.lastName,
-          createdAt = aggregate.createdAt,
-          updatedAt = aggregate.updatedAt
-        )
-      }
-    }
-  }
-
-}
+  .runAsync
 ```
 
-- for Memory(Guava Cache)
+- for Memory
 
 ```scala
-class UserAccountRepositoryOnMemory(minSize: Option[Int] = None,
-                                    maxSize: Option[Int] = None,
-                                    expireDuration: Option[Duration] = None,
-                                    concurrencyLevel: Option[Int] = None,
-                                    maxWeight: Option[Int] = None)
-    extends UserAccountRepository[OnMemory]
-    with AggregateSingleReadFeature
-    with AggregateSingleWriteFeature
-    with AggregateMultiWriteFeature
-    with AggregateMultiReadFeature
-    with AggregateSingleSoftDeleteFeature
-    with UserAccountComponent {
-
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao
-  override protected val dao: UserAccountDao =
-    UserAccountDao(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
-
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
-    Task.pure {
-      UserAccount(
-        id = UserAccountId(record.id.toLong),
-        status = Status.withName(record.status),
-        emailAddress = EmailAddress(record.email),
-        password = HashedPassword(record.password),
-        firstName = record.firstName,
-        lastName = record.lastName,
-        createdAt = record.createdAt,
-        updatedAt = record.updatedAt
-      )
-    }
-  }
-
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
-    Task.pure {
-      UserAccountRecord(
-        id = aggregate.id.value.toString,
-        status = aggregate.status.entryName,
-        email = aggregate.emailAddress.value,
-        password = aggregate.password.value,
-        firstName = aggregate.firstName,
-        lastName = aggregate.lastName,
-        createdAt = aggregate.createdAt,
-        updatedAt = aggregate.updatedAt
-      )
-    }
-  }
-
-}
+val repository = UserAccountRepository.onMemory()
+val resultFuture: Future[UserAccount] = (for {
+  _ <- repository.store(userAccount)
+  r <- repository.resolveById(userAccount.id)
+} yield r).runAsync
 ```
 
-
-## Usage
-
-- Slick with Task pattern
-
-```scala
-val userAccountRepository: UserAccountRepository[BySlickWithTask] = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
-val resultTask: Task[UserAccount] = for {
-  _ <- userAccountRepository.store(userAccount)
-  result <- userAccountRepository.resolveBy(userAccount.id)
-} yield result
-val resultFuture: Future[UserAccount] = resultTask.runAsync
-```
-
-- Skinny with Task pattern
-
-```scala
-val userAccountRepository: UserAccountRepository[BySkinnyWithTask] = UserAccountRepository.bySkinnyWithTask
-val resultTask: Task[UserAccount] = for {
-  _ <- userAccountRepository.store(userAccount)
-  result <- userAccountRepository.resolveBy(userAccount.id)
-} yield result
-val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runAsync
-```
-
-- Free Monad pattern
+- for Free
 
 ```scala
 val free: UserAccountRepository[ByFree] = UserAccountRepository[ByFree]
