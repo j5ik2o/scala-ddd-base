@@ -97,12 +97,23 @@ trait GuavaMemoryDaoSupport extends MemoryDaoSupport {
       1L
     }
 
+    override def deleteMulti(ids: Seq[String]): Task[Long] = Task {
+      cache.invalidateAll(ids.asJava)
+      ids.size.toLong
+    }
+
     override def softDelete(id: String): Task[Long] = get(id).flatMap {
       case Some(v) =>
         set(v.withStatus(DELETED).asInstanceOf[V])
       case None =>
         Task.pure(0L)
     }
+
+    override def softDeleteMulti(ids: Seq[String]): Task[Long] =
+      getMulti(ids).flatMap { values =>
+        setMulti(values.map(_.withStatus(DELETED).asInstanceOf[V]))
+      }
+
   }
 
 }

@@ -114,13 +114,6 @@ trait UserAccountComponent extends RedisDaoSupport {
     }
 
     override def softDelete(id: String): ReaderT[Task, RedisConnection, Long] = {
-//      for {
-//        _    <- redisClient.multi()
-//        uOpt <- internalGet(id)
-//        r    <- uOpt.map(u => internalSet(u.withStatus(DELETED))).getOrElse(ReaderTTask.pure(0L))
-//        e
-//      } yield r
-
       get(id).flatMap {
         case Some(v) =>
           set(v.withStatus(DELETED), Duration.Inf)
@@ -129,11 +122,27 @@ trait UserAccountComponent extends RedisDaoSupport {
       }
     }
 
+    override def softDeleteMulti(ids: Seq[String]): ReaderT[Task, RedisConnection, Long] = getMulti(ids).flatMap {
+      values =>
+        setMulti(values.map(_.withStatus(DELETED)), Duration.Inf)
+    }
+
     override def delete(
         id: String
     ): ReaderT[Task, RedisConnection, Long] = ReaderT { con =>
       redisClient.del(NonEmptyList.of(id)).run(con).map { _.value.toLong }
     }
+
+    override def deleteMulti(
+        ids: Seq[String]
+    ): ReaderT[Task, RedisConnection, Long] =
+      ReaderT { con =>
+        Task
+          .traverse(ids) { id =>
+            delete(id).run(con)
+          }
+          .map(_.count(_ > 0))
+      }
   }
 
   private def toJsonString(record: UserAccountRecord) = {

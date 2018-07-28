@@ -25,11 +25,15 @@ trait MemoryDaoSupport {
 
     def delete(id: String): Task[Long]
 
+    def deleteMulti(ids: Seq[String]): Task[Long]
+
   }
 
   trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
 
     def softDelete(id: String): Task[Long]
+
+    def softDeleteMulti(ids: Seq[String]): Task[Long]
 
   }
 

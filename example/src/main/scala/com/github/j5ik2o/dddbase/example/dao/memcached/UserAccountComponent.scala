@@ -107,13 +107,6 @@ trait UserAccountComponent extends MemcachedDaoSupport {
     }
 
     override def softDelete(id: String): ReaderT[Task, MemcachedConnection, Long] = {
-      //      for {
-      //        _    <- redisClient.multi()
-      //        uOpt <- internalGet(id)
-      //        r    <- uOpt.map(u => internalSet(u.withStatus(DELETED))).getOrElse(ReaderTTask.pure(0L))
-      //        e
-      //      } yield r
-
       get(id).flatMap {
         case Some(v) =>
           set(v._1.withStatus(DELETED), Duration.Inf)
@@ -122,12 +115,30 @@ trait UserAccountComponent extends MemcachedDaoSupport {
       }
     }
 
+    override def softDeleteMulti(
+        ids: Seq[String]
+    ): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
+      Task
+        .traverse(ids) { id =>
+          softDelete(id).run(con)
+        }
+        .map(_.count(_ > 0))
+    }
+
     override def delete(
         id: String
     ): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
       memcachedClient.delete(id).run(con).map { v =>
         v.toLong
       }
+    }
+
+    override def deleteMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Long] = ReaderT { con =>
+      Task
+        .traverse(ids) { id =>
+          delete(id).run(con)
+        }
+        .map(_.count(_ > 0))
     }
   }
 }

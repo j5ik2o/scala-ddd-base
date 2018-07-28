@@ -12,10 +12,11 @@ import monix.eval.Task
 class UserAccountRepositoryBySkinny
     extends UserAccountRepository[BySkinny]
     with AggregateSingleReadFeature
-    with AggregateMultiReadFeature
     with AggregateSingleWriteFeature
+    with AggregateMultiReadFeature
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

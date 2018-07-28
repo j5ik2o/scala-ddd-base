@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.redis
+
 import akka.actor.ActorSystem
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.redis.UserAccountComponent
@@ -18,6 +19,7 @@ class UserAccountRepositoryOnRedis(val expireDuration: Duration)(implicit system
     with AggregateMultiReadFeature
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

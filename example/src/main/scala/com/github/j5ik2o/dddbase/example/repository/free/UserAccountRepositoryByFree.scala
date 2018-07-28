@@ -14,10 +14,13 @@ object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
   override def resolveMulti(ids: Seq[UserAccountId]): ByFree[Seq[UserAccount]] = liftF(ResolveMulti(ids))
 
   override def store(aggregate: UserAccount): ByFree[Long] = liftF(Store(aggregate))
+
   override def storeMulti(aggregates: Seq[UserAccount]): ByFree[Long] =
     liftF(StoreMulti(aggregates))
 
   override def softDelete(id: UserAccountId): ByFree[Long] = liftF(SoftDelete(id))
+
+  override def softDeleteMulti(ids: Seq[UserAccountId]): ByFree[Long] = liftF(SoftDeleteMulti(ids))
 
   private def interpreter[M[_]](repo: UserAccountRepository[M]): UserRepositoryDSL ~> M = new (UserRepositoryDSL ~> M) {
     override def apply[A](fa: UserRepositoryDSL[A]): M[A] = fa match {
@@ -31,6 +34,8 @@ object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
         repo.storeMulti(aggregates).asInstanceOf[M[A]]
       case SoftDelete(id) =>
         repo.softDelete(id).asInstanceOf[M[A]]
+      case SoftDeleteMulti(ids) =>
+        repo.softDeleteMulti(ids).asInstanceOf[M[A]]
     }
   }
 

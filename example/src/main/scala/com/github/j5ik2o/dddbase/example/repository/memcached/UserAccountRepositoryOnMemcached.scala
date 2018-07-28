@@ -19,6 +19,7 @@ class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit sy
     with AggregateMultiReadFeature
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

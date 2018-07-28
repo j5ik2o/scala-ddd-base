@@ -16,6 +16,7 @@ class UserAccountRepositoryBySlick(val profile: JdbcProfile, val db: JdbcProfile
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

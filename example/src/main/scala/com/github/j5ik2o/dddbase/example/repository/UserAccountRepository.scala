@@ -22,10 +22,11 @@ import scala.concurrent.duration.Duration
 
 trait UserAccountRepository[M[_]]
     extends AggregateSingleReader[M]
-    with AggregateMultiReader[M]
     with AggregateSingleWriter[M]
+    with AggregateMultiReader[M]
     with AggregateMultiWriter[M]
-    with AggregateSingleSoftDeletable[M] {
+    with AggregateSingleSoftDeletable[M]
+    with AggregateMultiSoftDeletable[M] {
   override type IdType        = UserAccountId
   override type AggregateType = UserAccount
 }

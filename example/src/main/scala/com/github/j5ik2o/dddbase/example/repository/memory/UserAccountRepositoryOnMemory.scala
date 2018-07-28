@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.memory
+
 import com.github.j5ik2o.dddbase.example.dao.memory.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
@@ -28,6 +29,7 @@ class UserAccountRepositoryOnMemory(concurrencyLevel: Option[Int] = None,
     with AggregateMultiWriteFeature
     with AggregateMultiReadFeature
     with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
   override type RecordType = UserAccountRecord

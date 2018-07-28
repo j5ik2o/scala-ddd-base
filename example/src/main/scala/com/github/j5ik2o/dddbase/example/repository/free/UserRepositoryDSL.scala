@@ -9,3 +9,4 @@ case class ResolveById(ids: UserAccountId)            extends UserRepositoryDSL[
 case class Store(userAccount: UserAccount)            extends UserRepositoryDSL[Long]
 case class StoreMulti(userAccounts: Seq[UserAccount]) extends UserRepositoryDSL[Long]
 case class SoftDelete(id: UserAccountId)              extends UserRepositoryDSL[Long]
+case class SoftDeleteMulti(ids: Seq[UserAccountId])   extends UserRepositoryDSL[Long]

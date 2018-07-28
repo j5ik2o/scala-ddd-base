@@ -35,11 +35,15 @@ trait MemcachedDaoSupport {
 
     def delete(id: String): ReaderT[Task, MemcachedConnection, Long]
 
+    def deleteMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Long]
+
   }
 
   trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
 
     def softDelete(id: String): ReaderT[Task, MemcachedConnection, Long]
+
+    def softDeleteMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Long]
 
   }
 }

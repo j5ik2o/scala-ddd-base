@@ -35,11 +35,15 @@ trait RedisDaoSupport {
 
     def delete(id: String): ReaderT[Task, RedisConnection, Long]
 
+    def deleteMulti(ids: Seq[String]): ReaderT[Task, RedisConnection, Long]
+
   }
 
   trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
 
     def softDelete(id: String): ReaderT[Task, RedisConnection, Long]
+
+    def softDeleteMulti(ids: Seq[String]): ReaderT[Task, RedisConnection, Long]
 
   }
 
