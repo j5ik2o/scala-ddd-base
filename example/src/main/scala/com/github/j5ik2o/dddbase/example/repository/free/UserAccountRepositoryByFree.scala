@@ -13,13 +13,8 @@ object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 
   override def resolveMulti(ids: Seq[UserAccountId]): ByFree[Seq[UserAccount]] = liftF(ResolveMulti(ids))
 
-  override type SO  = StoreOption
-  override type SMO = StoreOption
-  override val defaultStoreOption      = NullStoreOption
-  override val defaultStoreMultiOption = NullStoreOption
-
-  override def store(aggregate: UserAccount, option: SO): ByFree[Long] = liftF(Store(aggregate))
-  override def storeMulti(aggregates: Seq[UserAccount], storeMultiOption: SMO): ByFree[Long] =
+  override def store(aggregate: UserAccount): ByFree[Long] = liftF(Store(aggregate))
+  override def storeMulti(aggregates: Seq[UserAccount]): ByFree[Long] =
     liftF(StoreMulti(aggregates))
 
   override def softDelete(id: UserAccountId): ByFree[Long] = liftF(SoftDelete(id))

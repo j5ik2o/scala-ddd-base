@@ -10,7 +10,9 @@ import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memcached._
 import monix.eval.Task
 
-class UserAccountRepositoryOnMemcachedWithTask()(implicit system: ActorSystem)
+import scala.concurrent.duration.Duration
+
+class UserAccountRepositoryOnMemcachedWithTask(val expireDuration: Duration)(implicit system: ActorSystem)
     extends UserAccountRepository[OnMemcachedWithTask]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature

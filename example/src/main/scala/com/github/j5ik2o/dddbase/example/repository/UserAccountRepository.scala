@@ -43,11 +43,15 @@ object UserAccountRepository {
 
   def bySkinnyWithTask: UserAccountRepositoryBySkinnyWithTask = new UserAccountRepositoryBySkinnyWithTask
 
-  def onRedisWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnRedisWithTask =
-    new UserAccountRepositoryOnRedisWithTask()
+  def onRedisWithTask(
+      expireDuration: Duration
+  )(implicit actorSystem: ActorSystem): UserAccountRepositoryOnRedisWithTask =
+    new UserAccountRepositoryOnRedisWithTask(expireDuration)
 
-  def onMemcachedWithTask(implicit actorSystem: ActorSystem): UserAccountRepositoryOnMemcachedWithTask =
-    new UserAccountRepositoryOnMemcachedWithTask()
+  def onMemcachedWithTask(
+      expireDuration: Duration
+  )(implicit actorSystem: ActorSystem): UserAccountRepositoryOnMemcachedWithTask =
+    new UserAccountRepositoryOnMemcachedWithTask(expireDuration)
 
   def onMemoryWithTask(minSize: Option[Int] = None,
                        maxSize: Option[Int] = None,

@@ -15,6 +15,8 @@ import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpecLike, Matchers }
 
+import scala.concurrent.duration.Duration
+
 class UserAccountRepositoryOnRedisWithTaskSpec
     extends TestKit(ActorSystem("UserAccountRepositoryOnRedisWithTaskSpec"))
     with FreeSpecLike
@@ -23,7 +25,7 @@ class UserAccountRepositoryOnRedisWithTaskSpec
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repository = UserAccountRepository.onRedisWithTask
+  val repository = UserAccountRepository.onRedisWithTask(Duration.Inf)
 
   var connectionPool: RedisConnectionPool[Task] = _
 

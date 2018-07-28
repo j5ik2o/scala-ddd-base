@@ -9,7 +9,9 @@ import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.redis._
 import monix.eval.Task
 
-class UserAccountRepositoryOnRedisWithTask()(implicit system: ActorSystem)
+import scala.concurrent.duration.Duration
+
+class UserAccountRepositoryOnRedisWithTask(val expireDuration: Duration)(implicit system: ActorSystem)
     extends UserAccountRepository[OnRedisWithTask]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
