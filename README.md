@@ -67,7 +67,7 @@ The supported ORM/KVS is below.
 ## Example
 
 Please mix in the core and support traits to your implementation. 
-Slick, SkinnyORM, etc. You can also choose the implementation as you like.
+Slick, SkinnyORM, Memcached, Redis, Memory etc. You can also choose the implementation as you like.
 
 ```scala
 trait UserAccountRepository[M[_]]
@@ -175,7 +175,7 @@ val resultFuture: Future[UserAccount] = connectionPool
   .runAsync
 ```
 
-- for Memory
+- for Memory(Guava Cache)
 
 ```scala
 val repository = UserAccountRepository.onMemory(expireDuration = Some(5 minutes))
