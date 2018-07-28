@@ -19,7 +19,9 @@ libraryDependencies ++= Seq(
   "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.6",
   "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.6"
   // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.6"
-  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.6" 
+  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.6"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.6"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.6" 
 )
 ```
 
@@ -33,6 +35,8 @@ libraryDependencies ++= Seq(
   "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.6-SNAPSHOT"
   // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.6-SNAPSHOT"
   // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.6-SNAPSHOT" 
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.6-SNAPSHOT"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.6-SNAPSHOT"
 )
 ```
 
@@ -61,8 +65,8 @@ The supported ORM/KVS is below.
 
 - Slick(JDBC)
 - SkinnyORM(JDBC)
-- Redis(reactive-redis-core)
-- Memcached(reactive-memcached-core)
+- Redis([reactive-redis-core](https://github.com/j5ik2o/reactive-redis))
+- Memcached([reactive-memcached-core](https://github.com/j5ik2o/reactive-memcached))
 
 ## Example
 
