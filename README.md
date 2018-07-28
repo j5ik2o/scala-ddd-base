@@ -1,6 +1,6 @@
 # scala-ddd-base
 
-[![CircleCI](https://circleci.com/gh/j5ik2o/scala-ddd-base/tree/master.svg?style=svg)](https://circleci.com/gh/j5ik2o/scala-ddd-base/tree/master)
+[![CircleCI](https://circleci.com/gh/j5ik2o/scala-ddd-base/tree/master.svg?style=shield&circle-token=77d5ba85babad56b6a3fdd0f5be9e140ec12a4ae)](https://circleci.com/gh/j5ik2o/scala-ddd-base/tree/master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.j5ik2o/scala-ddd-base-core_2.12)
 [![Scaladoc](http://javadoc-badge.appspot.com/com.github.j5ik2o/scala-ddd-base-core_2.12.svg?label=scaladoc)](http://javadoc-badge.appspot.com/com.github.j5ik2o/scala-ddd-base-core_2.12/com/github/j5ik2o/dddbase/index.html?javadocio=true)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0565a420c74b4c4c8df3e1896b5b0e3e)](https://www.codacy.com/project/j5ik2o/scala-ddd-base/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=j5ik2o/scala-ddd-base&amp;utm_campaign=Badge_Grade_Dashboard)
