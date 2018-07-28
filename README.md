@@ -67,7 +67,7 @@ The supported ORM/KVS is below.
 ## Example
 
 Please mix in the core and support traits to your implementation. 
-Slick, SkinnyORM, etc. You can also choose the implementation as you like.
+Slick, SkinnyORM, Memcached, Redis, Memory etc. You can also choose the implementation as you like.
 
 ```scala
 trait UserAccountRepository[M[_]]
@@ -150,7 +150,7 @@ val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runAsync
 - for Memcached
 
 ```scala
-val userAccountRepository: UserAccountRepository[OnMemcached] = UserAccountRepository.onMemcached(Duration.Inf)
+val userAccountRepository: UserAccountRepository[OnMemcached] = UserAccountRepository.onMemcached(expireDuration = 5 minutes)
 val resultFuture: Future[UserAccount] = connectionPool
   .withConnectionF { con =>
     (for {
@@ -164,7 +164,7 @@ val resultFuture: Future[UserAccount] = connectionPool
 - for Redis
 
 ```scala
-val userAccountRepository: UserAccountRepository[OnRedis] = UserAccountRepository.onRedis(Duration.Inf)
+val userAccountRepository: UserAccountRepository[OnRedis] = UserAccountRepository.onRedis(expireDuration = 5 minutes)
 val resultFuture: Future[UserAccount] = connectionPool
   .withConnectionF { con =>
     (for {
@@ -175,10 +175,10 @@ val resultFuture: Future[UserAccount] = connectionPool
   .runAsync
 ```
 
-- for Memory
+- for Memory(Guava Cache)
 
 ```scala
-val repository = UserAccountRepository.onMemory()
+val repository = UserAccountRepository.onMemory(expireDuration = Some(5 minutes))
 val resultFuture: Future[UserAccount] = (for {
   _ <- repository.store(userAccount)
   r <- repository.resolveById(userAccount.id)
