@@ -48,7 +48,7 @@ class UserAccountRepositoryByFreeSpec
         _      <- UserAccountRepositoryByFree.store(userAccount)
         result <- UserAccountRepositoryByFree.resolveById(userAccount.id)
       } yield result
-      val skinny     = UserAccountRepository.bySkinnyWithTask
+      val skinny     = UserAccountRepository.bySkinny
       val evalResult = UserAccountRepositoryByFree.evaluate(skinny)(program)
       val result     = evalResult.run(AutoSession).runAsync.futureValue
       result shouldBe userAccount

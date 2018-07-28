@@ -1,4 +1,4 @@
-package com.github.j5ik2o.dddbase.example.repository.redis
+package com.github.j5ik2o.dddbase.example.repository.memcached
 
 import java.net.InetSocketAddress
 import java.time.ZonedDateTime
@@ -9,35 +9,39 @@ import akka.testkit.TestKit
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
-import com.github.j5ik2o.reactive.redis.{ PeerConfig, RedisConnection, RedisConnectionPool, RedisSpecSupport }
+import com.github.j5ik2o.reactive.memcached.{
+  MemcachedConnection,
+  MemcachedConnectionPool,
+  MemcachedSpecSupport,
+  PeerConfig
+}
 import monix.eval.Task
-import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
+import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
 
 import scala.concurrent.duration.Duration
 
-class UserAccountRepositoryOnRedisWithTaskSpec
-    extends TestKit(ActorSystem("UserAccountRepositoryOnRedisWithTaskSpec"))
+class UserAccountRepositoryOnMemcachedSpec
+    extends TestKit(ActorSystem("UserAccountRepositoryOnMemcachedSpec"))
     with FreeSpecLike
-    with RedisSpecSupport
+    with MemcachedSpecSupport
     with ScalaFutures
     with ScalaFuturesSupportSpec
     with Matchers {
 
-  val repository = UserAccountRepository.onRedisWithTask(Duration.Inf)
+  val repository = UserAccountRepository.onMemcached(Duration.Inf)
 
-  var connectionPool: RedisConnectionPool[Task] = _
+  var connectionPool: MemcachedConnectionPool[Task] = _
 
   protected override def beforeAll(): Unit = {
     super.beforeAll()
-    val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
-    connectionPool = RedisConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
-                                                            peerConfig,
-                                                            RedisConnection(_, _),
-                                                            reSizer =
-                                                              Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
-
+    val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", memcachedTestServer.getPort))
+    connectionPool = MemcachedConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
+                                                                peerConfig,
+                                                                MemcachedConnection(_, _),
+                                                                reSizer =
+                                                                  Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
   }
 
   val userAccount = UserAccount(
@@ -64,7 +68,7 @@ class UserAccountRepositoryOnRedisWithTaskSpec
         updatedAt = None
       )
 
-  "UserAccountRepositoryOnRedisWithTask" - {
+  "UserAccountRepositoryOnMemcached" - {
     "store" in {
       val result = connectionPool
         .withConnectionF { con =>
@@ -92,5 +96,4 @@ class UserAccountRepositoryOnRedisWithTaskSpec
       result shouldBe userAccounts
     }
   }
-
 }

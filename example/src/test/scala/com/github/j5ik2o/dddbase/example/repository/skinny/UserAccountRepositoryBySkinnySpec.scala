@@ -1,22 +1,23 @@
-package com.github.j5ik2o.dddbase.example.repository.memory
+package com.github.j5ik2o.dddbase.example.repository.skinny
 
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemoryWithTask
-import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ FreeSpec, Matchers }
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinny
+import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
+import org.scalatest.{ FreeSpecLike, Matchers }
+import scalikejdbc.AutoSession
 import monix.execution.Scheduler.Implicits.global
 
-class UserAccountRepositoryOnMemoryWithTaskSpec
-    extends FreeSpec
-    with ScalaFutures
-    with ScalaFuturesSupportSpec
+class UserAccountRepositoryBySkinnySpec
+    extends FreeSpecLike
+    with FlywayWithMySQLSpecSupport
+    with SkinnySpecSupport
     with Matchers {
 
-  val repository = UserAccountRepository.onMemoryWithTask()
+  val repository                   = UserAccountRepository.bySkinny
+  override val tables: Seq[String] = Seq("user_account")
 
   val userAccount = UserAccount(
     id = UserAccountId(1L),
@@ -42,12 +43,12 @@ class UserAccountRepositoryOnMemoryWithTaskSpec
         updatedAt = None
       )
 
-  "UserAccountRepositoryOnMemoryWithTask" - {
+  "UserAccountRepositoryBySkinny" - {
     "store" in {
       val result = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
-      } yield r).runAsync.futureValue
+      } yield r).run(AutoSession).runAsync.futureValue
 
       result shouldBe userAccount
     }
@@ -55,10 +56,11 @@ class UserAccountRepositoryOnMemoryWithTaskSpec
       val result = (for {
         _ <- repository.storeMulti(userAccounts)
         r <- repository.resolveMulti(userAccounts.map(_.id))
-      } yield r).runAsync.futureValue
+      } yield r).run(AutoSession).runAsync.futureValue
 
       result shouldBe userAccounts
     }
+
   }
 
 }

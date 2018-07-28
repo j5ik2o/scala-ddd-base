@@ -1,32 +1,35 @@
-package com.github.j5ik2o.dddbase.example.repository.skinny
+package com.github.j5ik2o.dddbase.example.repository.memcached
 
+import akka.actor.ActorSystem
 import cats.data.ReaderT
-import com.github.j5ik2o.dddbase.example.dao.skinny.UserAccountComponent
+import com.github.j5ik2o.dddbase.example.dao.memcached.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinnyWithTask
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.skinny._
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemcached
+import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
+import com.github.j5ik2o.dddbase.memcached._
 import monix.eval.Task
 
-class UserAccountRepositoryBySkinnyWithTask
-    extends UserAccountRepository[BySkinnyWithTask]
+import scala.concurrent.duration.Duration
+
+class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit system: ActorSystem)
+    extends UserAccountRepository[OnMemcached]
     with AggregateSingleReadFeature
-    with AggregateMultiReadFeature
     with AggregateSingleWriteFeature
+    with AggregateMultiReadFeature
     with AggregateMultiWriteFeature
     with AggregateSingleSoftDeleteFeature
     with UserAccountComponent {
-
   override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao.type
-  override protected val dao: UserAccountDao.type = UserAccountDao
+  override type DaoType    = UserAccountDao
+
+  override protected val dao: UserAccountDao = UserAccountDao()
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     ReaderT { _ =>
       Task.pure {
         UserAccount(
-          id = UserAccountId(record.id),
+          id = UserAccountId(record.id.toLong),
           status = Status.withName(record.status),
           emailAddress = EmailAddress(record.email),
           password = HashedPassword(record.password),
@@ -43,7 +46,7 @@ class UserAccountRepositoryBySkinnyWithTask
     ReaderT { _ =>
       Task.pure {
         UserAccountRecord(
-          id = aggregate.id.value,
+          id = aggregate.id.value.toString,
           status = aggregate.status.entryName,
           email = aggregate.emailAddress.value,
           password = aggregate.password.value,
@@ -55,4 +58,5 @@ class UserAccountRepositoryBySkinnyWithTask
       }
     }
   }
+
 }

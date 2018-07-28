@@ -7,11 +7,11 @@ import cats.free.Free
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.free.{ UserAccountRepositoryByFree, UserRepositoryDSL }
-import com.github.j5ik2o.dddbase.example.repository.memcached.UserAccountRepositoryOnMemcachedWithTask
-import com.github.j5ik2o.dddbase.example.repository.memory.UserAccountRepositoryOnMemoryWithTask
-import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedisWithTask
-import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinnyWithTask
-import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickWithTask
+import com.github.j5ik2o.dddbase.example.repository.memcached.UserAccountRepositoryOnMemcached
+import com.github.j5ik2o.dddbase.example.repository.memory.UserAccountRepositoryOnMemory
+import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedis
+import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinny
+import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlick
 import com.github.j5ik2o.reactive.memcached.MemcachedConnection
 import com.github.j5ik2o.reactive.redis.RedisConnection
 import monix.eval.Task
@@ -31,33 +31,33 @@ trait UserAccountRepository[M[_]]
 
 object UserAccountRepository {
 
-  type OnRedisWithTask[A]     = ReaderT[Task, RedisConnection, A]
-  type OnMemcachedWithTask[A] = ReaderT[Task, MemcachedConnection, A]
-  type OnMemoryWithTask[A]    = Task[A]
-  type BySlickWithTask[A]     = Task[A]
-  type BySkinnyWithTask[A]    = ReaderT[Task, DBSession, A]
-  type ByFree[A]              = Free[UserRepositoryDSL, A]
+  type OnRedis[A]     = ReaderT[Task, RedisConnection, A]
+  type OnMemcached[A] = ReaderT[Task, MemcachedConnection, A]
+  type OnMemory[A]    = Task[A]
+  type BySlick[A]     = Task[A]
+  type BySkinny[A]    = ReaderT[Task, DBSession, A]
+  type ByFree[A]      = Free[UserRepositoryDSL, A]
 
-  def bySlickWithTask(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepositoryBySlickWithTask =
-    new UserAccountRepositoryBySlickWithTask(profile, db)
+  def bySlick(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlick] =
+    new UserAccountRepositoryBySlick(profile, db)
 
-  def bySkinnyWithTask: UserAccountRepositoryBySkinnyWithTask = new UserAccountRepositoryBySkinnyWithTask
+  def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryBySkinny
 
-  def onRedisWithTask(
+  def onRedis(
       expireDuration: Duration
-  )(implicit actorSystem: ActorSystem): UserAccountRepositoryOnRedisWithTask =
-    new UserAccountRepositoryOnRedisWithTask(expireDuration)
+  )(implicit actorSystem: ActorSystem): UserAccountRepository[OnRedis] =
+    new UserAccountRepositoryOnRedis(expireDuration)
 
-  def onMemcachedWithTask(
+  def onMemcached(
       expireDuration: Duration
-  )(implicit actorSystem: ActorSystem): UserAccountRepositoryOnMemcachedWithTask =
-    new UserAccountRepositoryOnMemcachedWithTask(expireDuration)
+  )(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcached] =
+    new UserAccountRepositoryOnMemcached(expireDuration)
 
-  def onMemoryWithTask(minSize: Option[Int] = None,
-                       maxSize: Option[Int] = None,
-                       expireDuration: Option[Duration] = None,
-                       concurrencyLevel: Option[Int] = None,
-                       maxWeight: Option[Int] = None): UserAccountRepositoryOnMemoryWithTask =
-    new UserAccountRepositoryOnMemoryWithTask(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
+  def onMemory(minSize: Option[Int] = None,
+               maxSize: Option[Int] = None,
+               expireDuration: Option[Duration] = None,
+               concurrencyLevel: Option[Int] = None,
+               maxWeight: Option[Int] = None): UserAccountRepository[OnMemory] =
+    new UserAccountRepositoryOnMemory(minSize, maxSize, expireDuration, concurrencyLevel, maxWeight)
 
 }

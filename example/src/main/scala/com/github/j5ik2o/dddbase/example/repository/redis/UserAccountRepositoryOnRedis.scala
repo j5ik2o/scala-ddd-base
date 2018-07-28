@@ -4,15 +4,15 @@ import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.redis.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnRedisWithTask
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnRedis
 import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.redis._
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 
-class UserAccountRepositoryOnRedisWithTask(val expireDuration: Duration)(implicit system: ActorSystem)
-    extends UserAccountRepository[OnRedisWithTask]
+class UserAccountRepositoryOnRedis(val expireDuration: Duration)(implicit system: ActorSystem)
+    extends UserAccountRepository[OnRedis]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiReadFeature

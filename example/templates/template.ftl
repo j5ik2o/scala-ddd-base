@@ -26,9 +26,9 @@ trait ${className}Component extends SlickDaoSupport {
     // def ${primaryKey.propertyName} = column[${primaryKey.propertyTypeName}]("${primaryKey.columnName}", O.PrimaryKey)</#list>
 <#list columns as column>
     <#if column.nullable>
-    def ${column.propertyName} = column[Option[${column.propertyTypeName}]]("${column.columnName}")
+    def ${column.propertyName}: Rep[Option[${column.propertyTypeName}]] = column[Option[${column.propertyTypeName}]]("${column.columnName}")
     <#else>
-    def ${column.propertyName} = column[${column.propertyTypeName}]("${column.columnName}")
+    def ${column.propertyName}: Rep[${column.propertyTypeName}] = column[${column.propertyTypeName}]("${column.columnName}")
     </#if>
 </#list>
     override def * = (<#list primaryKeys as primaryKey>${primaryKey.propertyName}<#if primaryKey_has_next>,</#if></#list><#if primaryKeys?has_content>,</#if><#list columns as column>${column.propertyName}<#if column_has_next>,</#if></#list>) <> (${className}Record.tupled, ${className}Record.unapply)

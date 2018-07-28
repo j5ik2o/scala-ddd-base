@@ -2,19 +2,19 @@ package com.github.j5ik2o.dddbase.example.repository.memory
 import com.github.j5ik2o.dddbase.example.dao.memory.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemoryWithTask
+import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemory
 import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memory._
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 
-class UserAccountRepositoryOnMemoryWithTask(minSize: Option[Int] = None,
-                                            maxSize: Option[Int] = None,
-                                            expireDuration: Option[Duration] = None,
-                                            concurrencyLevel: Option[Int] = None,
-                                            maxWeight: Option[Int] = None)
-    extends UserAccountRepository[OnMemoryWithTask]
+class UserAccountRepositoryOnMemory(minSize: Option[Int] = None,
+                                    maxSize: Option[Int] = None,
+                                    expireDuration: Option[Duration] = None,
+                                    concurrencyLevel: Option[Int] = None,
+                                    maxWeight: Option[Int] = None)
+    extends UserAccountRepository[OnMemory]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature

@@ -22,13 +22,13 @@ package slick {
         extends TableBase[UserAccountRecord](tag, "user_account")
         with SoftDeletableTableSupport[UserAccountRecord] {
       // def id = column[Long]("id", O.PrimaryKey)
-      def status    = column[String]("status")
-      def email     = column[String]("email")
-      def password  = column[String]("password")
-      def firstName = column[String]("first_name")
-      def lastName  = column[String]("last_name")
-      def createdAt = column[java.time.ZonedDateTime]("created_at")
-      def updatedAt = column[Option[java.time.ZonedDateTime]]("updated_at")
+      def status: Rep[String]                             = column[String]("status")
+      def email: Rep[String]                              = column[String]("email")
+      def password: Rep[String]                           = column[String]("password")
+      def firstName: Rep[String]                          = column[String]("first_name")
+      def lastName: Rep[String]                           = column[String]("last_name")
+      def createdAt: Rep[java.time.ZonedDateTime]         = column[java.time.ZonedDateTime]("created_at")
+      def updatedAt: Rep[Option[java.time.ZonedDateTime]] = column[Option[java.time.ZonedDateTime]]("updated_at")
       override def * =
         (id, status, email, password, firstName, lastName, createdAt, updatedAt) <> (UserAccountRecord.tupled, UserAccountRecord.unapply)
     }
