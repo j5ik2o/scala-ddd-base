@@ -138,7 +138,7 @@ object UserAccountRepository {
 - for Slick3
 
 ```scala
-val userAccountRepository: UserAccountRepository[BySlick] = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
+val userAccountRepository: UserAccountRepository[BySlick] = UserAccountRepository.bySlick(dbConfig.profile, dbConfig.db)
 val resultTask: Task[UserAccount] = for {
   _ <- userAccountRepository.store(userAccount)
   result <- userAccountRepository.resolveBy(userAccount.id)
@@ -150,7 +150,7 @@ val resultFuture: Future[UserAccount] = resultTask.runAsync
 - for SkinnyORM
 
 ```scala
-val userAccountRepository: UserAccountRepository[BySkinny] = UserAccountRepository.bySkinnyWithTask
+val userAccountRepository: UserAccountRepository[BySkinny] = UserAccountRepository.bySkinny
 val resultTask: Task[UserAccount] = for {
   _ <- userAccountRepository.store(userAccount)
   result <- userAccountRepository.resolveBy(userAccount.id)
@@ -190,7 +190,7 @@ val resultFuture: Future[UserAccount] = connectionPool
 - for Memory(Guava Cache)
 
 ```scala
-val repository = UserAccountRepository.onMemory(expireAfterWrite = Some(5 minutes))
+val userAccountRepository: UserAccountRepository[nMemory] = UserAccountRepository.onMemory(expireAfterWrite = Some(5 minutes))
 val resultFuture: Future[UserAccount] = (for {
   _ <- repository.store(userAccount)
   r <- repository.resolveById(userAccount.id)
@@ -206,12 +206,12 @@ val program: Free[UserRepositoryDSL, UserAccount] = for {
   result <- free.resolveById(userAccount.id)
 } yield result
 
-val slick = UserAccountRepository.bySlickWithTask(dbConfig.profile, dbConfig.db)
+val slick = UserAccountRepository.bySlick(dbConfig.profile, dbConfig.db)
 val resultTask: Task[UserAccount] = UserAccountRepositoryOnFree.evaluate(slick)(program)
 val resultFuture: Future[UserAccount] = evalResult.runAsync
 
 // if evaluation by skinny 
-// val skinny     = UserAccountRepository.bySkinnyWithTask
+// val skinny     = UserAccountRepository.bySkinny
 // val resultTask: Task[UserAccount] = UserAccountRepositoryOnFree.evaluate(skinny)(program)
 // val resultFuture: Future[UserAccount] = evalResult.run(AutoSession).runAsync
 ```
