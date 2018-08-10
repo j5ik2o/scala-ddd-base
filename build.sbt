@@ -137,7 +137,7 @@ lazy val redis = (project in file("nosql/redis"))
       name := "scala-ddd-base-redis",
       libraryDependencies ++= Seq(
         "io.monix"          %% "monix"               % "3.0.0-RC1",
-        "com.github.j5ik2o" %% "reactive-redis-core" % "1.0.10"
+        "com.github.j5ik2o" %% "reactive-redis-core" % "1.0.11-SNAPSHOT"
       )
     )
   )

@@ -5,7 +5,6 @@ import cats.{ ~>, Monad }
 import com.github.j5ik2o.dddbase.example.model.{ UserAccount, UserAccountId }
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.ByFree
-import com.github.j5ik2o.dddbase.{ NullStoreOption, StoreOption }
 
 object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 

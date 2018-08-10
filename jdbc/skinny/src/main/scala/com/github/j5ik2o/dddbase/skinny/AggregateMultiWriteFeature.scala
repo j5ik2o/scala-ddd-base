@@ -1,8 +1,8 @@
 package com.github.j5ik2o.dddbase.skinny
 
 import cats.data.ReaderT
+import com.github.j5ik2o.dddbase.AggregateMultiWriter
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.{ AggregateMultiWriter, NullStoreOption, StoreOption }
 import monix.eval.Task
 import scalikejdbc.DBSession
 
