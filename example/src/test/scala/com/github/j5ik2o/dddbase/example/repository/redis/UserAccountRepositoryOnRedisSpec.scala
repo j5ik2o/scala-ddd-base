@@ -34,7 +34,7 @@ class UserAccountRepositoryOnRedisSpec
     val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
     connectionPool = RedisConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
                                                             peerConfig,
-                                                            RedisConnection(_, _),
+                                                            RedisConnection.apply,
                                                             reSizer =
                                                               Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
 

@@ -146,6 +146,6 @@ trait UserAccountComponent extends RedisDaoSupport {
   }
 
   private def toJsonString(record: UserAccountRecord) = {
-    record.asJson.noSpaces.replaceAll("\"", "\\\\\"")
+    record.asJson.noSpaces
   }
 }
