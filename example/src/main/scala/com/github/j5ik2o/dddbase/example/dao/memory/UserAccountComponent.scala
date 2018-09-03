@@ -86,6 +86,10 @@ trait GuavaMemoryDaoSupport extends MemoryDaoSupport {
       Option(cache.getIfPresent(id)).filterNot(_.status == DELETED)
     }
 
+    override def getAll: Task[Seq[V]] = Task {
+      cache.asMap().asScala.values.filterNot(_.status == DELETED).toSeq
+    }
+
     override def getMulti(
         ids: Seq[String]
     ): Task[Seq[V]] = Task {
