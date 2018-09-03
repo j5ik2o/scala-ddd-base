@@ -21,6 +21,8 @@ trait MemoryDaoSupport {
 
     def get(id: String): Task[Option[R]]
 
+    def getAll: Task[Seq[R]]
+
     def getMulti(ids: Seq[String]): Task[Seq[R]]
 
     def delete(id: String): Task[Long]
