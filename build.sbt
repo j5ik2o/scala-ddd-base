@@ -245,13 +245,14 @@ lazy val example = (project in file("example"))
         .value,
       compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value,
       libraryDependencies ++= Seq(
-        "com.google.guava"  % "guava"                    % "25.1-jre",
-        "io.circe"          %% "circe-core"              % circeVersion,
-        "io.circe"          %% "circe-generic"           % circeVersion,
-        "io.circe"          %% "circe-parser"            % circeVersion,
-        "com.github.j5ik2o" %% "reactive-redis-test"     % "1.0.10" % Test,
-        "com.github.j5ik2o" %% "reactive-memcached-test" % "1.0.4" % Test,
-        "com.typesafe.akka" %% "akka-testkit"            % akkaVersion % Test
+        "org.wvlet.airframe" %% "airframe"                % "0.64",
+        "com.google.guava"   % "guava"                    % "25.1-jre",
+        "io.circe"           %% "circe-core"              % circeVersion,
+        "io.circe"           %% "circe-generic"           % circeVersion,
+        "io.circe"           %% "circe-parser"            % circeVersion,
+        "com.github.j5ik2o"  %% "reactive-redis-test"     % "1.0.10" % Test,
+        "com.github.j5ik2o"  %% "reactive-memcached-test" % "1.0.4" % Test,
+        "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
       ),
       parallelExecution in Test := false
     )
