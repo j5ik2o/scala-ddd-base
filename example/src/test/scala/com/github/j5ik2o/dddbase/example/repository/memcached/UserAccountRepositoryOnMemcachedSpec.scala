@@ -12,9 +12,9 @@ import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
 import com.github.j5ik2o.reactive.memcached._
 import monix.eval.Task
-import org.scalatest.concurrent.ScalaFutures
 import monix.execution.Scheduler.Implicits.global
-import org.scalatest.{ FreeSpecLike, Matchers }
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{FreeSpecLike, Matchers}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

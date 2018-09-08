@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.airframe
+
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
