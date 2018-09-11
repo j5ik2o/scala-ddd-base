@@ -1,5 +1,7 @@
 import scala.concurrent.duration._
-val compileScalaStyle = taskKey[Unit]("compileScalaStyle")
+
+val reactiveRedisVersion = "1.0.10"
+val compileScalaStyle    = taskKey[Unit]("compileScalaStyle")
 
 lazy val scalaStyleSettings = Seq(
   (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
@@ -137,7 +139,7 @@ lazy val redis = (project in file("nosql/redis"))
       name := "scala-ddd-base-redis",
       libraryDependencies ++= Seq(
         "io.monix"          %% "monix"               % "3.0.0-RC1",
-        "com.github.j5ik2o" %% "reactive-redis-core" % "1.0.11-SNAPSHOT"
+        "com.github.j5ik2o" %% "reactive-redis-core" % reactiveRedisVersion
       )
     )
   )
@@ -250,7 +252,7 @@ lazy val example = (project in file("example"))
         "io.circe"           %% "circe-core"              % circeVersion,
         "io.circe"           %% "circe-generic"           % circeVersion,
         "io.circe"           %% "circe-parser"            % circeVersion,
-        "com.github.j5ik2o"  %% "reactive-redis-test"     % "1.0.10" % Test,
+        "com.github.j5ik2o"  %% "reactive-redis-test"     % reactiveRedisVersion % Test,
         "com.github.j5ik2o"  %% "reactive-memcached-test" % "1.0.4" % Test,
         "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
       ),
