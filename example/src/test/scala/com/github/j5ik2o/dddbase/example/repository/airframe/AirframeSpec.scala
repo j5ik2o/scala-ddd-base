@@ -5,16 +5,13 @@ import java.time.ZonedDateTime
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinny
-import com.github.j5ik2o.dddbase.example.repository.util.{FlywayWithMySQLSpecSupport, SkinnySpecSupport}
+import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
 import monix.execution.Scheduler.Implicits.global
-import org.scalatest.{FreeSpecLike, Matchers}
+import org.scalatest.{ FreeSpecLike, Matchers }
 import scalikejdbc.AutoSession
 import wvlet.airframe._
 
-class AirframeSpec extends FreeSpecLike
-  with FlywayWithMySQLSpecSupport
-  with SkinnySpecSupport
-  with Matchers {
+class AirframeSpec extends FreeSpecLike with FlywayWithMySQLSpecSupport with SkinnySpecSupport with Matchers {
 
   override val tables: Seq[String] = Seq("user_account")
 
@@ -33,7 +30,7 @@ class AirframeSpec extends FreeSpecLike
 
   "Airframe" - {
     "store and resolveById" in {
-      design.withSession{ session =>
+      design.withSession { session =>
         val repository = session.build[UserAccountRepository[BySkinny]]
         val result = (for {
           _ <- repository.store(userAccount)
@@ -43,7 +40,5 @@ class AirframeSpec extends FreeSpecLike
       }
     }
   }
-
-
 
 }

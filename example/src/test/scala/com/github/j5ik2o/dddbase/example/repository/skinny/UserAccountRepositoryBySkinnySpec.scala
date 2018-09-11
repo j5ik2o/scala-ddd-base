@@ -4,9 +4,9 @@ import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.util.{FlywayWithMySQLSpecSupport, SkinnySpecSupport}
+import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
 import monix.execution.Scheduler.Implicits.global
-import org.scalatest.{FreeSpecLike, Matchers}
+import org.scalatest.{ FreeSpecLike, Matchers }
 import scalikejdbc.AutoSession
 
 class UserAccountRepositoryBySkinnySpec

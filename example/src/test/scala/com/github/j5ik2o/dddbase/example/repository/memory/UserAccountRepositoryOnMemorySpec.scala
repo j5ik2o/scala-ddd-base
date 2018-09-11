@@ -9,10 +9,10 @@ import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.{ FreeSpec, Matchers }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with ScalaFuturesSupportSpec with Matchers {
 
