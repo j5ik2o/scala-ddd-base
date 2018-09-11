@@ -130,7 +130,7 @@ trait UserAccountComponent extends RedisDaoSupport {
     override def delete(
         id: String
     ): ReaderT[Task, RedisConnection, Long] = ReaderT { con =>
-      redisClient.del(id).run(con).map { _.value.toLong }
+      redisClient.del(NonEmptyList.of(id)).run(con).map { _.value.toLong }
     }
 
     override def deleteMulti(
