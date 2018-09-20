@@ -1,6 +1,6 @@
 import scala.concurrent.duration._
 
-val reactiveRedisVersion = "1.0.10"
+val reactiveRedisVersion = "1.0.14"
 val compileScalaStyle    = taskKey[Unit]("compileScalaStyle")
 
 lazy val scalaStyleSettings = Seq(
