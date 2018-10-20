@@ -15,13 +15,13 @@ Add the following to your sbt build (Scala 2.11.x, 2.12.x):
 resolvers += "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/"
 
 libraryDependencies ++= Seq(
-  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.12",
+  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.13",
   // Please set as necessary
-  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.12"
-  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.12"
-  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.12"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.12"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.12" 
+  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.13"
+  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.13"
+  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.13"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.13"
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.13" 
 )
 ```
 
