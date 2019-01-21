@@ -184,7 +184,7 @@ val resultFuture: Future[UserAccount] = (for {
 - for Free
 
 ```scala
-val free: UserAccountRepository[ByFree] = UserAccountRepository[ByFree]
+val free: UserAccountRepository[ByFree] = UserAccountRepositoryByFree
 val program: Free[UserRepositoryDSL, UserAccount] = for {
   _      <- free.store(userAccount)
   result <- free.resolveById(userAccount.id)
