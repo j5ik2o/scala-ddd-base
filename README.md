@@ -110,7 +110,7 @@ object UserAccountRepository {
 }
 ```
 
-- [for Slick3](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
+- [for Slick3](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/slick/UserAccountRepositoryBySlick.scala)
 - [for SkinnyORM](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
 - [for Memcached](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
 - [for Redis](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
