@@ -50,7 +50,7 @@ class UserAccountRepositoryByFreeSpec
       } yield result
       val skinny     = UserAccountRepository.bySkinny
       val evalResult = UserAccountRepositoryByFree.evaluate(skinny)(program)
-      val result     = evalResult.run(AutoSession).runAsync.futureValue
+      val result     = evalResult.run(AutoSession).runToFuture.futureValue
       result shouldBe userAccount
     }
   }

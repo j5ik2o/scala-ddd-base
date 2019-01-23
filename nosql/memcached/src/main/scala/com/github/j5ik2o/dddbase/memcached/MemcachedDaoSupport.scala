@@ -29,9 +29,9 @@ trait MemcachedDaoSupport {
 
     def setMulti(records: Seq[R], expire: Duration): ReaderT[Task, MemcachedConnection, Long]
 
-    def get(id: String): ReaderT[Task, MemcachedConnection, Option[(R, Duration)]]
+    def get(id: String): ReaderT[Task, MemcachedConnection, Option[R]]
 
-    def getMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Seq[(R, Duration)]]
+    def getMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Seq[R]]
 
     def delete(id: String): ReaderT[Task, MemcachedConnection, Long]
 

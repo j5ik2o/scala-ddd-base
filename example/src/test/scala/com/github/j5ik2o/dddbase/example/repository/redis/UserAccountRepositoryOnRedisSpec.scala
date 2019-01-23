@@ -74,7 +74,7 @@ class UserAccountRepositoryOnRedisSpec
             r <- repository.resolveById(userAccount.id)
           } yield r).run(con)
         }
-        .runAsync
+        .runToFuture
         .futureValue
 
       result shouldBe userAccount
@@ -88,7 +88,7 @@ class UserAccountRepositoryOnRedisSpec
             r <- repository.resolveMulti(userAccounts.map(_.id))
           } yield r).run(con)
         }
-        .runAsync
+        .runToFuture
         .futureValue
 
       result shouldBe userAccounts
@@ -101,7 +101,7 @@ class UserAccountRepositoryOnRedisSpec
           _ <- ReaderTTask.pure(Thread.sleep(1000))
           r <- repository.resolveById(userAccount.id)
         } yield r).run(con)
-      }.runAsync
+      }.runToFuture
 
       an[AggregateNotFoundException] should be thrownBy {
         Await.result(resultFuture, Duration.Inf)

@@ -35,7 +35,7 @@ class AirframeSpec extends FreeSpecLike with FlywayWithMySQLSpecSupport with Ski
         val result = (for {
           _ <- repository.store(userAccount)
           r <- repository.resolveById(userAccount.id)
-        } yield r).run(AutoSession).runAsync.futureValue
+        } yield r).run(AutoSession).runToFuture.futureValue
         result shouldBe userAccount
       }
     }

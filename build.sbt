@@ -1,7 +1,8 @@
 import scala.concurrent.duration._
 
-val reactiveRedisVersion = "1.0.18"
-val compileScalaStyle    = taskKey[Unit]("compileScalaStyle")
+val reactiveRedisVersion     = "1.0.19"
+val reactiveMemcachedVersion = "1.0.5"
+val compileScalaStyle        = taskKey[Unit]("compileScalaStyle")
 
 lazy val scalaStyleSettings = Seq(
   (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
@@ -12,8 +13,8 @@ lazy val scalaStyleSettings = Seq(
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
-  scalaVersion := "2.11.11",
-  crossScalaVersions ++= Seq("2.11.11", "2.12.6"),
+  scalaVersion := "2.11.12",
+  crossScalaVersions ++= Seq("2.11.12", "2.12.8"),
   scalacOptions ++= {
     Seq(
       "-feature",
@@ -75,26 +76,26 @@ val coreSettings = Seq(
     Resolver.bintrayRepo("danslapman", "maven")
   ),
   libraryDependencies ++= Seq(
-    "org.typelevel"     %% "cats-core"        % "1.1.0",
-    "org.typelevel"     %% "cats-free"        % "1.1.0",
+    "org.typelevel"     %% "cats-core"        % "1.5.0",
+    "org.typelevel"     %% "cats-free"        % "1.5.0",
     "com.beachape"      %% "enumeratum"       % "1.5.13",
     "org.slf4j"         % "slf4j-api"         % "1.7.25",
     "org.scalatest"     %% "scalatest"        % "3.0.5" % Test,
     "org.scalacheck"    %% "scalacheck"       % "1.14.0" % Test,
     "ch.qos.logback"    % "logback-classic"   % "1.2.3" % Test,
-    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.5" % Test
+    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7" % Test,
+    "io.monix"          %% "monix"            % "3.0.0-RC2"
   )
 ) ++ scalaStyleSettings
 
-val circeVersion    = "0.10.0-M1"
-val akkaHttpVersion = "10.1.1"
-val akkaVersion     = "2.5.11"
+val circeVersion    = "0.11.1"
+val akkaHttpVersion = "10.1.7"
+val akkaVersion     = "2.5.19"
 
 lazy val core = (project in file("core")).settings(
   coreSettings ++ Seq(
     name := "scala-ddd-base-core",
-    libraryDependencies ++= Seq(
-      )
+    libraryDependencies ++= Seq()
   )
 )
 
@@ -104,14 +105,13 @@ val dbUser       = "dddbase"
 val dbPassword   = "passwd"
 val dbPort: Int  = Utils.RandomPortSupport.temporaryServerPort()
 val dbUrl        = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
-val slickVersion = "3.2.0"
+val slickVersion = "3.2.3"
 
 lazy val slick = (project in file("jdbc/slick"))
   .settings(
     coreSettings ++ Seq(
       name := "scala-ddd-base-slick",
       libraryDependencies ++= Seq(
-        "io.monix"           %% "monix"          % "3.0.0-RC1",
         "com.typesafe.slick" %% "slick"          % slickVersion,
         "com.typesafe.slick" %% "slick-hikaricp" % slickVersion
       )
@@ -125,7 +125,6 @@ lazy val skinny = (project in file("jdbc/skinny"))
     coreSettings ++ Seq(
       name := "scala-ddd-base-skinny",
       libraryDependencies ++= Seq(
-        "io.monix"             %% "monix"      % "3.0.0-RC1",
         "org.skinny-framework" %% "skinny-orm" % "2.6.0"
       )
     )
@@ -138,7 +137,6 @@ lazy val redis = (project in file("nosql/redis"))
     coreSettings ++ Seq(
       name := "scala-ddd-base-redis",
       libraryDependencies ++= Seq(
-        "io.monix"          %% "monix"               % "3.0.0-RC1",
         "com.github.j5ik2o" %% "reactive-redis-core" % reactiveRedisVersion
       )
     )
@@ -151,8 +149,7 @@ lazy val memcached = (project in file("nosql/memcached"))
     coreSettings ++ Seq(
       name := "scala-ddd-base-memcached",
       libraryDependencies ++= Seq(
-        "io.monix"          %% "monix"                   % "3.0.0-RC1",
-        "com.github.j5ik2o" %% "reactive-memcached-core" % "1.0.4"
+        "com.github.j5ik2o" %% "reactive-memcached-core" % reactiveMemcachedVersion
       )
     )
   )
@@ -163,9 +160,7 @@ lazy val memory = (project in file("nosql/memory"))
   .settings(
     coreSettings ++ Seq(
       name := "scala-ddd-base-memory",
-      libraryDependencies ++= Seq(
-        "io.monix" %% "monix" % "3.0.0-RC1"
-      )
+      libraryDependencies ++= Seq()
     )
   )
   .dependsOn(core)
@@ -248,12 +243,12 @@ lazy val example = (project in file("example"))
       compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value,
       libraryDependencies ++= Seq(
         "org.wvlet.airframe" %% "airframe"                % "0.64",
-        "com.google.guava"   % "guava"                    % "25.1-jre",
+        "com.google.guava"   % "guava"                    % "27.0.1-jre",
         "io.circe"           %% "circe-core"              % circeVersion,
         "io.circe"           %% "circe-generic"           % circeVersion,
         "io.circe"           %% "circe-parser"            % circeVersion,
         "com.github.j5ik2o"  %% "reactive-redis-test"     % reactiveRedisVersion % Test,
-        "com.github.j5ik2o"  %% "reactive-memcached-test" % "1.0.4" % Test,
+        "com.github.j5ik2o"  %% "reactive-memcached-test" % reactiveMemcachedVersion % Test,
         "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
       ),
       parallelExecution in Test := false

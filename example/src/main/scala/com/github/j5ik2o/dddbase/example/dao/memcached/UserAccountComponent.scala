@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import cats.data.ReaderT
 import cats.implicits._
 import com.github.j5ik2o.dddbase.memcached.MemcachedDaoSupport
+import com.github.j5ik2o.reactive.memcached.command.ValueDesc
 import com.github.j5ik2o.reactive.memcached.{ MemcachedConnection, ReaderTTask }
 import io.circe.generic.auto._
 import io.circe.parser.parse
@@ -66,50 +67,48 @@ trait UserAccountComponent extends MemcachedDaoSupport {
 
     override def getMulti(
         ids: Seq[String]
-    ): ReaderT[Task, MemcachedConnection, Seq[(UserAccountRecord, Duration)]] = ReaderT { con =>
+    ): ReaderT[Task, MemcachedConnection, Seq[UserAccountRecord]] = ReaderT { con =>
       Task
         .traverse(ids) { id =>
           get(id).run(con)
         }
-        .map(_.foldLeft(Seq.empty[(UserAccountRecord, Duration)]) {
+        .map(_.foldLeft(Seq.empty[UserAccountRecord]) {
           case (result, e) =>
             result ++ e.map(Seq(_)).getOrElse(Seq.empty)
         })
     }
 
-    private def internalGet(id: String): ReaderT[Task, MemcachedConnection, Option[(UserAccountRecord, Duration)]] =
+    private def internalGet(id: String): ReaderT[Task, MemcachedConnection, Option[UserAccountRecord]] =
       memcachedClient
         .get(id)
         .map {
-          _.flatMap { v =>
+          _.flatMap { v: ValueDesc =>
             val r = parse(v.value.replaceAll("\\\\\"", "\"")).leftMap(error => new Exception(error.message)).flatMap {
               json =>
                 json.as[UserAccountRecord].leftMap(error => new Exception(error.message)).map { e =>
                   if (e.status == DELETED)
                     None
                   else
-                    Some((e, Duration(v.expire, TimeUnit.SECONDS)))
+                    Some(e)
                 }
             }
             r match {
-              case Right(v) =>
-                (v)
-              case Left(ex) =>
-                throw ex
+              case Right(v) => v
+              case Left(ex) => throw ex
             }
           }
         }
 
     override def get(
         id: String
-    ): ReaderT[Task, MemcachedConnection, Option[(UserAccountRecord, Duration)]] = ReaderT { con =>
+    ): ReaderT[Task, MemcachedConnection, Option[UserAccountRecord]] = ReaderT { con =>
       internalGet(id).run(con)
     }
 
     override def softDelete(id: String): ReaderT[Task, MemcachedConnection, Long] = {
       get(id).flatMap {
         case Some(v) =>
-          set(v._1.withStatus(DELETED), Duration.Inf)
+          set(v.withStatus(DELETED), Duration.Inf)
         case None =>
           ReaderTTask.pure(0L)
       }
