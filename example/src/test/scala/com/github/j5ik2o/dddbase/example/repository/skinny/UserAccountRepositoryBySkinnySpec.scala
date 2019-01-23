@@ -47,7 +47,7 @@ class UserAccountRepositoryBySkinnySpec
       val result = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
-      } yield r).run(AutoSession).runAsync.futureValue
+      } yield r).run(AutoSession).runToFuture.futureValue
 
       result shouldBe userAccount
     }
@@ -55,7 +55,7 @@ class UserAccountRepositoryBySkinnySpec
       val result = (for {
         _ <- repository.storeMulti(userAccounts)
         r <- repository.resolveMulti(userAccounts.map(_.id))
-      } yield r).run(AutoSession).runAsync.futureValue
+      } yield r).run(AutoSession).runToFuture.futureValue
 
       result shouldBe userAccounts
     }

@@ -46,7 +46,7 @@ class UserAccountRepositoryBySlickSpec
       val result = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
-      } yield r).runAsync.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccount
     }
@@ -55,7 +55,7 @@ class UserAccountRepositoryBySlickSpec
       val result = (for {
         _ <- repository.storeMulti(userAccounts)
         r <- repository.resolveMulti(userAccounts.map(_.id))
-      } yield r).runAsync.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccounts
     }

@@ -46,7 +46,7 @@ class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with 
       val result: UserAccount = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
-      } yield r).runAsync.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccount
     }
@@ -56,7 +56,7 @@ class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with 
         _ <- repository.storeMulti(userAccounts)
 
         r <- repository.resolveMulti(userAccounts.map(_.id))
-      } yield r).runAsync.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccounts
     }
@@ -66,7 +66,7 @@ class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with 
         _ <- repository.store(userAccount)
         _ <- Task.pure(Thread.sleep(1000))
         r <- repository.resolveById(userAccount.id)
-      } yield r).runAsync
+      } yield r).runToFuture
 
       an[AggregateNotFoundException] should be thrownBy {
         Await.result(resultFuture, Duration.Inf)

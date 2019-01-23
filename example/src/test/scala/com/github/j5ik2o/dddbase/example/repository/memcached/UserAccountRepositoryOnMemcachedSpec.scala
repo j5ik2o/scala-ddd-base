@@ -73,7 +73,7 @@ class UserAccountRepositoryOnMemcachedSpec
             r <- repository.resolveById(userAccount.id)
           } yield r).run(con)
         }
-        .runAsync
+        .runToFuture
         .futureValue
 
       result shouldBe userAccount
@@ -87,20 +87,20 @@ class UserAccountRepositoryOnMemcachedSpec
             r <- repository.resolveMulti(userAccounts.map(_.id))
           } yield r).run(con)
         }
-        .runAsync
+        .runToFuture
         .futureValue
 
       result shouldBe userAccounts
     }
     "store then expired" in {
-      val repository = UserAccountRepository.onMemcached(expireDuration = 1 seconds)
+      val repository = UserAccountRepository.onMemcached(expireDuration = 1.5 seconds)
       val resultFuture = connectionPool.withConnectionF { con =>
         (for {
           _ <- repository.store(userAccount)
-          _ <- ReaderTTask.pure(Thread.sleep(1000))
+          _ <- ReaderTTask.pure(Thread.sleep(3000))
           r <- repository.resolveById(userAccount.id)
         } yield r).run(con)
-      }.runAsync
+      }.runToFuture
 
       an[AggregateNotFoundException] should be thrownBy {
         Await.result(resultFuture, Duration.Inf)
