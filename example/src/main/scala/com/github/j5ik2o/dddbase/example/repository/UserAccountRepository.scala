@@ -29,6 +29,7 @@ trait UserAccountRepository[M[_]]
     with AggregateMultiSoftDeletable[M] {
   override type IdType        = UserAccountId
   override type AggregateType = UserAccount
+
 }
 
 object UserAccountRepository {
