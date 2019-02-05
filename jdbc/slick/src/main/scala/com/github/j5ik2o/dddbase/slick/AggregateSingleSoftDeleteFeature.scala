@@ -17,21 +17,17 @@ trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO]
   override def softDelete(id: IdType): RIO[Long] =
     Task.deferFutureAction { implicit ec =>
       import profile.api._
-      db.run(dao.filter(_.id === id.value).map(_.status).update(DELETE)).map(_.toLong)
-    }
+      db.run(dao.filter(byCondition(id)).map(_.status).update(DELETE)).map(_.toLong)
+    }.asyncBoundary
 
-  override protected def byCondition(
-      id: IdType
-  ): TableType => Rep[Boolean] = { e =>
+  abstract override protected def byCondition(id: IdType): TableType => Rep[Boolean] = { e =>
     import profile.api._
-    e.id === id.value && e.status =!= DELETE
+    super.byCondition(id)(e) && e.status =!= DELETE
   }
 
-  override protected def byConditions(
-      ids: Seq[IdType]
-  ): TableType => Rep[Boolean] = { e =>
+  abstract override protected def byConditions(ids: Seq[IdType]): TableType => Rep[Boolean] = { e =>
     import profile.api._
-    e.id.inSet(ids.map(_.value)) && e.status =!= DELETE
+    super.byConditions(ids)(e) && e.status =!= DELETE
   }
 
 }

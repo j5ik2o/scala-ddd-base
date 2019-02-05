@@ -10,7 +10,7 @@ trait AggregateMultiSoftDeleteFeature extends AggregateMultiSoftDeletable[RIO] w
   override def softDeleteMulti(ids: Seq[IdType]): Task[Long] =
     Task.deferFutureAction { implicit ec =>
       import profile.api._
-      db.run(dao.filter(_.id.inSet(ids.map(_.value).toSet)).map(_.status).update(DELETE)).map(_.toLong)
+      db.run(dao.filter(byConditions(ids)).map(_.status).update(DELETE)).map(_.toLong)
     }
 
 }

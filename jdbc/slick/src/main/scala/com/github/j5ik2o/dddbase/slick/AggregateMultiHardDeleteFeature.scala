@@ -9,7 +9,7 @@ trait AggregateMultiHardDeleteFeature extends AggregateMultiHardDeletable[RIO] w
 
   override def hardDeleteMulti(ids: Seq[IdType]): RIO[Long] = Task.deferFutureAction { implicit ec =>
     import profile.api._
-    db.run(dao.filter(_.id.inSet(ids.map(_.value))).delete).map(_.toLong)
+    db.run(dao.filter(byConditions(ids)).delete).map(_.toLong)
   }
 
 }

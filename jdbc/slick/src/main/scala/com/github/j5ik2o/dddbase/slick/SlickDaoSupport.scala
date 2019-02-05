@@ -18,18 +18,14 @@ trait SlickDaoSupport {
       }
     )
 
-  trait Record {
-    val id: Long
-  }
+  trait Record
 
   trait SoftDeletableRecord extends Record {
     val status: String
   }
 
   abstract class TableBase[T](_tableTag: Tag, _tableName: String, _schemaName: Option[String] = None)
-      extends Table[T](_tableTag, _schemaName, _tableName) {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-  }
+      extends Table[T](_tableTag, _schemaName, _tableName)
 
   trait SoftDeletableTableSupport[T] { this: TableBase[T] =>
     def status: Rep[String]

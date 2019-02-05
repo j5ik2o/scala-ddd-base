@@ -8,20 +8,34 @@ import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySlic
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.slick._
 import monix.eval.Task
+import slick.lifted.Rep
 
-class UserAccountRepositoryBySlick(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
+abstract class AbstractUserAccountRepositoryBySlick(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)
     extends UserAccountRepository[BySlick]
     with AggregateSingleReadFeature
     with AggregateMultiReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
-
   override type RecordType = UserAccountRecord
   override type TableType  = UserAccounts
   override protected val dao = UserAccountDao
+
+  override protected def byCondition(id: IdType): TableType => Rep[Boolean] = {
+    import profile.api._
+    _.id === id.value
+  }
+
+  override protected def byConditions(ids: Seq[IdType]): TableType => Rep[Boolean] = {
+    import profile.api._
+    _.id.inSet(ids.map(_.value))
+  }
+}
+
+class UserAccountRepositoryBySlick(override val profile: JdbcProfile, override val db: JdbcProfile#Backend#Database)
+    extends AbstractUserAccountRepositoryBySlick(profile, db)
+    with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature {
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     Task.pure {

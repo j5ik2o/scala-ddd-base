@@ -5,7 +5,6 @@ import com.github.j5ik2o.dddbase.slick.SlickDaoSupport
 
 <#assign softDelete=false>
 trait ${className}Component extends SlickDaoSupport {
-
   import profile.api._
 
   case class ${className}Record(
@@ -23,7 +22,7 @@ trait ${className}Component extends SlickDaoSupport {
 
   case class ${className}s(tag: Tag) extends TableBase[${className}Record](tag, "${tableName}")<#if softDelete == true> with SoftDeletableTableSupport[${className}Record]</#if> {
 <#list primaryKeys as primaryKey>
-    // def ${primaryKey.propertyName} = column[${primaryKey.propertyTypeName}]("${primaryKey.columnName}", O.PrimaryKey)</#list>
+    def ${primaryKey.propertyName}: Rep[${primaryKey.propertyTypeName}] = column[${primaryKey.propertyTypeName}]("${primaryKey.columnName}")</#list>
 <#list columns as column>
     <#if column.nullable>
     def ${column.propertyName}: Rep[Option[${column.propertyTypeName}]] = column[Option[${column.propertyTypeName}]]("${column.columnName}")
@@ -31,6 +30,7 @@ trait ${className}Component extends SlickDaoSupport {
     def ${column.propertyName}: Rep[${column.propertyTypeName}] = column[${column.propertyTypeName}]("${column.columnName}")
     </#if>
 </#list>
+    def pk  = primaryKey("pk", (<#list primaryKeys as primaryKey>${primaryKey.propertyName}<#if primaryKey_has_next>,</#if></#list>))
     override def * = (<#list primaryKeys as primaryKey>${primaryKey.propertyName}<#if primaryKey_has_next>,</#if></#list><#if primaryKeys?has_content>,</#if><#list columns as column>${column.propertyName}<#if column_has_next>,</#if></#list>) <> (${className}Record.tupled, ${className}Record.unapply)
   }
 

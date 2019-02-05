@@ -4,7 +4,6 @@ package slick {
   import com.github.j5ik2o.dddbase.slick.SlickDaoSupport
 
   trait UserAccountComponent extends SlickDaoSupport {
-
     import profile.api._
 
     case class UserAccountRecord(
@@ -21,7 +20,7 @@ package slick {
     case class UserAccounts(tag: Tag)
         extends TableBase[UserAccountRecord](tag, "user_account")
         with SoftDeletableTableSupport[UserAccountRecord] {
-      // def id = column[Long]("id", O.PrimaryKey)
+      def id: Rep[Long]                                   = column[Long]("id")
       def status: Rep[String]                             = column[String]("status")
       def email: Rep[String]                              = column[String]("email")
       def password: Rep[String]                           = column[String]("password")
@@ -29,6 +28,7 @@ package slick {
       def lastName: Rep[String]                           = column[String]("last_name")
       def createdAt: Rep[java.time.ZonedDateTime]         = column[java.time.ZonedDateTime]("created_at")
       def updatedAt: Rep[Option[java.time.ZonedDateTime]] = column[Option[java.time.ZonedDateTime]]("updated_at")
+      def pk                                              = primaryKey("pk", (id))
       override def * =
         (id, status, email, password, firstName, lastName, createdAt, updatedAt) <> (UserAccountRecord.tupled, UserAccountRecord.unapply)
     }
