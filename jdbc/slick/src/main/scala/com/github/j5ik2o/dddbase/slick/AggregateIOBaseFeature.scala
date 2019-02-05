@@ -20,7 +20,7 @@ trait AggregateIOBaseFeature extends AggregateIO[RIO] {
   protected def byCondition(id: IdType): TableType => Rep[Boolean]
 
   protected def byConditions(ids: Seq[IdType]): TableType => Rep[Boolean]
-  
+
 }
 
 object AggregateIOBaseFeature {
