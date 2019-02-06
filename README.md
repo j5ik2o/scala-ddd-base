@@ -14,14 +14,16 @@ Add the following to your sbt build (Scala 2.11.x, 2.12.x):
 ```scala
 resolvers += "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/"
 
+val scalaDddBaseVersion = "..."
+
 libraryDependencies ++= Seq(
-  "com.github.j5ik2o" %% "scala-ddd-base-core" % "1.0.14",
+  "com.github.j5ik2o" %% "scala-ddd-base-core" % scalaDddBaseVersion,
   // Please set as necessary
-  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % "1.0.14"
-  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % "1.0.14"
-  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % "1.0.14"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % "1.0.14"
-  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % "1.0.14" 
+  // "com.github.j5ik2o" %% "scala-ddd-base-slick" % scalaDddBaseVersion,
+  // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % scalaDddBaseVersion,
+  // "com.github.j5ik2o" %% "scala-ddd-base-redis" % scalaDddBaseVersion,
+  // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % scalaDddBaseVersion,
+  // "com.github.j5ik2o" %% "scala-ddd-base-memory" % scalaDddBaseVersion
 )
 ```
 
@@ -128,7 +130,7 @@ val resultTask: Task[UserAccount] = for {
   result <- userAccountRepository.resolveBy(userAccount.id)
 } yield result
 
-val resultFuture: Future[UserAccount] = resultTask.runAsync
+val resultFuture: Future[UserAccount] = resultTask.runToFuture
 ```
 
 - for SkinnyORM
@@ -140,7 +142,7 @@ val resultTask: Task[UserAccount] = for {
   result <- userAccountRepository.resolveBy(userAccount.id)
 } yield result
 
-val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runAsync
+val resultFuture: Future[UserAccount] = resultTask.run(AutoSession).runToFuture
 ```
 
 - for Memcached
@@ -154,7 +156,7 @@ val resultFuture: Future[UserAccount] = connectionPool
       r <- userAccountRepository.resolveById(userAccount.id)
     } yield r).run(con)
   }
-  .runAsync
+  .runToFuture
 ```
 
 - for Redis
@@ -168,7 +170,7 @@ val resultFuture: Future[UserAccount] = connectionPool
       r <- userAccountRepository.resolveById(userAccount.id)
     } yield r).run(con)
   }
-  .runAsync
+  .runToFuture
 ```
 
 - for Memory(Guava Cache)
@@ -178,7 +180,7 @@ val userAccountRepository: UserAccountRepository[OnMemory] = UserAccountReposito
 val resultFuture: Future[UserAccount] = (for {
   _ <- repository.store(userAccount)
   r <- repository.resolveById(userAccount.id)
-} yield r).runAsync
+} yield r).runToFuture
 ```
 
 - for Free
@@ -192,10 +194,10 @@ val program: Free[UserRepositoryDSL, UserAccount] = for {
 
 val slick = UserAccountRepository.bySlick(dbConfig.profile, dbConfig.db)
 val resultTask: Task[UserAccount] = UserAccountRepositoryOnFree.evaluate(slick)(program)
-val resultFuture: Future[UserAccount] = evalResult.runAsync
+val resultFuture: Future[UserAccount] = evalResult.runToFuture
 
 // if evaluation by skinny 
 // val skinny     = UserAccountRepository.bySkinny
 // val resultTask: Task[UserAccount] = UserAccountRepositoryOnFree.evaluate(skinny)(program)
-// val resultFuture: Future[UserAccount] = evalResult.run(AutoSession).runAsync
+// val resultFuture: Future[UserAccount] = evalResult.run(AutoSession).runToFuture
 ```
