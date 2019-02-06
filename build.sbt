@@ -193,6 +193,7 @@ lazy val flyway = (project in file("flyway"))
     flywayLocations := Seq(
       s"filesystem:${baseDirectory.value}/src/test/resources/rdb-migration/"
     ),
+    skip in publish := true,
     flywayMigrate := (flywayMigrate dependsOn wixMySQLStart).value
   )
   .enablePlugins(FlywayPlugin)
@@ -256,7 +257,8 @@ lazy val example = (project in file("example"))
         "com.github.j5ik2o"  %% "reactive-memcached-test" % reactiveMemcachedVersion % Test,
         "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
       ),
-      parallelExecution in Test := false
+      parallelExecution in Test := false,
+      skip in publish := true
     )
   )
   .dependsOn(core, slick, skinny, redis, memcached, memory, flyway)
