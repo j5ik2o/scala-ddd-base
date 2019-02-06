@@ -76,17 +76,22 @@ val coreSettings = Seq(
     Resolver.bintrayRepo("danslapman", "maven")
   ),
   libraryDependencies ++= Seq(
-    "org.typelevel"     %% "cats-core"        % "1.5.0",
-    "org.typelevel"     %% "cats-free"        % "1.5.0",
-    "com.beachape"      %% "enumeratum"       % "1.5.13",
-    "org.slf4j"         % "slf4j-api"         % "1.7.25",
-    "org.scalatest"     %% "scalatest"        % "3.0.5" % Test,
+    "org.scalatest"     %% "scalatest"        % "3.0.5"  % Test,
     "org.scalacheck"    %% "scalacheck"       % "1.14.0" % Test,
-    "ch.qos.logback"    % "logback-classic"   % "1.2.3" % Test,
-    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7" % Test,
-    "io.monix"          %% "monix"            % "3.0.0-RC2"
+    "ch.qos.logback"    % "logback-classic"   % "1.2.3"  % Test,
+    "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7"  % Test
   )
 ) ++ scalaStyleSettings
+
+val baseDependencies = Seq(
+  libraryDependencies ++= Seq(
+    "org.typelevel" %% "cats-core"  % "1.5.0",
+    "org.typelevel" %% "cats-free"  % "1.5.0",
+    "com.beachape"  %% "enumeratum" % "1.5.13",
+    "org.slf4j"     % "slf4j-api"   % "1.7.25",
+    "io.monix"      %% "monix"      % "3.0.0-RC2"
+  )
+)
 
 val circeVersion    = "0.11.1"
 val akkaHttpVersion = "10.1.7"
@@ -109,7 +114,7 @@ val slickVersion = "3.2.3"
 
 lazy val slick = (project in file("jdbc/slick"))
   .settings(
-    coreSettings ++ Seq(
+    coreSettings ++ baseDependencies ++ Seq(
       name := "scala-ddd-base-slick",
       libraryDependencies ++= Seq(
         "com.typesafe.slick" %% "slick"          % slickVersion,
@@ -122,7 +127,7 @@ lazy val slick = (project in file("jdbc/slick"))
 
 lazy val skinny = (project in file("jdbc/skinny"))
   .settings(
-    coreSettings ++ Seq(
+    coreSettings ++ baseDependencies ++ Seq(
       name := "scala-ddd-base-skinny",
       libraryDependencies ++= Seq(
         "org.skinny-framework" %% "skinny-orm" % "2.6.0"
@@ -146,7 +151,7 @@ lazy val redis = (project in file("nosql/redis"))
 
 lazy val memcached = (project in file("nosql/memcached"))
   .settings(
-    coreSettings ++ Seq(
+    coreSettings ++ baseDependencies ++ Seq(
       name := "scala-ddd-base-memcached",
       libraryDependencies ++= Seq(
         "com.github.j5ik2o" %% "reactive-memcached-core" % reactiveMemcachedVersion
@@ -158,7 +163,7 @@ lazy val memcached = (project in file("nosql/memcached"))
 
 lazy val memory = (project in file("nosql/memory"))
   .settings(
-    coreSettings ++ Seq(
+    coreSettings ++ baseDependencies ++ Seq(
       name := "scala-ddd-base-memory",
       libraryDependencies ++= Seq()
     )
@@ -194,7 +199,7 @@ lazy val flyway = (project in file("flyway"))
 
 lazy val example = (project in file("example"))
   .settings(
-    coreSettings ++ Seq(
+    coreSettings ++ baseDependencies ++ Seq(
       name := "scala-ddd-base-example",
       // JDBCのドライバークラス名を指定します(必須)
       driverClassName in generator := dbDriver,
