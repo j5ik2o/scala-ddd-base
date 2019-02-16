@@ -1,7 +1,6 @@
 package com.github.j5ik2o.dddbase.example.dao.memcached
 
 import java.time.{ Instant, ZoneId, ZonedDateTime }
-import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import cats.data.ReaderT
