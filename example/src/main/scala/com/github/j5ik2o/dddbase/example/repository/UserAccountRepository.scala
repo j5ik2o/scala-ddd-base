@@ -34,6 +34,7 @@ trait UserAccountRepository[M[_]]
 
 object UserAccountRepository {
 
+  type OnDynamoDB[A]  = Task[A]
   type OnRedis[A]     = ReaderT[Task, RedisConnection, A]
   type OnMemcached[A] = ReaderT[Task, MemcachedConnection, A]
   type OnMemory[A]    = Task[A]

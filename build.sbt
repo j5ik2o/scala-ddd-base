@@ -1,8 +1,26 @@
 import scala.concurrent.duration._
 
+val scalaVersion211 = "2.11.12"
+val scalaVersion212 = "2.12.8"
+
 val reactiveRedisVersion     = "1.0.19"
 val reactiveMemcachedVersion = "1.0.5"
-val compileScalaStyle        = taskKey[Unit]("compileScalaStyle")
+val reactiveDynamoDBVersion  = "1.0.2"
+val circeVersion             = "0.11.1"
+val akkaHttpVersion          = "10.1.7"
+val akkaVersion              = "2.5.19"
+val slickVersion             = "3.2.3"
+val catsVersion              = "1.5.0"
+val monixVersion             = "3.0.0-RC2"
+
+val dbDriver    = "com.mysql.jdbc.Driver"
+val dbName      = "dddbase"
+val dbUser      = "dddbase"
+val dbPassword  = "passwd"
+val dbPort: Int = Utils.RandomPortSupport.temporaryServerPort()
+val dbUrl       = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
+
+val compileScalaStyle = taskKey[Unit]("compileScalaStyle")
 
 lazy val scalaStyleSettings = Seq(
   (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
@@ -13,8 +31,8 @@ lazy val scalaStyleSettings = Seq(
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
-  scalaVersion := "2.11.12",
-  crossScalaVersions ++= Seq("2.11.12", "2.12.8"),
+  scalaVersion := scalaVersion211,
+  crossScalaVersions ++= Seq(scalaVersion211, scalaVersion212),
   scalacOptions ++= {
     Seq(
       "-feature",
@@ -22,10 +40,9 @@ val coreSettings = Seq(
       "-unchecked",
       "-encoding",
       "UTF-8",
-      "-language:existentials",
-      "-language:implicitConversions",
-      "-language:postfixOps",
-      "-language:higherKinds"
+      "-language:_",
+      "-Ydelambdafy:method",
+      "-target:jvm-1.8"
     ) ++ {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2L, scalaMajor)) if scalaMajor == 12 =>
@@ -85,17 +102,13 @@ val coreSettings = Seq(
 
 val baseDependencies = Seq(
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core"  % "1.5.0",
-    "org.typelevel" %% "cats-free"  % "1.5.0",
+    "org.typelevel" %% "cats-core"  % catsVersion,
+    "org.typelevel" %% "cats-free"  % catsVersion,
     "com.beachape"  %% "enumeratum" % "1.5.13",
     "org.slf4j"     % "slf4j-api"   % "1.7.25",
-    "io.monix"      %% "monix"      % "3.0.0-RC2"
+    "io.monix"      %% "monix"      % monixVersion
   )
 )
-
-val circeVersion    = "0.11.1"
-val akkaHttpVersion = "10.1.7"
-val akkaVersion     = "2.5.19"
 
 lazy val core = (project in file("core")).settings(
   coreSettings ++ Seq(
@@ -103,14 +116,6 @@ lazy val core = (project in file("core")).settings(
     libraryDependencies ++= Seq()
   )
 )
-
-val dbDriver     = "com.mysql.jdbc.Driver"
-val dbName       = "dddbase"
-val dbUser       = "dddbase"
-val dbPassword   = "passwd"
-val dbPort: Int  = Utils.RandomPortSupport.temporaryServerPort()
-val dbUrl        = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
-val slickVersion = "3.2.3"
 
 lazy val slick = (project in file("jdbc/slick"))
   .settings(
@@ -131,6 +136,18 @@ lazy val skinny = (project in file("jdbc/skinny"))
       name := "scala-ddd-base-skinny",
       libraryDependencies ++= Seq(
         "org.skinny-framework" %% "skinny-orm" % "2.6.0"
+      )
+    )
+  )
+  .dependsOn(core)
+  .disablePlugins(WixMySQLPlugin)
+
+lazy val dynamodb = (project in file("nosql/dynamodb"))
+  .settings(
+    coreSettings ++ Seq(
+      name := "scala-ddd-base-dynamodb",
+      libraryDependencies ++= Seq(
+        "com.github.j5ik2o" %% "reactive-dynamodb-v2-monix" % reactiveDynamoDBVersion
       )
     )
   )
@@ -253,6 +270,7 @@ lazy val example = (project in file("example"))
         "io.circe"           %% "circe-core"              % circeVersion,
         "io.circe"           %% "circe-generic"           % circeVersion,
         "io.circe"           %% "circe-parser"            % circeVersion,
+        "com.github.j5ik2o"  %% "reactive-dynamodb-test"  % reactiveDynamoDBVersion % Test,
         "com.github.j5ik2o"  %% "reactive-redis-test"     % reactiveRedisVersion % Test,
         "com.github.j5ik2o"  %% "reactive-memcached-test" % reactiveMemcachedVersion % Test,
         "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
@@ -261,7 +279,7 @@ lazy val example = (project in file("example"))
       skip in publish := true
     )
   )
-  .dependsOn(core, slick, skinny, redis, memcached, memory, flyway)
+  .dependsOn(core, slick, skinny, redis, memcached, dynamodb, memory, flyway)
   .disablePlugins(WixMySQLPlugin)
 
 lazy val `root` = (project in file("."))
