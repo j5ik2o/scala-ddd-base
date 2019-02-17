@@ -1,0 +1,32 @@
+# These directories are cached to S3 at the end of the build
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+    - $HOME/.wixMySQL
+
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find $HOME/.sbt -name "*.lock" -delete
+
+before_install:
+  - sudo apt-get update -qq && sudo apt-get install -y libaio1
+  - sudo hostname "$(hostname | cut -c1-63)"
+
+os: linux
+dist: trusty
+sudo: required
+
+language: scala
+scala: 2.12.4
+jdk: oraclejdk8
+
+script:
+  - SBT_TEST_TIME_FACTOR=10 sbt ++$TRAVIS_SCALA_VERSION test
+
+branches:
+  only:
+    - master
+    - develop
+    - /^.*head$/
