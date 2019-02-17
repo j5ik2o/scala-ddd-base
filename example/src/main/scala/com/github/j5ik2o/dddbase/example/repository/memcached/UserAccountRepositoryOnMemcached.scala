@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.memcached.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemcached
+import com.github.j5ik2o.dddbase.example.repository.{ OnMemcached, UserAccountRepository }
 import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memcached._
 import monix.eval.Task

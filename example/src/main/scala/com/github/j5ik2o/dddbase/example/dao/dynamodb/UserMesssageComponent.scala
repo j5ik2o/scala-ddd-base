@@ -1,4 +1,5 @@
 package com.github.j5ik2o.dddbase.example.dao.dynamodb
+
 import java.time.{ Instant, ZoneId, ZonedDateTime }
 
 import com.github.j5ik2o.dddbase.dynamodb.DynamoDBDaoSupport
@@ -6,39 +7,36 @@ import com.github.j5ik2o.reactive.dynamodb.model._
 import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
 import monix.eval.Task
 
-trait UserAccountComponent extends DynamoDBDaoSupport {
+trait UserMessageComponent extends DynamoDBDaoSupport {
 
-  case class UserAccountRecord(id: String,
+  case class UserMessageRecordId(userId: String, messageId: String)
+
+  case class UserMessageRecord(id: UserMessageRecordId,
                                status: String,
-                               email: String,
-                               password: String,
-                               firstName: String,
-                               lastName: String,
+                               message: String,
                                createdAt: java.time.ZonedDateTime,
                                updatedAt: Option[java.time.ZonedDateTime])
-      extends SoftDeletableRecord[String] {
-    override type This = UserAccountRecord
-    override def withStatus(value: String): UserAccountRecord =
+      extends SoftDeletableRecord[UserMessageRecordId] {
+    override type This = UserMessageRecord
+    override def withStatus(value: String): UserMessageRecord =
       copy(status = value)
   }
 
-  case class UserAccountDao(client: DynamoDBTaskClientV2)
-      extends Dao[String, UserAccountRecord]
-      with DaoSoftDeletable[String, UserAccountRecord] {
-    val tableName       = "UserAccount"
+  case class UserMessageDao(client: DynamoDBTaskClientV2)
+      extends Dao[UserMessageRecordId, UserMessageRecord]
+      with DaoSoftDeletable[UserMessageRecordId, UserMessageRecord] {
+    val tableName       = "UserMessage"
     val DELETED: String = "deleted"
 
-    override def put(record: UserAccountRecord): Task[Long] = {
+    override def put(record: UserMessageRecord): Task[Long] = {
       client
         .putItem(
           tableName,
           Map(
-            "Id"        -> AttributeValue().withString(Some(record.id)),
+            "UserId"    -> AttributeValue().withString(Some(record.id.userId)),
+            "MessageId" -> AttributeValue().withString(Some(record.id.messageId)),
             "Status"    -> AttributeValue().withString(Some(record.status)),
-            "Email"     -> AttributeValue().withString(Some(record.email)),
-            "Password"  -> AttributeValue().withString(Some(record.password)),
-            "FirstName" -> AttributeValue().withString(Some(record.firstName)),
-            "LastName"  -> AttributeValue().withString(Some(record.lastName)),
+            "Message"   -> AttributeValue().withString(Some(record.message)),
             "CreatedAt" -> AttributeValue().withNumber(Some(record.createdAt.toInstant.toEpochMilli.toString))
           ) ++ record.updatedAt
             .map { s =>
@@ -54,7 +52,7 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         }
     }
 
-    override def putMulti(records: Seq[UserAccountRecord]): Task[Long] = {
+    override def putMulti(records: Seq[UserMessageRecord]): Task[Long] = {
       client
         .batchWriteItem(
           Map(
@@ -64,12 +62,10 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
                   PutRequest().withItem(
                     Some(
                       Map(
-                        "Id"        -> AttributeValue().withString(Some(record.id)),
+                        "UserId"    -> AttributeValue().withString(Some(record.id.userId)),
+                        "MessageId" -> AttributeValue().withString(Some(record.id.messageId)),
                         "Status"    -> AttributeValue().withString(Some(record.status)),
-                        "Email"     -> AttributeValue().withString(Some(record.email)),
-                        "Password"  -> AttributeValue().withString(Some(record.password)),
-                        "FirstName" -> AttributeValue().withString(Some(record.firstName)),
-                        "LastName"  -> AttributeValue().withString(Some(record.lastName)),
+                        "Message"   -> AttributeValue().withString(Some(record.message)),
                         "CreatedAt" -> AttributeValue()
                           .withNumber(Some(record.createdAt.toInstant.toEpochMilli.toString))
                       ) ++ record.updatedAt
@@ -92,41 +88,47 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         }
     }
 
-    override def get(id: String): Task[Option[UserAccountRecord]] = {
-      client.getItem(tableName, Map("Id" -> AttributeValue().withString(Some(id)))).flatMap { response =>
-        if (response.isSuccessful) {
-          Task.pure {
-            response.item.map { item =>
-              UserAccountRecord(
-                id = item("Id").string.get,
-                status = item("Status").string.get,
-                email = item("Email").string.get,
-                password = item("Password").string.get,
-                firstName = item("FirstName").string.get,
-                lastName = item("LastName").string.get,
-                createdAt = item("CreatedAt").number.map { v =>
-                  ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
-                }.get,
-                updatedAt = item
-                  .get("UpdatedAt")
-                  .flatMap(_.number.map { v =>
+    override def get(id: UserMessageRecordId): Task[Option[UserMessageRecord]] = {
+      client
+        .getItem(tableName,
+                 Map(
+                   "UserId"    -> AttributeValue().withString(Some(id.userId)),
+                   "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                 ))
+        .flatMap { response =>
+          if (response.isSuccessful) {
+            Task.pure {
+              response.item.map { item =>
+                UserMessageRecord(
+                  id = UserMessageRecordId(item("UserId").string.get, item("MessageId").string.get),
+                  status = item("Status").string.get,
+                  message = item("Password").string.get,
+                  createdAt = item("CreatedAt").number.map { v =>
                     ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
-                  })
-              )
+                  }.get,
+                  updatedAt = item
+                    .get("UpdatedAt")
+                    .flatMap(_.number.map { v =>
+                      ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
+                    })
+                )
+              }
             }
-          }
-        } else
-          Task.raiseError(new Exception())
-      }
+          } else
+            Task.raiseError(new Exception())
+        }
 
     }
-    override def getMulti(ids: Seq[String]): Task[Seq[UserAccountRecord]] = {
+    override def getMulti(ids: Seq[UserMessageRecordId]): Task[Seq[UserMessageRecord]] = {
       client
         .batchGetItem(
           Map(
             tableName -> KeysAndAttributes()
               .withKeys(Some(ids.map { id =>
-                Map("Id" -> AttributeValue().withString(Some(id)))
+                Map(
+                  "UserId"    -> AttributeValue().withString(Some(id.userId)),
+                  "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                )
               }))
           )
         )
@@ -137,13 +139,10 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
                 .map { records =>
                   records.values.toSeq.flatMap { records =>
                     records.map { item =>
-                      UserAccountRecord(
-                        id = item("Id").string.get,
+                      UserMessageRecord(
+                        id = UserMessageRecordId(item("UserId").string.get, item("MessageId").string.get),
                         status = item("Status").string.get,
-                        email = item("Email").string.get,
-                        password = item("Password").string.get,
-                        firstName = item("FirstName").string.get,
-                        lastName = item("LastName").string.get,
+                        message = item("Password").string.get,
                         createdAt = item("CreatedAt").number.map { v =>
                           ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
                         }.get,
@@ -162,16 +161,22 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
 
     }
 
-    override def delete(id: String): Task[Long] = {
-      client.deleteItem(tableName, Map("Id" -> AttributeValue().withString(Some(id)))).flatMap { response =>
-        if (response.isSuccessful)
-          Task.pure(1L)
-        else
-          Task.raiseError(new Exception())
-      }
+    override def delete(id: UserMessageRecordId): Task[Long] = {
+      client
+        .deleteItem(tableName,
+                    Map(
+                      "UserId"    -> AttributeValue().withString(Some(id.userId)),
+                      "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                    ))
+        .flatMap { response =>
+          if (response.isSuccessful)
+            Task.pure(1L)
+          else
+            Task.raiseError(new Exception())
+        }
     }
 
-    override def deleteMulti(ids: Seq[String]): Task[Long] = {
+    override def deleteMulti(ids: Seq[UserMessageRecordId]): Task[Long] = {
       client
         .batchWriteItem(
           Map(
@@ -181,7 +186,8 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
                   DeleteRequest().withKey(
                     Some(
                       Map(
-                        "Id" -> AttributeValue().withString(Some(id))
+                        "UserId"    -> AttributeValue().withString(Some(id.userId)),
+                        "MessageId" -> AttributeValue().withString(Some(id.messageId))
                       )
                     )
                   )
@@ -198,11 +204,14 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         }
     }
 
-    override def softDelete(id: String): Task[Long] = {
+    override def softDelete(id: UserMessageRecordId): Task[Long] = {
       client
         .updateItem(
           tableName,
-          Map("Id"     -> AttributeValue().withString(Some(id))),
+          Map(
+            "UserId"    -> AttributeValue().withString(Some(id.userId)),
+            "MessageId" -> AttributeValue().withString(Some(id.messageId))
+          ),
           Map("Status" -> AttributeValueUpdate().withValue(Some(AttributeValue().withString(Some(DELETED)))))
         )
         .flatMap { response =>
@@ -213,7 +222,7 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         }
     }
 
-    override def softDeleteMulti(ids: Seq[String]): Task[Long] = {
+    override def softDeleteMulti(ids: Seq[UserMessageRecordId]): Task[Long] = {
       Task
         .traverse(ids) { id =>
           delete(id)

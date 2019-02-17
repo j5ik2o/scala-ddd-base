@@ -20,13 +20,13 @@ val dbPassword  = "passwd"
 val dbPort: Int = Utils.RandomPortSupport.temporaryServerPort()
 val dbUrl       = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
 
-val compileScalaStyle = taskKey[Unit]("compileScalaStyle")
-
-lazy val scalaStyleSettings = Seq(
-  (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
-  compileScalaStyle := scalastyle.in(Compile).toTask("").value,
-  (compile in Compile) := (compile in Compile).dependsOn(compileScalaStyle).value
-)
+//val compileScalaStyle = taskKey[Unit]("compileScalaStyle")
+//
+//lazy val scalaStyleSettings = Seq(
+//  (scalastyleConfig in Compile) := file("scalastyle-config.xml"),
+//  compileScalaStyle := scalastyle.in(Compile).toTask("").value,
+//  (compile in Compile) := (compile in Compile).dependsOn(compileScalaStyle).value
+//)
 
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
@@ -98,7 +98,7 @@ val coreSettings = Seq(
     "ch.qos.logback"    % "logback-classic"   % "1.2.3"  % Test,
     "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7"  % Test
   )
-) ++ scalaStyleSettings
+) // ++ scalaStyleSettings
 
 val baseDependencies = Seq(
   libraryDependencies ++= Seq(
@@ -250,7 +250,7 @@ lazy val example = (project in file("example"))
       // モデル名に対してどのテンプレートを利用するか指定できます。
       templateNameMapper in generator := {
         case className if className.endsWith("Spec") => "template_spec.ftl"
-        case _                                       => "template.ftl"
+        case className                               => className + "_template.ftl"
       },
       generateAll in generator := Def
         .taskDyn {

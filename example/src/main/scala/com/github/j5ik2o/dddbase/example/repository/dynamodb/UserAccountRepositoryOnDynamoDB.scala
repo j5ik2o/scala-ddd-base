@@ -4,8 +4,7 @@ import com.github.j5ik2o.dddbase.dynamodb.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.dynamodb._
 import com.github.j5ik2o.dddbase.example.dao.dynamodb.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnDynamoDB
+import com.github.j5ik2o.dddbase.example.repository.{ OnDynamoDB, UserAccountRepository }
 import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
 import monix.eval.Task
 
@@ -18,9 +17,12 @@ class UserAccountRepositoryOnDynamoDB(client: DynamoDBTaskClientV2)
     with AggregateSingleSoftDeleteFeature
     with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao
+  override type RecordIdType = String
+  override type RecordType   = UserAccountRecord
+  override type DaoType      = UserAccountDao
   override protected val dao = UserAccountDao(client)
+
+  override protected def toRecordId(id: UserAccountId): String = id.value.toString
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     Task.pure {
@@ -51,5 +53,4 @@ class UserAccountRepositoryOnDynamoDB(client: DynamoDBTaskClientV2)
       )
     }
   }
-
 }

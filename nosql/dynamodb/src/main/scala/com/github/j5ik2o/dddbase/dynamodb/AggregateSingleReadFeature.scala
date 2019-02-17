@@ -8,7 +8,7 @@ trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with Aggrega
 
   override def resolveById(id: IdType): RIO[AggregateType] = {
     for {
-      record <- dao.get(id.value.toString).flatMap {
+      record <- dao.get(toRecordId(id)).flatMap {
         case Some(v) => Task.pure(v)
         case None    => Task.raiseError(AggregateNotFoundException(id))
       }

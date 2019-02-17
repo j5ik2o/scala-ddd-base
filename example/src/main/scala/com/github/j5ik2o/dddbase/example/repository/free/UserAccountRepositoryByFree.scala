@@ -3,8 +3,7 @@ package com.github.j5ik2o.dddbase.example.repository.free
 import cats.free.Free.liftF
 import cats.{ ~>, Monad }
 import com.github.j5ik2o.dddbase.example.model.{ UserAccount, UserAccountId }
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.ByFree
+import com.github.j5ik2o.dddbase.example.repository.{ ByFree, UserAccountRepository }
 
 object UserAccountRepositoryByFree extends UserAccountRepository[ByFree] {
 
