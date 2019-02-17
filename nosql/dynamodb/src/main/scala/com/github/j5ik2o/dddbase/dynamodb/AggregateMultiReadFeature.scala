@@ -8,7 +8,7 @@ trait AggregateMultiReadFeature extends AggregateMultiReader[RIO] with Aggregate
 
   override def resolveMulti(ids: Seq[IdType]): RIO[Seq[AggregateType]] =
     for {
-      results    <- dao.getMulti(ids.map(_.value.toString))
+      results    <- dao.getMulti(ids.map(toRecordId))
       aggregates <- Task.sequence(results.map(v => convertToAggregate(v)))
     } yield aggregates
 

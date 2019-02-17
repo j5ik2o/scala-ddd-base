@@ -2,8 +2,7 @@ package com.github.j5ik2o.dddbase.example.repository.memory
 
 import com.github.j5ik2o.dddbase.example.dao.memory.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnMemory
+import com.github.j5ik2o.dddbase.example.repository.{ OnMemory, UserAccountRepository }
 import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memory._
 import com.google.common.base.Ticker

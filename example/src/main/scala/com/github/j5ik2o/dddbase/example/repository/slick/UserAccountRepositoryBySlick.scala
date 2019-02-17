@@ -1,13 +1,12 @@
 package com.github.j5ik2o.dddbase.example.repository.slick
 
-import slick.jdbc.JdbcProfile
 import com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySlick
+import com.github.j5ik2o.dddbase.example.repository.{ BySlick, UserAccountRepository }
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.slick._
 import monix.eval.Task
+import slick.jdbc.JdbcProfile
 import slick.lifted.Rep
 
 abstract class AbstractUserAccountRepositoryBySlick(val profile: JdbcProfile, val db: JdbcProfile#Backend#Database)

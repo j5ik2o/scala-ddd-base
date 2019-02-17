@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.redis.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.OnRedis
+import com.github.j5ik2o.dddbase.example.repository.{ OnRedis, UserAccountRepository }
 import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.redis._
 import monix.eval.Task

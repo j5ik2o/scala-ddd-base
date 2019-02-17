@@ -4,17 +4,17 @@ import monix.eval.Task
 
 trait DynamoDBDaoSupport {
 
-  trait Record {
-    val id: String
+  trait Record[ID] {
+    val id: ID
   }
 
-  trait SoftDeletableRecord extends Record {
-    type This <: SoftDeletableRecord
+  trait SoftDeletableRecord[ID] extends Record[ID] {
+    type This <: SoftDeletableRecord[ID]
     val status: String
     def withStatus(value: String): This
   }
 
-  trait Dao[R <: Record] {
+  trait Dao[ID, R <: Record[ID]] {
 
     protected def client: DynamoDBTaskClientV2
 
@@ -22,21 +22,21 @@ trait DynamoDBDaoSupport {
 
     def putMulti(records: Seq[R]): Task[Long]
 
-    def get(id: String): Task[Option[R]]
+    def get(id: ID): Task[Option[R]]
 
-    def getMulti(ids: Seq[String]): Task[Seq[R]]
+    def getMulti(ids: Seq[ID]): Task[Seq[R]]
 
-    def delete(id: String): Task[Long]
+    def delete(id: ID): Task[Long]
 
-    def deleteMulti(ids: Seq[String]): Task[Long]
+    def deleteMulti(ids: Seq[ID]): Task[Long]
 
   }
 
-  trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
+  trait DaoSoftDeletable[ID, R <: SoftDeletableRecord[ID]] { this: Dao[ID, R] =>
 
-    def softDelete(id: String): Task[Long]
+    def softDelete(id: ID): Task[Long]
 
-    def softDeleteMulti(ids: Seq[String]): Task[Long]
+    def softDeleteMulti(ids: Seq[ID]): Task[Long]
 
   }
 

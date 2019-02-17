@@ -5,11 +5,12 @@ import com.github.j5ik2o.dddbase.dynamodb.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 
 trait AggregateIOBaseFeature extends AggregateIO[RIO] {
-  type RecordType <: DynamoDBDaoSupport#Record
-  type DaoType <: DynamoDBDaoSupport#Dao[RecordType]
+  type RecordIdType
+  type RecordType <: DynamoDBDaoSupport#Record[RecordIdType]
+  type DaoType <: DynamoDBDaoSupport#Dao[RecordIdType, RecordType]
 
   protected val dao: DaoType
-
+  protected def toRecordId(id: IdType): RecordIdType
 }
 
 object AggregateIOBaseFeature {

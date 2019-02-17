@@ -3,8 +3,7 @@ package com.github.j5ik2o.dddbase.example.repository.skinny
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.skinny.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository.BySkinny
+import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, UserAccountRepository }
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task

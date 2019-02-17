@@ -6,6 +6,6 @@ import com.github.j5ik2o.dddbase.{ AggregateMultiSoftDeletable, AggregateMultiWr
 trait AggregateMultiSoftDeleteFeature extends AggregateMultiSoftDeletable[RIO] with AggregateBaseReadFeature {
   this: AggregateMultiWriter[RIO] with AggregateSingleSoftDeleteFeature =>
 
-  override def softDeleteMulti(ids: Seq[IdType]): RIO[Long] = dao.softDeleteMulti(ids.map(_.value.toString))
+  override def softDeleteMulti(ids: Seq[IdType]): RIO[Long] = dao.softDeleteMulti(ids.map(toRecordId))
 
 }
