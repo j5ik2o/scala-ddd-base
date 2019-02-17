@@ -9,7 +9,7 @@ import monix.eval.Task
 
 trait UserMessageComponent extends DynamoDBDaoSupport {
 
-  case class UserMessageRecordId(userId: String, messageId: String)
+  case class UserMessageRecordId(userId: Long, messageId: Long)
 
   case class UserMessageRecord(id: UserMessageRecordId,
                                status: String,
@@ -33,8 +33,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
         .putItem(
           tableName,
           Map(
-            "UserId"    -> AttributeValue().withString(Some(record.id.userId)),
-            "MessageId" -> AttributeValue().withString(Some(record.id.messageId)),
+            "UserId"    -> AttributeValue().withNumber(Some(record.id.userId.toString)),
+            "MessageId" -> AttributeValue().withNumber(Some(record.id.messageId.toString)),
             "Status"    -> AttributeValue().withString(Some(record.status)),
             "Message"   -> AttributeValue().withString(Some(record.message)),
             "CreatedAt" -> AttributeValue().withNumber(Some(record.createdAt.toInstant.toEpochMilli.toString))
@@ -62,8 +62,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
                   PutRequest().withItem(
                     Some(
                       Map(
-                        "UserId"    -> AttributeValue().withString(Some(record.id.userId)),
-                        "MessageId" -> AttributeValue().withString(Some(record.id.messageId)),
+                        "UserId"    -> AttributeValue().withNumber(Some(record.id.userId.toString)),
+                        "MessageId" -> AttributeValue().withNumber(Some(record.id.messageId.toString)),
                         "Status"    -> AttributeValue().withString(Some(record.status)),
                         "Message"   -> AttributeValue().withString(Some(record.message)),
                         "CreatedAt" -> AttributeValue()
@@ -92,15 +92,15 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
       client
         .getItem(tableName,
                  Map(
-                   "UserId"    -> AttributeValue().withString(Some(id.userId)),
-                   "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                   "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+                   "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
                  ))
         .flatMap { response =>
           if (response.isSuccessful) {
             Task.pure {
               response.item.map { item =>
                 UserMessageRecord(
-                  id = UserMessageRecordId(item("UserId").string.get, item("MessageId").string.get),
+                  id = UserMessageRecordId(item("UserId").number.get.toLong, item("MessageId").number.get.toLong),
                   status = item("Status").string.get,
                   message = item("Password").string.get,
                   createdAt = item("CreatedAt").number.map { v =>
@@ -126,8 +126,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
             tableName -> KeysAndAttributes()
               .withKeys(Some(ids.map { id =>
                 Map(
-                  "UserId"    -> AttributeValue().withString(Some(id.userId)),
-                  "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                  "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+                  "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
                 )
               }))
           )
@@ -140,7 +140,7 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
                   records.values.toSeq.flatMap { records =>
                     records.map { item =>
                       UserMessageRecord(
-                        id = UserMessageRecordId(item("UserId").string.get, item("MessageId").string.get),
+                        id = UserMessageRecordId(item("UserId").number.get.toLong, item("MessageId").number.get.toLong),
                         status = item("Status").string.get,
                         message = item("Password").string.get,
                         createdAt = item("CreatedAt").number.map { v =>
@@ -165,8 +165,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
       client
         .deleteItem(tableName,
                     Map(
-                      "UserId"    -> AttributeValue().withString(Some(id.userId)),
-                      "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                      "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+                      "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
                     ))
         .flatMap { response =>
           if (response.isSuccessful)
@@ -186,8 +186,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
                   DeleteRequest().withKey(
                     Some(
                       Map(
-                        "UserId"    -> AttributeValue().withString(Some(id.userId)),
-                        "MessageId" -> AttributeValue().withString(Some(id.messageId))
+                        "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+                        "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
                       )
                     )
                   )
@@ -209,8 +209,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
         .updateItem(
           tableName,
           Map(
-            "UserId"    -> AttributeValue().withString(Some(id.userId)),
-            "MessageId" -> AttributeValue().withString(Some(id.messageId))
+            "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+            "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
           ),
           Map("Status" -> AttributeValueUpdate().withValue(Some(AttributeValue().withString(Some(DELETED)))))
         )

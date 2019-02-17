@@ -16,7 +16,7 @@ INSERT INTO `user_account_id_sequence_number` VALUES (100);
 
 CREATE TABLE `user_message` (
   `user_id`     bigint NOT NULL,
-  `message_id`  bigint NOT NULL ,
+  `message_id`  bigint NOT NULL,
   `status`      enum('active', 'suspended', 'deleted') NOT NULL default 'active',
   `message`   varchar(255) NOT NULL,
   `created_at`  datetime(6) NOT NULL,

@@ -11,7 +11,7 @@ trait AggregateMultiHardDeleteFeature extends AggregateMultiHardDeletable[RIO] w
 
   override def hardDeleteMulti(ids: Seq[IdType]): RIO[Long] = ReaderT { implicit dbSession =>
     Task {
-      dao.deleteBy(sqls.in(dao.defaultAlias.id, ids.map(_.value))).toLong
+      dao.deleteBy(byConditions(ids)).toLong
     }
   }
 

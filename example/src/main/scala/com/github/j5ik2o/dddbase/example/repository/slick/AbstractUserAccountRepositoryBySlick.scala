@@ -4,7 +4,12 @@ import com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ BySlick, UserAccountRepository }
 import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
-import com.github.j5ik2o.dddbase.slick._
+import com.github.j5ik2o.dddbase.slick.{
+  AggregateMultiReadFeature,
+  AggregateMultiWriteFeature,
+  AggregateSingleReadFeature,
+  AggregateSingleWriteFeature
+}
 import monix.eval.Task
 import slick.jdbc.JdbcProfile
 import slick.lifted.Rep
@@ -29,12 +34,6 @@ abstract class AbstractUserAccountRepositoryBySlick(val profile: JdbcProfile, va
     import profile.api._
     _.id.inSet(ids.map(_.value))
   }
-}
-
-class UserAccountRepositoryBySlick(override val profile: JdbcProfile, override val db: JdbcProfile#Backend#Database)
-    extends AbstractUserAccountRepositoryBySlick(profile, db)
-    with AggregateSingleSoftDeleteFeature
-    with AggregateMultiSoftDeleteFeature {
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     Task.pure {

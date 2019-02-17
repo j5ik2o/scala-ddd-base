@@ -9,7 +9,7 @@ trait AggregateSingleHardDeleteFeature extends AggregateSingleHardDeletable[RIO]
   this: AggregateSingleWriter[RIO] =>
 
   override def hardDelete(id: IdType): RIO[Long] = ReaderT { implicit dbSession =>
-    Task { dao.deleteById(id.value).toLong }
+    Task { dao.deleteById(toRecordId(id)).toLong }
   }
 
 }

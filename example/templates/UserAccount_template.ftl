@@ -60,9 +60,11 @@ trait ${className}Component extends SkinnyDaoSupport {
     <#else>    ${column.propertyName}: ${column.propertyTypeName}<#if column_has_next>,</#if>
     </#if>
 </#list>
-  ) extends Record
+  ) extends Record[Long]
 
-  object ${className}Dao extends Dao[${className}Record] {
+  object ${className}Dao extends DaoWithId[Long, ${className}Record] {
+
+      override implicit def pbf: ParameterBinderFactory[Long] = ParameterBinderFactory.longParameterBinderFactory
 
       override def useAutoIncrementPrimaryKey: Boolean = false
 
@@ -73,10 +75,13 @@ trait ${className}Component extends SkinnyDaoSupport {
 </#list>
     )
 
-      override def defaultAlias: Alias[UserAccountRecord] = createAlias("${className[0]?lower_case}")
+      override def defaultAlias: Alias[${className}Record] = createAlias("${className[0]?lower_case}")
 
       override def extract(rs: WrappedResultSet, s: ResultName[${className}Record]): ${className}Record = autoConstruct(rs, s)
 
+      override def rawValueToId(value: Any): Long = value.toString.toLong
+
+      override def idToRawValue(id: Long): Any    = id
 
   }
 

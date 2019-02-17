@@ -7,20 +7,25 @@ import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, UserAccountRepos
 import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task
+import scalikejdbc._
 
-class UserAccountRepositoryBySkinny
+trait UserAccountRepositoryBySkinny
     extends UserAccountRepository[BySkinny]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiReadFeature
     with AggregateMultiWriteFeature
-    with AggregateSingleSoftDeleteFeature
-    with AggregateMultiSoftDeleteFeature
     with UserAccountComponent {
 
-  override type RecordType = UserAccountRecord
-  override type DaoType    = UserAccountDao.type
+  override type RecordIdType = Long
+  override type RecordType   = UserAccountRecord
+  override type DaoType      = UserAccountDao.type
   override protected val dao: UserAccountDao.type = UserAccountDao
+
+  override protected def toRecordId(id: UserAccountId): Long = id.value
+
+  override protected def byCondition(id: IdType): SQLSyntax        = sqls.eq(dao.defaultAlias.id, id.value)
+  override protected def byConditions(ids: Seq[IdType]): SQLSyntax = sqls.in(dao.defaultAlias.id, ids.map(_.value))
 
   override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
     ReaderT { _ =>
@@ -55,5 +60,9 @@ class UserAccountRepositoryBySkinny
       }
     }
   }
-
 }
+
+class UserAccountRepositoryBySkinnyImpl
+    extends UserAccountRepositoryBySkinny
+    with AggregateSingleSoftDeleteFeature
+    with AggregateMultiSoftDeleteFeature

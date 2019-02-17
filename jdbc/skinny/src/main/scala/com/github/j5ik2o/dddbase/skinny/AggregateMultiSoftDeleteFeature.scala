@@ -11,7 +11,7 @@ trait AggregateMultiSoftDeleteFeature extends AggregateMultiSoftDeletable[RIO] w
 
   override def softDeleteMulti(ids: Seq[IdType]): RIO[Long] = ReaderT { implicit dbDesion =>
     Task {
-      dao.updateBy(sqls.in(dao.defaultAlias.status, ids.map(_.value))).withAttributes('status -> DELETE).toLong
+      dao.updateBy(byConditions(ids)).withAttributes('status -> DELETE).toLong
     }
   }
 

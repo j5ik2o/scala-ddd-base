@@ -8,8 +8,11 @@ import com.github.j5ik2o.dddbase.example.repository.dynamodb.UserAccountReposito
 import com.github.j5ik2o.dddbase.example.repository.memcached.UserAccountRepositoryOnMemcached
 import com.github.j5ik2o.dddbase.example.repository.memory.UserAccountRepositoryOnMemory
 import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedis
-import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinny
-import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlick
+import com.github.j5ik2o.dddbase.example.repository.skinny.{
+  UserAccountRepositoryBySkinny,
+  UserAccountRepositoryBySkinnyImpl
+}
+import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickImpl
 import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
 import com.google.common.base.Ticker
 
@@ -30,9 +33,9 @@ trait UserAccountRepository[M[_]]
 object UserAccountRepository {
 
   def bySlick(profile: JdbcProfile, db: JdbcProfile#Backend#Database): UserAccountRepository[BySlick] =
-    new UserAccountRepositoryBySlick(profile, db)
+    new UserAccountRepositoryBySlickImpl(profile, db)
 
-  def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryBySkinny
+  def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryBySkinnyImpl
 
   def onDynamoDB(client: DynamoDBTaskClientV2): UserAccountRepository[OnDynamoDB] =
     new UserAccountRepositoryOnDynamoDB(client)
