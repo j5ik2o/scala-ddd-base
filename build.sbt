@@ -5,7 +5,7 @@ val scalaVersion212 = "2.12.8"
 
 val reactiveRedisVersion     = "1.0.19"
 val reactiveMemcachedVersion = "1.0.5"
-val reactiveDynamoDBVersion  = "1.0.2"
+val reactiveDynamoDBVersion  = "1.0.4-SNAPSHOT"
 val circeVersion             = "0.11.1"
 val akkaHttpVersion          = "10.1.7"
 val akkaVersion              = "2.5.19"
@@ -31,7 +31,7 @@ val dbUrl       = s"jdbc:mysql://localhost:$dbPort/$dbName?useSSL=false"
 val coreSettings = Seq(
   sonatypeProfileName := "com.github.j5ik2o",
   organization := "com.github.j5ik2o",
-  scalaVersion := scalaVersion211,
+  scalaVersion := scalaVersion212,
   crossScalaVersions ++= Seq(scalaVersion211, scalaVersion212),
   scalacOptions ++= {
     Seq(
@@ -287,4 +287,4 @@ lazy val `root` = (project in file("."))
   .settings(
     name := "scala-ddd-base-project"
   )
-  .aggregate(core, slick, skinny, redis, memcached, memory, example)
+  .aggregate(core, slick, skinny, redis, memcached, dynamodb, memory, example)

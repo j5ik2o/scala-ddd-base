@@ -5,8 +5,8 @@ import com.github.j5ik2o.dddbase.{ Aggregate, AggregateId }
 
 import scala.reflect.{ classTag, ClassTag }
 
-case class UserMessageId(userId: String, messageId: String) extends AggregateId {
-  override type IdType = (String, String)
+case class UserMessageId(userId: Long, messageId: Long) extends AggregateId {
+  override type IdType = (Long, Long)
   override val value = (userId, messageId)
 }
 

@@ -56,9 +56,11 @@ package skinny {
         lastName: String,
         createdAt: java.time.ZonedDateTime,
         updatedAt: Option[java.time.ZonedDateTime]
-    ) extends Record
+    ) extends Record[Long]
 
-    object UserAccountDao extends Dao[UserAccountRecord] {
+    object UserAccountDao extends DaoWithId[Long, UserAccountRecord] {
+
+      override implicit def pbf: ParameterBinderFactory[Long] = ParameterBinderFactory.longParameterBinderFactory
 
       override def useAutoIncrementPrimaryKey: Boolean = false
 
@@ -78,6 +80,10 @@ package skinny {
 
       override def extract(rs: WrappedResultSet, s: ResultName[UserAccountRecord]): UserAccountRecord =
         autoConstruct(rs, s)
+
+      override def rawValueToId(value: Any): Long = value.toString.toLong
+
+      override def idToRawValue(id: Long): Any = id
 
     }
 

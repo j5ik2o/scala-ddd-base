@@ -12,13 +12,13 @@ trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO]
 
   override def softDelete(id: IdType): RIO[Long] = ReaderT { implicit dbSession =>
     Task {
-      dao.updateById(id.value).withAttributes('status -> DELETE).toLong
+      dao.updateById(toRecordId(id)).withAttributes('status -> DELETE).toLong
     }
   }
 
-  override protected def byCondition(id: IdType): SQLSyntax =
+  abstract override protected def byCondition(id: IdType): SQLSyntax =
     super.byCondition(id).and.ne(dao.defaultAlias.status, DELETE)
 
-  override protected def byConditions(ids: Seq[IdType]): SQLSyntax =
+  abstract override protected def byConditions(ids: Seq[IdType]): SQLSyntax =
     super.byConditions(ids).and.ne(dao.defaultAlias.status, DELETE)
 }

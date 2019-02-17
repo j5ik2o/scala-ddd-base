@@ -1,21 +1,19 @@
-package com.github.j5ik2o.dddbase.example.repository.skinny
+package com.github.j5ik2o.dddbase.example.repository.slick
 
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.UserAccountRepository
-import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
+import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, Slick3SpecSupport }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
-import scalikejdbc.AutoSession
 
-class UserAccountRepositoryBySkinnySpec
+class UserAccountRepositoryBySlickImplSpec
     extends FreeSpecLike
     with FlywayWithMySQLSpecSupport
-    with SkinnySpecSupport
+    with Slick3SpecSupport
     with Matchers {
 
-  val repository                   = UserAccountRepository.bySkinny
   override val tables: Seq[String] = Seq("user_account")
 
   val userAccount = UserAccount(
@@ -42,24 +40,24 @@ class UserAccountRepositoryBySkinnySpec
         updatedAt = None
       )
 
-  "UserAccountRepositoryBySkinny" - {
+  "UserAccountRepositoryBySlickImpl" - {
     "store" in {
+      val repository = new UserAccountRepositoryBySlickImpl(dbConfig.profile, dbConfig.db)
       val result = (for {
         _ <- repository.store(userAccount)
         r <- repository.resolveById(userAccount.id)
-      } yield r).run(AutoSession).runToFuture.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccount
     }
     "storeMulti" in {
+      val repository = new UserAccountRepositoryBySlickImpl(dbConfig.profile, dbConfig.db)
       val result = (for {
         _ <- repository.storeMulti(userAccounts)
         r <- repository.resolveMulti(userAccounts.map(_.id))
-      } yield r).run(AutoSession).runToFuture.futureValue
+      } yield r).runToFuture.futureValue
 
       result shouldBe userAccounts
     }
-
   }
-
 }
