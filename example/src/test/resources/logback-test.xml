@@ -13,9 +13,9 @@
     </appender>
 
     <!-- <logger name="slick.jdbc.JdbcBackend.statement"  level="DEBUG" /> Will log all statements -->
-    <logger name="com.github.j5ik2o" level="DEBUG" />
+    <logger name="com.github.j5ik2o" level="INFO" />
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="ASYNCSTDOUT" />
     </root>
 

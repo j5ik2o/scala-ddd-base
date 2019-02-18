@@ -194,7 +194,7 @@ lazy val flyway = (project in file("flyway"))
     libraryDependencies ++= Seq(
       "mysql" % "mysql-connector-java" % "5.1.42"
     ),
-    parallelExecution in Test := false,
+    parallelExecution in Test := true,
     wixMySQLVersion := com.wix.mysql.distribution.Version.v5_6_21,
     wixMySQLUserName := Some(dbUser),
     wixMySQLPassword := Some(dbPassword),

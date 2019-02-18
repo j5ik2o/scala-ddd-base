@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
-import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, UserAccountRepository }
+import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, IdGenerator, UserAccountRepository }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
 import scalikejdbc.AutoSession
@@ -17,7 +17,7 @@ class AirframeSpec extends FreeSpecLike with FlywayWithMySQLSpecSupport with Ski
   val design = newDesign.bind[UserAccountRepository[BySkinny]].toInstance(UserAccountRepository.bySkinny)
 
   val userAccount = UserAccount(
-    id = UserAccountId(1L),
+    id = UserAccountId(IdGenerator.generateIdValue),
     status = Status.Active,
     emailAddress = EmailAddress("test@test.com"),
     password = HashedPassword("aaa"),
