@@ -181,6 +181,16 @@ val resultFuture: Future[UserAccount] = connectionPool
   .runToFuture
 ```
 
+- for DynamoDB
+
+```scala
+val userAccountRepository: UserAccountRepository[OnDynamoDB] = UserAccountRepository.onDynamoDB(dynamoDbAsyncClient)
+val resultFuture: Future[UserAccount] = (for {
+  _ <- userAccountRepository.store(userAccount)
+  r <- userAccountRepository.resolveById(userAccount.id)
+} yield r).runToFuture
+```
+
 - for Memory(Guava Cache)
 
 ```scala
