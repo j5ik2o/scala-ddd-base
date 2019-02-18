@@ -12,9 +12,6 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <!-- <logger name="slick.jdbc.JdbcBackend.statement"  level="DEBUG" /> Will log all statements -->
-    <logger name="com.github.j5ik2o.reactive.memcached" level="DEBUG" />
-
     <root level="INFO">
         <appender-ref ref="ASYNCSTDOUT" />
     </root>
