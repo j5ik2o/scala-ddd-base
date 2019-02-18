@@ -3,7 +3,7 @@ import scala.concurrent.duration._
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
 
-val reactiveRedisVersion     = "1.0.19"
+val reactiveRedisVersion     = "1.0.22-SNAPSHOT"
 val reactiveMemcachedVersion = "1.0.6"
 val reactiveDynamoDBVersion  = "1.0.3"
 val circeVersion             = "0.11.1"
@@ -87,7 +87,7 @@ val coreSettings = Seq(
   scalafmtOnCompile in ThisBuild := true,
   scalafmtTestOnCompile in ThisBuild := true,
   resolvers ++= Seq(
-    Resolver.sonatypeRepo("snapshot"),
+    Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases"),
     "Seasar2 Repository" at "http://maven.seasar.org/maven2",
     Resolver.bintrayRepo("danslapman", "maven")
