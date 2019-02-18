@@ -24,6 +24,7 @@ libraryDependencies ++= Seq(
   // "com.github.j5ik2o" %% "scala-ddd-base-skinny" % scalaDddBaseVersion,
   // "com.github.j5ik2o" %% "scala-ddd-base-redis" % scalaDddBaseVersion,
   // "com.github.j5ik2o" %% "scala-ddd-base-memcached" % scalaDddBaseVersion,
+  // "com.github.j5ik2o" %% "scala-ddd-base-dynamodb" % scalaDddBaseVersion,
   // "com.github.j5ik2o" %% "scala-ddd-base-memory" % scalaDddBaseVersion
 )
 ```
@@ -102,6 +103,9 @@ object UserAccountRepository {
       expireDuration: Duration
   )(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcached] =
     new UserAccountRepositoryOnMemcached(expireDuration)
+    
+  def onDynamoDB(dynamoDbAsyncClient: DynamoDbAsyncClient): UserAccountRepository[OnDynamoDB] =
+    new UserAccountRepositoryOnDynamoDB(DynamoDBTaskClientV2(DynamoDBAsyncClientV2(underlying))
 
   def onMemory(minSize: Option[Int] = None,
                maxSize: Option[Int] = None,
@@ -117,6 +121,7 @@ object UserAccountRepository {
 - [for SkinnyORM](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
 - [for Memcached](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
 - [for Redis](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
+- [for DynamoDB](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnDynamoDB.scala)
 - [for Memory(Guava Cache)](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memory/UserAccountRepositoryOnMemory.scala)
 - [for Free](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/free/UserAccountRepositoryByFree.scala)
 
