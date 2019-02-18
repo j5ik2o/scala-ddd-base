@@ -59,8 +59,9 @@ The supported ORM/KVS/Cache is below.
 
 - Slick(JDBC)
 - SkinnyORM(JDBC)
-- Redis([reactive-redis-core](https://github.com/j5ik2o/reactive-redis))
-- Memcached([reactive-memcached-core](https://github.com/j5ik2o/reactive-memcached))
+- Redis([reactive-redis](https://github.com/j5ik2o/reactive-redis))
+- Memcached([reactive-memcached](https://github.com/j5ik2o/reactive-memcached))
+- DynamoDB([reactive-dynamodb](https://github.com/j5ik2o/reactive-dynamodb))
 - Memory([Guava Cache](https://github.com/google/guava))
 
 ## Example
@@ -84,6 +85,7 @@ object UserAccountRepository {
 
   type OnRedis[A]     = ReaderT[Task, RedisConnection, A]
   type OnMemcached[A] = ReaderT[Task, MemcachedConnection, A]
+  type OnDynamoDB[A]  = Task[A]
   type OnMemory[A]    = Task[A]
   type BySlick[A]     = Task[A]
   type BySkinny[A]    = ReaderT[Task, DBSession, A]
