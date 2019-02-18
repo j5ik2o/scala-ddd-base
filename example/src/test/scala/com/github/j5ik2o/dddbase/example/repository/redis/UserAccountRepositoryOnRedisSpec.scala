@@ -30,7 +30,7 @@ class UserAccountRepositoryOnRedisSpec
   var connectionPool: RedisConnectionPool[Task] = _
 
   override def waitFor(): Unit = {
-    Thread.sleep(1000 * sys.env.get("SBT_TEST_TIME_FACTOR").map(_.toLong).getOrElse(1L))
+    Thread.sleep(500 * sys.env.get("SBT_TEST_TIME_FACTOR").map(_.toLong).getOrElse(1L))
   }
 
   protected override def beforeAll(): Unit = {
