@@ -4,7 +4,7 @@ val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
 
 val reactiveRedisVersion     = "1.0.19"
-val reactiveMemcachedVersion = "1.0.5"
+val reactiveMemcachedVersion = "1.0.6"
 val reactiveDynamoDBVersion  = "1.0.3"
 val circeVersion             = "0.11.1"
 val akkaHttpVersion          = "10.1.7"
@@ -87,8 +87,8 @@ val coreSettings = Seq(
   scalafmtOnCompile in ThisBuild := true,
   scalafmtTestOnCompile in ThisBuild := true,
   resolvers ++= Seq(
-    "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
-    "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
+    Resolver.sonatypeRepo("snapshot"),
+    Resolver.sonatypeRepo("releases"),
     "Seasar2 Repository" at "http://maven.seasar.org/maven2",
     Resolver.bintrayRepo("danslapman", "maven")
   ),
