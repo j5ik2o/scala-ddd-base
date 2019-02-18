@@ -17,8 +17,8 @@ jobs:
       - checkout
       - restore_cache:
           key: scala-library-dependencies-{{ checksum "build.sbt" }}
-      - run: sbt ++2.11.11 test:compile && sbt ++2.12.6 test:compile
+      - run: sbt ++2.11.12 test:compile && sbt ++2.12.8 test:compile
       - save_cache:
-          paths: [ "~/.m2", "~/.ivy2", "~/.cache/coursier" ]
+          paths: [ "~/.sbt/boot", "~/.ivy2", "~/.wixMySQL" ]
           key: scala-library-dependencies-{{ checksum "build.sbt" }}
-      - run: sbt ++2.11.11 test && sbt ++2.12.6 test
+      - run: sbt ++2.11.12 test && sbt ++2.12.8 test
