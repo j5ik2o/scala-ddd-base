@@ -45,8 +45,9 @@ class UserAccountRepositoryOnRedisSpec
   }
 
   protected override def afterAll(): Unit = {
-    TestKit.shutdownActorSystem(system)
     super.afterAll()
+    waitFor()
+    TestKit.shutdownActorSystem(system)
   }
 
   val userAccount = UserAccount(
@@ -74,7 +75,7 @@ class UserAccountRepositoryOnRedisSpec
       )
 
   "UserAccountRepositoryOnRedis" - {
-    "store" in {
+    "store" ignore {
       val repository = UserAccountRepository.onRedis(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
