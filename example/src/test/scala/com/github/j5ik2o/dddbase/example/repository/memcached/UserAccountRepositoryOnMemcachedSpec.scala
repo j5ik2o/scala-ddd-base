@@ -39,6 +39,11 @@ class UserAccountRepositoryOnMemcachedSpec
                                                                   Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
   }
 
+  protected override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+    super.afterAll()
+  }
+
   val userAccount = UserAccount(
     id = UserAccountId(IdGenerator.generateIdValue),
     status = Status.Active,

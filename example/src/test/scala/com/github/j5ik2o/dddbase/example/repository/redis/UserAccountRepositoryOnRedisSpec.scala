@@ -40,6 +40,11 @@ class UserAccountRepositoryOnRedisSpec
 
   }
 
+  protected override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+    super.afterAll()
+  }
+
   val userAccount = UserAccount(
     id = UserAccountId(IdGenerator.generateIdValue),
     status = Status.Active,
