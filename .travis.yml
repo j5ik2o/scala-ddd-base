@@ -19,8 +19,10 @@ dist: trusty
 sudo: required
 
 language: scala
-scala: 2.12.4
 jdk: oraclejdk8
+scala:
+  - 2.11.12
+  - 2.12.8
 
 script:
   - SBT_TEST_TIME_FACTOR=10 sbt ++$TRAVIS_SCALA_VERSION test
