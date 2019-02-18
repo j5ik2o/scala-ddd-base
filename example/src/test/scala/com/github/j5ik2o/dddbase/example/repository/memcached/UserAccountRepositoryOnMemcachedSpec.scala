@@ -75,7 +75,7 @@ class UserAccountRepositoryOnMemcachedSpec
       )
 
   "UserAccountRepositoryOnMemcached" - {
-    "store" ignore {
+    "store" in {
       val repository = UserAccountRepository.onMemcached(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
@@ -89,7 +89,7 @@ class UserAccountRepositoryOnMemcachedSpec
 
       result shouldBe userAccount
     }
-    "storeMulti" ignore {
+    "storeMulti" in {
       val repository = UserAccountRepository.onMemcached(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
