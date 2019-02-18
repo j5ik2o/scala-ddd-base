@@ -2,6 +2,7 @@ package com.github.j5ik2o.dddbase.example.repository.skinny
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model.{ Status, UserMessage, UserMessageId }
+import com.github.j5ik2o.dddbase.example.repository.IdGenerator
 import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
@@ -15,18 +16,18 @@ class UserMessageRepositoryBySkinnyImplSpec
   override val tables: Seq[String] = Seq("user_message")
 
   val userMessage = UserMessage(
-    id = UserMessageId(1L, 1L),
+    id = UserMessageId(IdGenerator.generateIdValue, IdGenerator.generateIdValue),
     status = Status.Active,
     message = "ABC",
     createdAt = ZonedDateTime.now(),
     updatedAt = None
   )
-  val userMessages = for (idValue <- 1L to 10L)
+  val userMessages = for (idx <- 1L to 10L)
     yield
       UserMessage(
-        id = UserMessageId(idValue, idValue),
+        id = UserMessageId(IdGenerator.generateIdValue, IdGenerator.generateIdValue),
         status = Status.Active,
-        message = "ABC",
+        message = s"ABC${idx}",
         createdAt = ZonedDateTime.now(),
         updatedAt = None
       )

@@ -9,6 +9,7 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.{ AmazonDynamoDB, AmazonDynamoDBClientBuilder }
 import com.github.j5ik2o.dddbase.example.model._
+import com.github.j5ik2o.dddbase.example.repository.IdGenerator
 import com.github.j5ik2o.reactive.dynamodb.model._
 import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
 import com.github.j5ik2o.reactive.dynamodb.{ DynamoDBAsyncClientV2, DynamoDBSpecSupport }
@@ -48,7 +49,7 @@ class UserAccountRepositoryOnDynamoDBSpec extends FreeSpec with Matchers with Dy
     .build()
 
   val userAccount = UserAccount(
-    id = UserAccountId(1L),
+    id = UserAccountId(IdGenerator.generateIdValue),
     status = Status.Active,
     emailAddress = EmailAddress("test@test.com"),
     password = HashedPassword("aaa"),
@@ -58,12 +59,12 @@ class UserAccountRepositoryOnDynamoDBSpec extends FreeSpec with Matchers with Dy
     updatedAt = None
   )
 
-  val userAccounts = for (idValue <- 1L to 10L)
+  val userAccounts = for (idx <- 1L to 10L)
     yield
       UserAccount(
-        id = UserAccountId(idValue),
+        id = UserAccountId(IdGenerator.generateIdValue),
         status = Status.Active,
-        emailAddress = EmailAddress(s"user${idValue}@gmail.com"),
+        emailAddress = EmailAddress(s"user${idx}@gmail.com"),
         password = HashedPassword("aaa"),
         firstName = "Junichi",
         lastName = "Kato",
