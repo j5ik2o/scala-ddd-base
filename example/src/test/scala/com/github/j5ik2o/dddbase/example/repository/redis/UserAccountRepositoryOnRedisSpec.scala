@@ -70,7 +70,7 @@ class UserAccountRepositoryOnRedisSpec
       )
 
   "UserAccountRepositoryOnRedis" - {
-    "store" in {
+    "store" ignore {
       val repository = UserAccountRepository.onRedis(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
@@ -84,7 +84,7 @@ class UserAccountRepositoryOnRedisSpec
 
       result shouldBe userAccount
     }
-    "storeMulti" in {
+    "storeMulti" ignore {
       val repository = UserAccountRepository.onRedis(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
@@ -98,12 +98,12 @@ class UserAccountRepositoryOnRedisSpec
 
       result shouldBe userAccounts
     }
-    "store then expired" in {
+    "store then expired" ignore {
       val repository = UserAccountRepository.onRedis(expireDuration = 1 seconds)
       val resultFuture = connectionPool.withConnectionF { con =>
         (for {
           _ <- repository.store(userAccount)
-          _ <- ReaderTTask.pure(Thread.sleep(1000))
+          _ <- ReaderTTask.pure(Thread.sleep(3000))
           r <- repository.resolveById(userAccount.id)
         } yield r).run(con)
       }.runToFuture
