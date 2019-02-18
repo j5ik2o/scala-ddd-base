@@ -123,7 +123,7 @@ object UserAccountRepository {
 - [for SkinnyORM](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/skinny/UserAccountRepositoryBySkinny.scala)
 - [for Memcached](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memcached/UserAccountRepositoryOnMemcached.scala)
 - [for Redis](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnRedis.scala)
-- [for DynamoDB](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/redis/UserAccountRepositoryOnDynamoDB.scala)
+- [for DynamoDB](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/dynamodb/UserAccountRepositoryOnDynamoDB.scala)
 - [for Memory(Guava Cache)](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/memory/UserAccountRepositoryOnMemory.scala)
 - [for Free](example/src/main/scala/com/github/j5ik2o/dddbase/example/repository/free/UserAccountRepositoryByFree.scala)
 
