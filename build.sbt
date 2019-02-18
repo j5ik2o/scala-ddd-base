@@ -3,7 +3,7 @@ import scala.concurrent.duration._
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
 
-val reactiveRedisVersion     = "1.0.22-SNAPSHOT"
+val reactiveRedisVersion     = "1.0.21"
 val reactiveMemcachedVersion = "1.0.6"
 val reactiveDynamoDBVersion  = "1.0.3"
 val circeVersion             = "0.11.1"
