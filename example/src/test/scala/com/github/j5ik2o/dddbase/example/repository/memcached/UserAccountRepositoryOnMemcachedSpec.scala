@@ -29,8 +29,13 @@ class UserAccountRepositoryOnMemcachedSpec
 
   var connectionPool: MemcachedConnectionPool[Task] = _
 
+  def waitFor(): Unit = {
+    Thread.sleep(500 * sys.env.get("SBT_TEST_TIME_FACTOR").map(_.toLong).getOrElse(1L))
+  }
+
   protected override def beforeAll(): Unit = {
     super.beforeAll()
+    waitFor()
     val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", memcachedTestServer.getPort))
     connectionPool = MemcachedConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
                                                                 peerConfig,
