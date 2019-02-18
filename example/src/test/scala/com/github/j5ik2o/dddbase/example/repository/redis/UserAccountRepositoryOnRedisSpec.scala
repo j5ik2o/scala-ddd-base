@@ -29,6 +29,10 @@ class UserAccountRepositoryOnRedisSpec
 
   var connectionPool: RedisConnectionPool[Task] = _
 
+  override def waitFor(): Unit = {
+    Thread.sleep(1000 * sys.env.get("SBT_TEST_TIME_FACTOR").map(_.toLong).getOrElse(1L))
+  }
+
   protected override def beforeAll(): Unit = {
     super.beforeAll()
     val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", redisMasterServer.getPort))
@@ -70,7 +74,7 @@ class UserAccountRepositoryOnRedisSpec
       )
 
   "UserAccountRepositoryOnRedis" - {
-    "store" ignore {
+    "store" in {
       val repository = UserAccountRepository.onRedis(expireDuration = Duration.Inf)
       val result = connectionPool
         .withConnectionF { con =>
