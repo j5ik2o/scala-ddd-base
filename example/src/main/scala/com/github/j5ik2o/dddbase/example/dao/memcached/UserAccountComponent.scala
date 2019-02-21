@@ -38,8 +38,8 @@ trait UserAccountComponent extends MemcachedDaoSupport {
   }
 
   case class UserAccountDao()(implicit val system: ActorSystem)
-      extends Dao[UserAccountRecord]
-      with DaoSoftDeletable[UserAccountRecord] {
+      extends Dao[ReaderT[Task, MemcachedConnection, ?], UserAccountRecord]
+      with DaoSoftDeletable[ReaderT[Task, MemcachedConnection, ?], UserAccountRecord] {
 
     val DELETED: String = "deleted"
 

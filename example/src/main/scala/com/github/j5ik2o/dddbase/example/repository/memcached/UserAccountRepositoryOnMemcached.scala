@@ -5,8 +5,8 @@ import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.memcached.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ OnMemcached, UserAccountRepository }
-import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memcached._
+import com.github.j5ik2o.reactive.memcached.MemcachedConnection
 import monix.eval.Task
 
 import scala.concurrent.duration._
@@ -28,38 +28,40 @@ class UserAccountRepositoryOnMemcached(val expireDuration: Duration)(implicit sy
 
   override protected val dao: UserAccountDao = UserAccountDao()
 
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccount(
-          id = UserAccountId(record.id.toLong),
-          status = Status.withName(record.status),
-          emailAddress = EmailAddress(record.email),
-          password = HashedPassword(record.password),
-          firstName = record.firstName,
-          lastName = record.lastName,
-          createdAt = record.createdAt,
-          updatedAt = record.updatedAt
-        )
+  override protected def convertToAggregate: UserAccountRecord => ReaderT[Task, MemcachedConnection, UserAccount] = {
+    record =>
+      ReaderT { _ =>
+        Task.pure {
+          UserAccount(
+            id = UserAccountId(record.id.toLong),
+            status = Status.withName(record.status),
+            emailAddress = EmailAddress(record.email),
+            password = HashedPassword(record.password),
+            firstName = record.firstName,
+            lastName = record.lastName,
+            createdAt = record.createdAt,
+            updatedAt = record.updatedAt
+          )
+        }
       }
-    }
   }
 
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
-    ReaderT { _ =>
-      Task.pure {
-        UserAccountRecord(
-          id = aggregate.id.value.toString,
-          status = aggregate.status.entryName,
-          email = aggregate.emailAddress.value,
-          password = aggregate.password.value,
-          firstName = aggregate.firstName,
-          lastName = aggregate.lastName,
-          createdAt = aggregate.createdAt,
-          updatedAt = aggregate.updatedAt
-        )
+  override protected def convertToRecord: UserAccount => ReaderT[Task, MemcachedConnection, UserAccountRecord] = {
+    aggregate =>
+      ReaderT { _ =>
+        Task.pure {
+          UserAccountRecord(
+            id = aggregate.id.value.toString,
+            status = aggregate.status.entryName,
+            email = aggregate.emailAddress.value,
+            password = aggregate.password.value,
+            firstName = aggregate.firstName,
+            lastName = aggregate.lastName,
+            createdAt = aggregate.createdAt,
+            updatedAt = aggregate.updatedAt
+          )
+        }
       }
-    }
   }
 
 }

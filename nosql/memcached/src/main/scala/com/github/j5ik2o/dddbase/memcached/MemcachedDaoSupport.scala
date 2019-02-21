@@ -19,31 +19,31 @@ trait MemcachedDaoSupport {
     def withStatus(value: String): This
   }
 
-  trait Dao[R <: Record] {
+  trait Dao[M[_], R <: Record] {
 
     implicit val system: ActorSystem
 
-    protected lazy val memcachedClient = MemcachedClient()
+    protected lazy val memcachedClient: MemcachedClient = MemcachedClient()
 
-    def set(record: R, expire: Duration): ReaderT[Task, MemcachedConnection, Long]
+    def set(record: R, expire: Duration): M[Long]
 
-    def setMulti(records: Seq[R], expire: Duration): ReaderT[Task, MemcachedConnection, Long]
+    def setMulti(records: Seq[R], expire: Duration): M[Long]
 
-    def get(id: String): ReaderT[Task, MemcachedConnection, Option[R]]
+    def get(id: String): M[Option[R]]
 
-    def getMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Seq[R]]
+    def getMulti(ids: Seq[String]): M[Seq[R]]
 
-    def delete(id: String): ReaderT[Task, MemcachedConnection, Long]
+    def delete(id: String): M[Long]
 
-    def deleteMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Long]
+    def deleteMulti(ids: Seq[String]): M[Long]
 
   }
 
-  trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
+  trait DaoSoftDeletable[M[_], R <: SoftDeletableRecord] { this: Dao[M, R] =>
 
-    def softDelete(id: String): ReaderT[Task, MemcachedConnection, Long]
+    def softDelete(id: String): M[Long]
 
-    def softDeleteMulti(ids: Seq[String]): ReaderT[Task, MemcachedConnection, Long]
+    def softDeleteMulti(ids: Seq[String]): M[Long]
 
   }
 }

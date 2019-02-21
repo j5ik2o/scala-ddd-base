@@ -1,5 +1,4 @@
 package com.github.j5ik2o.dddbase.memory
-import monix.eval.Task
 
 trait MemoryDaoSupport {
 
@@ -13,29 +12,29 @@ trait MemoryDaoSupport {
     def withStatus(value: String): This
   }
 
-  trait Dao[R <: Record] {
+  trait Dao[M[_], R <: Record] {
 
-    def set(record: R): Task[Long]
+    def set(record: R): M[Long]
 
-    def setMulti(records: Seq[R]): Task[Long]
+    def setMulti(records: Seq[R]): M[Long]
 
-    def get(id: String): Task[Option[R]]
+    def get(id: String): M[Option[R]]
 
-    def getAll: Task[Seq[R]]
+    def getAll: M[Seq[R]]
 
-    def getMulti(ids: Seq[String]): Task[Seq[R]]
+    def getMulti(ids: Seq[String]): M[Seq[R]]
 
-    def delete(id: String): Task[Long]
+    def delete(id: String): M[Long]
 
-    def deleteMulti(ids: Seq[String]): Task[Long]
+    def deleteMulti(ids: Seq[String]): M[Long]
 
   }
 
-  trait DaoSoftDeletable[R <: SoftDeletableRecord] { this: Dao[R] =>
+  trait DaoSoftDeletable[M[_], R <: SoftDeletableRecord] { this: Dao[M, R] =>
 
-    def softDelete(id: String): Task[Long]
+    def softDelete(id: String): M[Long]
 
-    def softDeleteMulti(ids: Seq[String]): Task[Long]
+    def softDeleteMulti(ids: Seq[String]): M[Long]
 
   }
 

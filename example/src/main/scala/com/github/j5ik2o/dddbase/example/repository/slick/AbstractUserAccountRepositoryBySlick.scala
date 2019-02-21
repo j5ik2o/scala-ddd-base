@@ -3,7 +3,6 @@ package com.github.j5ik2o.dddbase.example.repository.slick
 import com.github.j5ik2o.dddbase.example.dao.slick.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ BySlick, UserAccountRepository }
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.slick.{
   AggregateMultiReadFeature,
   AggregateMultiWriteFeature,
@@ -35,7 +34,7 @@ abstract class AbstractUserAccountRepositoryBySlick(val profile: JdbcProfile, va
     _.id.inSet(ids.map(_.value))
   }
 
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
+  override protected def convertToAggregate: UserAccountRecord => Task[UserAccount] = { record =>
     Task.pure {
       UserAccount(
         id = UserAccountId(record.id),
@@ -50,7 +49,7 @@ abstract class AbstractUserAccountRepositoryBySlick(val profile: JdbcProfile, va
     }
   }
 
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
+  override protected def convertToRecord: UserAccount => Task[UserAccountRecord] = { aggregate =>
     Task.pure {
       UserAccountRecord(
         id = aggregate.id.value,

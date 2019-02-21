@@ -97,7 +97,8 @@ val coreSettings = Seq(
     "org.scalacheck"    %% "scalacheck"       % "1.14.0" % Test,
     "ch.qos.logback"    % "logback-classic"   % "1.2.3"  % Test,
     "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7"  % Test
-  )
+  ),
+  addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.9" cross CrossVersion.binary)
 ) // ++ scalaStyleSettings
 
 val baseDependencies = Seq(

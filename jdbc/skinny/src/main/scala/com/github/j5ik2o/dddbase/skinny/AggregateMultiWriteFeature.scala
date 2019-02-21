@@ -2,13 +2,14 @@ package com.github.j5ik2o.dddbase.skinny
 
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.AggregateMultiWriter
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import scalikejdbc.DBSession
 
-trait AggregateMultiWriteFeature extends AggregateMultiWriter[RIO] with AggregateBaseWriteFeature {
+trait AggregateMultiWriteFeature
+    extends AggregateMultiWriter[ReaderT[Task, DBSession, ?]]
+    with AggregateBaseWriteFeature {
 
-  override def storeMulti(aggregates: Seq[AggregateType]): RIO[Long] =
+  override def storeMulti(aggregates: Seq[AggregateType]): ReaderT[Task, DBSession, Long] =
     ReaderT[Task, DBSession, Long] { dbSession =>
       for {
         records <- Task.traverse(aggregates) { aggregate =>

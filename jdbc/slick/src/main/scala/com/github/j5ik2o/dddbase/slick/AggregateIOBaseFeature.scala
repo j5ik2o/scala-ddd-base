@@ -1,12 +1,11 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.AggregateIO
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature._
 import monix.eval.Task
 import slick.jdbc.JdbcProfile
-import slick.lifted.{Rep, TableQuery}
+import slick.lifted.{ Rep, TableQuery }
 
-trait AggregateIOBaseFeature extends AggregateIO[RIO] {
+trait AggregateIOBaseFeature extends AggregateIO[Task] {
   type RecordType <: SlickDaoSupport#Record
   type TableType <: SlickDaoSupport#TableBase[RecordType]
 
@@ -20,8 +19,4 @@ trait AggregateIOBaseFeature extends AggregateIO[RIO] {
 
   protected def byConditions(ids: Seq[IdType]): TableType => Rep[Boolean]
 
-}
-
-object AggregateIOBaseFeature {
-  type RIO[A] = Task[A]
 }

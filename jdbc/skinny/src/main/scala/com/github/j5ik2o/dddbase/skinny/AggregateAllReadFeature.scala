@@ -2,13 +2,12 @@ package com.github.j5ik2o.dddbase.skinny
 
 import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.AggregateAllReader
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import scalikejdbc.DBSession
 
-trait AggregateAllReadFeature extends AggregateAllReader[RIO] with AggregateBaseReadFeature {
+trait AggregateAllReadFeature extends AggregateAllReader[ReaderT[Task, DBSession, ?]] with AggregateBaseReadFeature {
 
-  override def resolveAll: RIO[Seq[AggregateType]] = ReaderT[Task, DBSession, Seq[AggregateType]] {
+  override def resolveAll: ReaderT[Task, DBSession, Seq[AggregateType]] = ReaderT[Task, DBSession, Seq[AggregateType]] {
     implicit dbSession: DBSession =>
       for {
         results <- Task {

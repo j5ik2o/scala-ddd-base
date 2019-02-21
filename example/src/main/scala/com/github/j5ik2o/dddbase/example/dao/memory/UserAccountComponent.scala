@@ -67,8 +67,8 @@ trait GuavaMemoryDaoSupport extends MemoryDaoSupport {
 
   abstract class GuavaCacheDao[K, V <: SoftDeletableRecord](
       cache: Cache[String, V]
-  ) extends Dao[V]
-      with DaoSoftDeletable[V] {
+  ) extends Dao[Task, V]
+      with DaoSoftDeletable[Task, V] {
 
     override def set(record: V): Task[Long] =
       Task {

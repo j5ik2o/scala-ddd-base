@@ -4,10 +4,9 @@ import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.skinny.UserMessageComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, UserMessageRepository }
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task
-import scalikejdbc.{ sqls, SQLSyntax }
+import scalikejdbc.{ sqls, DBSession, SQLSyntax }
 
 trait UserMessageRepositoryBySkinny
     extends UserMessageRepository[BySkinny]
@@ -30,7 +29,7 @@ trait UserMessageRepositoryBySkinny
   override protected def byConditions(ids: Seq[IdType]): SQLSyntax =
     sqls.in((dao.column.messageId, dao.column.userId), ids.map(v => (v.messageId, v.userId)))
 
-  override protected def convertToAggregate: UserMessageRecord => RIO[UserMessage] = { record =>
+  override protected def convertToAggregate: UserMessageRecord => ReaderT[Task, DBSession, UserMessage] = { record =>
     ReaderT { _ =>
       Task.pure {
         UserMessage(
@@ -44,7 +43,7 @@ trait UserMessageRepositoryBySkinny
     }
   }
 
-  override protected def convertToRecord: UserMessage => RIO[UserMessageRecord] = { aggregate =>
+  override protected def convertToRecord: UserMessage => ReaderT[Task, DBSession, UserMessageRecord] = { aggregate =>
     ReaderT { _ =>
       Task.pure {
         UserMessageRecord(

@@ -1,13 +1,14 @@
 package com.github.j5ik2o.dddbase.skinny
 
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
+import cats.data.ReaderT
+import monix.eval.Task
 import scalikejdbc._
 
 trait AggregateBaseReadFeature extends AggregateIOBaseFeature {
 
-  protected def convertToAggregate: RecordType => RIO[AggregateType]
+  protected def convertToAggregate: RecordType => ReaderT[Task, DBSession, AggregateType]
 
-  protected def byCondition(id: IdType): SQLSyntax /*= sqls.eq(dao.defaultAlias.id, id.value)*/
-  protected def byConditions(ids: Seq[IdType]): SQLSyntax /*= sqls.in(dao.defaultAlias.id, ids.map(_.value))*/
+  protected def byCondition(id: IdType): SQLSyntax
+  protected def byConditions(ids: Seq[IdType]): SQLSyntax
 
 }
