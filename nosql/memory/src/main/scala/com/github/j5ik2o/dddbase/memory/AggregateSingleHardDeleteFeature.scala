@@ -1,11 +1,11 @@
 package com.github.j5ik2o.dddbase.memory
 
-import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.{ AggregateSingleHardDeletable, AggregateSingleWriter }
+import monix.eval.Task
 
-trait AggregateSingleHardDeleteFeature extends AggregateSingleHardDeletable[RIO] with AggregateBaseWriteFeature {
-  this: AggregateSingleWriter[RIO] =>
+trait AggregateSingleHardDeleteFeature extends AggregateSingleHardDeletable[Task] with AggregateBaseWriteFeature {
+  this: AggregateSingleWriter[Task] =>
 
-  override def hardDelete(id: IdType): RIO[Long] = dao.delete(id.value.toString)
+  override def hardDelete(id: IdType): Task[Long] = dao.delete(id.value.toString)
 
 }

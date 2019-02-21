@@ -1,14 +1,15 @@
 package com.github.j5ik2o.dddbase.memory
 
 import com.github.j5ik2o.dddbase.AggregateSingleSoftDeletable
-import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
+import monix.eval.Task
 
-trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[Task] with AggregateBaseReadFeature {
 
   override type RecordType <: MemoryDaoSupport#SoftDeletableRecord
-  override type DaoType <: MemoryDaoSupport#Dao[RecordType] with MemoryDaoSupport#DaoSoftDeletable[RecordType]
+  override type DaoType <: MemoryDaoSupport#Dao[Task, RecordType] with MemoryDaoSupport#DaoSoftDeletable[Task,
+                                                                                                         RecordType]
 
-  override def softDelete(id: IdType): RIO[Long] =
+  override def softDelete(id: IdType): Task[Long] =
     dao.softDelete(id.value.toString)
 
 }

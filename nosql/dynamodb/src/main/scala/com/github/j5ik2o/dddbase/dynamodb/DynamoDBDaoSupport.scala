@@ -14,29 +14,29 @@ trait DynamoDBDaoSupport {
     def withStatus(value: String): This
   }
 
-  trait Dao[ID, R <: Record[ID]] {
+  trait Dao[M[_], ID, R <: Record[ID]] {
 
     protected def client: DynamoDBTaskClientV2
 
-    def put(record: R): Task[Long]
+    def put(record: R): M[Long]
 
-    def putMulti(records: Seq[R]): Task[Long]
+    def putMulti(records: Seq[R]): M[Long]
 
-    def get(id: ID): Task[Option[R]]
+    def get(id: ID): M[Option[R]]
 
-    def getMulti(ids: Seq[ID]): Task[Seq[R]]
+    def getMulti(ids: Seq[ID]): M[Seq[R]]
 
-    def delete(id: ID): Task[Long]
+    def delete(id: ID): M[Long]
 
-    def deleteMulti(ids: Seq[ID]): Task[Long]
+    def deleteMulti(ids: Seq[ID]): M[Long]
 
   }
 
-  trait DaoSoftDeletable[ID, R <: SoftDeletableRecord[ID]] { this: Dao[ID, R] =>
+  trait DaoSoftDeletable[M[_], ID, R <: SoftDeletableRecord[ID]] { this: Dao[M, ID, R] =>
 
-    def softDelete(id: ID): Task[Long]
+    def softDelete(id: ID): M[Long]
 
-    def softDeleteMulti(ids: Seq[ID]): Task[Long]
+    def softDeleteMulti(ids: Seq[ID]): M[Long]
 
   }
 

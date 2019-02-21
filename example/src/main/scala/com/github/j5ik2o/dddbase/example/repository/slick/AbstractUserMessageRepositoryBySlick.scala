@@ -2,7 +2,6 @@ package com.github.j5ik2o.dddbase.example.repository.slick
 import com.github.j5ik2o.dddbase.example.dao.slick.UserMessageComponent
 import com.github.j5ik2o.dddbase.example.model.{ Status, UserMessage, UserMessageId }
 import com.github.j5ik2o.dddbase.example.repository.{ BySlick, UserMessageRepository }
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.slick._
 import monix.eval.Task
 import slick.jdbc.JdbcProfile
@@ -34,7 +33,7 @@ abstract class AbstractUserMessageRepositoryBySlick(val profile: JdbcProfile, va
       .reduceLeft(_ || _)
   }
 
-  override protected def convertToAggregate: UserMessageRecord => RIO[UserMessage] = { record =>
+  override protected def convertToAggregate: UserMessageRecord => Task[UserMessage] = { record =>
     Task.pure {
       UserMessage(
         id = UserMessageId(record.userId, record.messageId),
@@ -46,7 +45,7 @@ abstract class AbstractUserMessageRepositoryBySlick(val profile: JdbcProfile, va
     }
   }
 
-  override protected def convertToRecord: UserMessage => RIO[UserMessageRecord] = { aggregate =>
+  override protected def convertToRecord: UserMessage => Task[UserMessageRecord] = { aggregate =>
     Task.pure {
       UserMessageRecord(
         messageId = aggregate.id.messageId,

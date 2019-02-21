@@ -1,8 +1,9 @@
 package com.github.j5ik2o.dddbase.memory
-import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
+
+import monix.eval.Task
 
 trait AggregateBaseReadFeature extends AggregateIOBaseFeature {
 
-  protected def convertToAggregate: RecordType => RIO[AggregateType]
+  protected def convertToAggregate: RecordType => Task[AggregateType]
 
 }

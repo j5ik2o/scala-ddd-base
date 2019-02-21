@@ -16,6 +16,7 @@ import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpecLike, Matchers }
 
+import scala.collection.immutable
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -44,7 +45,7 @@ class UserAccountRepositoryOnMemcachedSpec
     TestKit.shutdownActorSystem(system)
   }
 
-  val userAccount = UserAccount(
+  val userAccount: UserAccount = UserAccount(
     id = UserAccountId(IdGenerator.generateIdValue),
     status = Status.Active,
     emailAddress = EmailAddress("test@test.com"),
@@ -55,7 +56,7 @@ class UserAccountRepositoryOnMemcachedSpec
     updatedAt = None
   )
 
-  val userAccounts = for (idx <- 1L to 10L)
+  val userAccounts: Seq[UserAccount] = for (idx <- 1L to 10L)
     yield
       UserAccount(
         id = UserAccountId(IdGenerator.generateIdValue),

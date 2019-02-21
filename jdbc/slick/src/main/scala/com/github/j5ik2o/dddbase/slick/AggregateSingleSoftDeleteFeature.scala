@@ -1,11 +1,10 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.AggregateSingleSoftDeletable
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 import slick.lifted.{ Rep, TableQuery }
 
-trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[Task] with AggregateBaseReadFeature {
 
   override type RecordType <: SlickDaoSupport#SoftDeletableRecord
   override type TableType <: SlickDaoSupport#TableBase[RecordType] with SlickDaoSupport#SoftDeletableTableSupport[
@@ -14,7 +13,7 @@ trait AggregateSingleSoftDeleteFeature extends AggregateSingleSoftDeletable[RIO]
   protected final val DELETE = "deleted"
   override protected val dao: TableQuery[TableType]
 
-  override def softDelete(id: IdType): RIO[Long] =
+  override def softDelete(id: IdType): Task[Long] =
     Task.deferFutureAction { implicit ec =>
       import profile.api._
       db.run(dao.filter(byCondition(id)).map(_.status).update(DELETE)).map(_.toLong)

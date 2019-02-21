@@ -4,7 +4,6 @@ import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.example.dao.skinny.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ BySkinny, UserAccountRepository }
-import com.github.j5ik2o.dddbase.skinny.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.skinny._
 import monix.eval.Task
 import scalikejdbc._
@@ -27,7 +26,7 @@ trait UserAccountRepositoryBySkinny
   override protected def byCondition(id: IdType): SQLSyntax        = sqls.eq(dao.defaultAlias.id, id.value)
   override protected def byConditions(ids: Seq[IdType]): SQLSyntax = sqls.in(dao.defaultAlias.id, ids.map(_.value))
 
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
+  override protected def convertToAggregate: UserAccountRecord => ReaderT[Task, DBSession, UserAccount] = { record =>
     ReaderT { _ =>
       Task.pure {
         UserAccount(
@@ -44,7 +43,7 @@ trait UserAccountRepositoryBySkinny
     }
   }
 
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
+  override protected def convertToRecord: UserAccount => ReaderT[Task, DBSession, UserAccountRecord] = { aggregate =>
     ReaderT { _ =>
       Task.pure {
         UserAccountRecord(

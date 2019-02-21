@@ -37,8 +37,8 @@ trait UserAccountComponent extends RedisDaoSupport {
   }
 
   case class UserAccountDao()(implicit val system: ActorSystem)
-      extends Dao[UserAccountRecord]
-      with DaoSoftDeletable[UserAccountRecord] {
+      extends Dao[ReaderT[Task, RedisConnection, ?], UserAccountRecord]
+      with DaoSoftDeletable[ReaderT[Task, RedisConnection, ?], UserAccountRecord] {
 
     val DELETED = "deleted"
 

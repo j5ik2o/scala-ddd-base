@@ -1,6 +1,5 @@
 package com.github.j5ik2o.dddbase.example.repository.dynamodb
 
-import com.github.j5ik2o.dddbase.dynamodb.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.dynamodb._
 import com.github.j5ik2o.dddbase.example.dao.dynamodb.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
@@ -24,7 +23,7 @@ class UserAccountRepositoryOnDynamoDB(client: DynamoDBTaskClientV2)
 
   override protected def toRecordId(id: UserAccountId): String = id.value.toString
 
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
+  override protected def convertToAggregate: UserAccountRecord => Task[UserAccount] = { record =>
     Task.pure {
       UserAccount(
         id = UserAccountId(record.id.toLong),
@@ -39,7 +38,7 @@ class UserAccountRepositoryOnDynamoDB(client: DynamoDBTaskClientV2)
     }
   }
 
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
+  override protected def convertToRecord: UserAccount => Task[UserAccountRecord] = { aggregate =>
     Task.pure {
       UserAccountRecord(
         id = aggregate.id.value.toString,

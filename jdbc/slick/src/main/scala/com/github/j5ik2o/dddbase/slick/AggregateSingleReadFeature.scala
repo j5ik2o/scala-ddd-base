@@ -1,12 +1,11 @@
 package com.github.j5ik2o.dddbase.slick
 
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.{ AggregateNotFoundException, AggregateSingleReader }
 import monix.eval.Task
 
-trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleReadFeature extends AggregateSingleReader[Task] with AggregateBaseReadFeature {
 
-  override def resolveById(id: IdType): RIO[AggregateType] =
+  override def resolveById(id: IdType): Task[AggregateType] =
     for {
       record <- Task
         .deferFutureAction { implicit ec =>

@@ -1,11 +1,11 @@
 package com.github.j5ik2o.dddbase.dynamodb
 
-import com.github.j5ik2o.dddbase.dynamodb.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.{ AggregateMultiSoftDeletable, AggregateMultiWriter }
+import monix.eval.Task
 
-trait AggregateMultiSoftDeleteFeature extends AggregateMultiSoftDeletable[RIO] with AggregateBaseReadFeature {
-  this: AggregateMultiWriter[RIO] with AggregateSingleSoftDeleteFeature =>
+trait AggregateMultiSoftDeleteFeature extends AggregateMultiSoftDeletable[Task] with AggregateBaseReadFeature {
+  this: AggregateMultiWriter[Task] with AggregateSingleSoftDeleteFeature =>
 
-  override def softDeleteMulti(ids: Seq[IdType]): RIO[Long] = dao.softDeleteMulti(ids.map(toRecordId))
+  override def softDeleteMulti(ids: Seq[IdType]): Task[Long] = dao.softDeleteMulti(ids.map(toRecordId))
 
 }

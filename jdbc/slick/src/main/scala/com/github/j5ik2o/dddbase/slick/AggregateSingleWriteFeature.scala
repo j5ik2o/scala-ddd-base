@@ -1,12 +1,11 @@
 package com.github.j5ik2o.dddbase.slick
 
 import com.github.j5ik2o.dddbase.AggregateSingleWriter
-import com.github.j5ik2o.dddbase.slick.AggregateIOBaseFeature.RIO
 import monix.eval.Task
 
-trait AggregateSingleWriteFeature extends AggregateSingleWriter[RIO] with AggregateBaseWriteFeature {
+trait AggregateSingleWriteFeature extends AggregateSingleWriter[Task] with AggregateBaseWriteFeature {
 
-  override def store(aggregate: AggregateType): RIO[Long] =
+  override def store(aggregate: AggregateType): Task[Long] =
     for {
       record <- convertToRecord(aggregate)
       result <- Task.deferFutureAction { implicit ec =>

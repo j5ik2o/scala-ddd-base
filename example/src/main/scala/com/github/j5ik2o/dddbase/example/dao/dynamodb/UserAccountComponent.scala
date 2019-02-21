@@ -23,8 +23,8 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
   }
 
   case class UserAccountDao(client: DynamoDBTaskClientV2)
-      extends Dao[String, UserAccountRecord]
-      with DaoSoftDeletable[String, UserAccountRecord] {
+      extends Dao[Task, String, UserAccountRecord]
+      with DaoSoftDeletable[Task, String, UserAccountRecord] {
     val tableName       = "UserAccount"
     val DELETED: String = "deleted"
 
@@ -118,8 +118,8 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         } else
           Task.raiseError(new Exception())
       }
-
     }
+
     override def getMulti(ids: Seq[String]): Task[Seq[UserAccountRecord]] = {
       client
         .batchGetItem(

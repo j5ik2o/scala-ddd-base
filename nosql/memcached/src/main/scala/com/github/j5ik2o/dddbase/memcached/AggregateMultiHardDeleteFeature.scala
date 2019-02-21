@@ -1,11 +1,16 @@
 package com.github.j5ik2o.dddbase.memcached
 
-import com.github.j5ik2o.dddbase.memcached.AggregateIOBaseFeature.RIO
+import cats.data.ReaderT
 import com.github.j5ik2o.dddbase.{ AggregateMultiHardDeletable, AggregateMultiWriter }
+import com.github.j5ik2o.reactive.memcached.MemcachedConnection
+import monix.eval.Task
 
-trait AggregateMultiHardDeleteFeature extends AggregateMultiHardDeletable[RIO] with AggregateBaseReadFeature {
-  this: AggregateMultiWriter[RIO] with AggregateSingleHardDeleteFeature =>
+trait AggregateMultiHardDeleteFeature
+    extends AggregateMultiHardDeletable[ReaderT[Task, MemcachedConnection, ?]]
+    with AggregateBaseReadFeature {
+  this: AggregateMultiWriter[ReaderT[Task, MemcachedConnection, ?]] with AggregateSingleHardDeleteFeature =>
 
-  override def hardDeleteMulti(ids: Seq[IdType]): RIO[Long] = dao.deleteMulti(ids.map(_.value.toString))
+  override def hardDeleteMulti(ids: Seq[IdType]): ReaderT[Task, MemcachedConnection, Long] =
+    dao.deleteMulti(ids.map(_.value.toString))
 
 }

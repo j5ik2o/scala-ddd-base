@@ -1,14 +1,15 @@
 package com.github.j5ik2o.dddbase.redis
 
 import cats.data.ReaderT
-import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.{ AggregateNotFoundException, AggregateSingleReader }
 import com.github.j5ik2o.reactive.redis.RedisConnection
 import monix.eval.Task
 
-trait AggregateSingleReadFeature extends AggregateSingleReader[RIO] with AggregateBaseReadFeature {
+trait AggregateSingleReadFeature
+    extends AggregateSingleReader[ReaderT[Task, RedisConnection, ?]]
+    with AggregateBaseReadFeature {
 
-  override def resolveById(id: IdType): RIO[AggregateType] =
+  override def resolveById(id: IdType): ReaderT[Task, RedisConnection, AggregateType] =
     for {
       record <- ReaderT[Task, RedisConnection, RecordType] { con =>
         dao.get(id.value.toString).run(con).flatMap {

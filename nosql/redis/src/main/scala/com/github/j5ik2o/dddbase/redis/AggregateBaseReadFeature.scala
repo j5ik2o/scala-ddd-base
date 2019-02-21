@@ -1,9 +1,10 @@
 package com.github.j5ik2o.dddbase.redis
-
-import com.github.j5ik2o.dddbase.redis.AggregateIOBaseFeature.RIO
+import cats.data.ReaderT
+import com.github.j5ik2o.reactive.redis.RedisConnection
+import monix.eval.Task
 
 trait AggregateBaseReadFeature extends AggregateIOBaseFeature {
 
-  protected def convertToAggregate: RecordType => RIO[AggregateType]
+  protected def convertToAggregate: RecordType => ReaderT[Task, RedisConnection, AggregateType]
 
 }

@@ -23,8 +23,8 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
   }
 
   case class UserMessageDao(client: DynamoDBTaskClientV2)
-      extends Dao[UserMessageRecordId, UserMessageRecord]
-      with DaoSoftDeletable[UserMessageRecordId, UserMessageRecord] {
+      extends Dao[Task, UserMessageRecordId, UserMessageRecord]
+      with DaoSoftDeletable[Task, UserMessageRecordId, UserMessageRecord] {
     val tableName       = "UserMessage"
     val DELETED: String = "deleted"
 

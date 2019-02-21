@@ -3,7 +3,6 @@ package com.github.j5ik2o.dddbase.example.repository.memory
 import com.github.j5ik2o.dddbase.example.dao.memory.UserAccountComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ OnMemory, UserAccountRepository }
-import com.github.j5ik2o.dddbase.memory.AggregateIOBaseFeature.RIO
 import com.github.j5ik2o.dddbase.memory._
 import com.google.common.base.Ticker
 import monix.eval.Task
@@ -50,7 +49,7 @@ class UserAccountRepositoryOnMemory(concurrencyLevel: Option[Int] = None,
       weakValues = weakValues
     )
 
-  override protected def convertToAggregate: UserAccountRecord => RIO[UserAccount] = { record =>
+  override protected def convertToAggregate: UserAccountRecord => Task[UserAccount] = { record =>
     Task.pure {
       UserAccount(
         id = UserAccountId(record.id.toLong),
@@ -65,7 +64,7 @@ class UserAccountRepositoryOnMemory(concurrencyLevel: Option[Int] = None,
     }
   }
 
-  override protected def convertToRecord: UserAccount => RIO[UserAccountRecord] = { aggregate =>
+  override protected def convertToRecord: UserAccount => Task[UserAccountRecord] = { aggregate =>
     Task.pure {
       UserAccountRecord(
         id = aggregate.id.value.toString,
