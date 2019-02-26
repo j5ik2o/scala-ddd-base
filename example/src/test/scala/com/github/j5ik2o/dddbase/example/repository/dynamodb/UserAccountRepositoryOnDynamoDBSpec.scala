@@ -4,7 +4,7 @@ import java.net.URI
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.IdGenerator
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport }
 import com.github.j5ik2o.reactive.dynamodb.model._
 import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
 import com.github.j5ik2o.reactive.dynamodb.{ DynamoDBAsyncClientV2, DynamoDBEmbeddedSpecSupport }
@@ -20,7 +20,8 @@ class UserAccountRepositoryOnDynamoDBSpec
     extends FreeSpec
     with Matchers
     with ScalaFutures
-    with DynamoDBEmbeddedSpecSupport {
+    with DynamoDBEmbeddedSpecSupport
+    with SpecSupport {
   implicit val pc: PatienceConfig = PatienceConfig(20 seconds, 1 seconds)
 
   val underlying: DynamoDbAsyncClient = DynamoDbAsyncClient
@@ -68,6 +69,16 @@ class UserAccountRepositoryOnDynamoDBSpec
         } yield r).runToFuture.futureValue
 
       result shouldBe userAccount
+    }
+    "storeMulti" in {
+      val repository = new UserAccountRepositoryOnDynamoDB(client)
+      val result =
+        (for {
+          _ <- repository.storeMulti(userAccounts)
+          r <- repository.resolveMulti(userAccounts.map(_.id))
+        } yield r).runToFuture.futureValue
+
+      sameAs(result, userAccounts) shouldBe true
     }
   }
 

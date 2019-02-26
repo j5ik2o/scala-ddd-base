@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import cats.free.Free
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, UserAccountRepository }
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport, UserAccountRepository }
 import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
@@ -14,7 +14,8 @@ class UserAccountRepositoryByFreeSpec
     extends FreeSpecLike
     with FlywayWithMySQLSpecSupport
     with SkinnySpecSupport
-    with Matchers {
+    with Matchers
+    with SpecSupport {
 
   override val tables: Seq[String] = Seq("user_account")
 

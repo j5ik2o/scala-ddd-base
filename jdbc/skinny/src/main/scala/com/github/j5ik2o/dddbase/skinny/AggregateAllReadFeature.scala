@@ -13,7 +13,7 @@ trait AggregateAllReadFeature extends AggregateAllReader[ReaderT[Task, DBSession
         results <- Task {
           dao.findAll()
         }
-        aggregates <- Task.sequence(results.map(convertToAggregate(_)(dbSession)))
+        aggregates <- Task.gather(results.map(convertToAggregate(_)(dbSession)))
       } yield aggregates
   }
 

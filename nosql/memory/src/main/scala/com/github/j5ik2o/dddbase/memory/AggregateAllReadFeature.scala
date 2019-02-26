@@ -8,7 +8,7 @@ trait AggregateAllReadFeature extends AggregateAllReader[Task] with AggregateBas
   override def resolveAll: Task[Seq[AggregateType]] =
     for {
       results    <- dao.getAll
-      aggregates <- Task.sequence(results.map(v => convertToAggregate(v)))
+      aggregates <- Task.gather(results.map(v => convertToAggregate(v)))
     } yield aggregates
 
 }

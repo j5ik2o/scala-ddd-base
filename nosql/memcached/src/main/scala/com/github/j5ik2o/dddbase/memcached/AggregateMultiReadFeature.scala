@@ -13,7 +13,7 @@ trait AggregateMultiReadFeature
     ReaderT[Task, MemcachedConnection, Seq[AggregateType]] { con =>
       for {
         results    <- dao.getMulti(ids.map(_.value.toString)).run(con)
-        aggregates <- Task.sequence(results.map(v => convertToAggregate(v)(con)))
+        aggregates <- Task.gather(results.map(v => convertToAggregate(v)(con)))
       } yield aggregates
     }
 

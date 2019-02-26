@@ -8,7 +8,7 @@ import akka.routing.DefaultResizer
 import akka.testkit.TestKit
 import com.github.j5ik2o.dddbase.AggregateNotFoundException
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, UserAccountRepository }
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport, UserAccountRepository }
 import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
 import com.github.j5ik2o.reactive.redis._
 import monix.eval.Task
@@ -25,7 +25,8 @@ class UserAccountRepositoryOnRedisSpec
     with RedisSpecSupport
     with ScalaFutures
     with ScalaFuturesSupportSpec
-    with Matchers {
+    with Matchers
+    with SpecSupport {
 
   var connectionPool: RedisConnectionPool[Task] = _
 
@@ -101,7 +102,7 @@ class UserAccountRepositoryOnRedisSpec
         .runToFuture
         .futureValue
 
-      result shouldBe userAccounts
+      sameAs(result, userAccounts) shouldBe true
     }
     "store then expired" in {
       val repository = UserAccountRepository.onRedis(expireDuration = 1 seconds)
