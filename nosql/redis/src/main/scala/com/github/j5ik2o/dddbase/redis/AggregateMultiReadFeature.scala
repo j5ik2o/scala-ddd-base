@@ -13,7 +13,7 @@ trait AggregateMultiReadFeature
     ReaderT[Task, RedisConnection, Seq[AggregateType]] { con =>
       for {
         results    <- dao.getMulti(ids.map(_.value.toString)).run(con)
-        aggregates <- Task.sequence(results.map(convertToAggregate(_)(con)))
+        aggregates <- Task.gather(results.map(convertToAggregate(_)(con)))
       } yield aggregates
     }
 

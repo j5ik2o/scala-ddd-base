@@ -15,7 +15,7 @@ trait AggregateMultiReadFeature
         results <- Task {
           dao.findAllBy(byConditions(ids))
         }
-        aggregates <- Task.sequence(results.map(convertToAggregate(_)(dbSession)))
+        aggregates <- Task.gather(results.map(convertToAggregate(_)(dbSession)))
       } yield aggregates
     }
 

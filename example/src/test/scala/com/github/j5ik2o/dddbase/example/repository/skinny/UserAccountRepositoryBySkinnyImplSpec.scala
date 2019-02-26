@@ -3,7 +3,7 @@ package com.github.j5ik2o.dddbase.example.repository.skinny
 import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.IdGenerator
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport }
 import com.github.j5ik2o.dddbase.example.repository.util.{ FlywayWithMySQLSpecSupport, SkinnySpecSupport }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.{ FreeSpecLike, Matchers }
@@ -13,7 +13,8 @@ class UserAccountRepositoryBySkinnyImplSpec
     extends FreeSpecLike
     with FlywayWithMySQLSpecSupport
     with SkinnySpecSupport
-    with Matchers {
+    with Matchers
+    with SpecSupport {
 
   val repository                   = new UserAccountRepositoryBySkinnyImpl
   override val tables: Seq[String] = Seq("user_account")
@@ -57,7 +58,7 @@ class UserAccountRepositoryBySkinnyImplSpec
         r <- repository.resolveMulti(userAccounts.map(_.id))
       } yield r).run(AutoSession).runToFuture.futureValue
 
-      result shouldBe userAccounts
+      sameAs(result, userAccounts) shouldBe true
     }
 
   }

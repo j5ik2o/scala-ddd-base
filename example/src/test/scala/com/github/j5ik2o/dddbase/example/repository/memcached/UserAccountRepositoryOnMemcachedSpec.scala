@@ -8,15 +8,14 @@ import akka.routing.DefaultResizer
 import akka.testkit.TestKit
 import com.github.j5ik2o.dddbase.AggregateNotFoundException
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, UserAccountRepository }
 import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport, UserAccountRepository }
 import com.github.j5ik2o.reactive.memcached._
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpecLike, Matchers }
 
-import scala.collection.immutable
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -26,7 +25,8 @@ class UserAccountRepositoryOnMemcachedSpec
     with MemcachedSpecSupport
     with ScalaFutures
     with ScalaFuturesSupportSpec
-    with Matchers {
+    with Matchers
+    with SpecSupport {
 
   var connectionPool: MemcachedConnectionPool[Task] = _
 
@@ -96,7 +96,7 @@ class UserAccountRepositoryOnMemcachedSpec
         .runToFuture
         .futureValue
 
-      result shouldBe userAccounts
+      sameAs(result, userAccounts) shouldBe true
     }
     "store then expired" in {
       val repository = UserAccountRepository.onMemcached(expireDuration = 1.5 seconds)

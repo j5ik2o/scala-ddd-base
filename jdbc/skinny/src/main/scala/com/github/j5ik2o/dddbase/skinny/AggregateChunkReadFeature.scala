@@ -17,7 +17,7 @@ trait AggregateChunkReadFeature
         results <- Task {
           dao.findAllWithLimitOffset(limit.toInt, index)
         }
-        aggregates <- Task.sequence(results.map(convertToAggregate(_)(dbSession)))
+        aggregates <- Task.gather(results.map(convertToAggregate(_)(dbSession)))
       } yield AggregatesChunk(index, aggregates)
     }
 

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.AggregateNotFoundException
 import com.github.j5ik2o.dddbase.example.model._
-import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, UserAccountRepository }
+import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport, UserAccountRepository }
 import com.github.j5ik2o.dddbase.example.repository.util.ScalaFuturesSupportSpec
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
@@ -14,7 +14,12 @@ import org.scalatest.{ FreeSpec, Matchers }
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, Future }
 
-class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with ScalaFuturesSupportSpec with Matchers {
+class UserAccountRepositoryOnMemorySpec
+    extends FreeSpec
+    with ScalaFutures
+    with ScalaFuturesSupportSpec
+    with Matchers
+    with SpecSupport {
 
   val userAccount = UserAccount(
     id = UserAccountId(IdGenerator.generateIdValue),
@@ -58,7 +63,7 @@ class UserAccountRepositoryOnMemorySpec extends FreeSpec with ScalaFutures with 
         r <- repository.resolveMulti(userAccounts.map(_.id))
       } yield r).runToFuture.futureValue
 
-      result shouldBe userAccounts
+      sameAs(result, userAccounts) shouldBe true
     }
     "store then expired" in {
       val repository = UserAccountRepository.onMemory(expireAfterWrite = Some(1 seconds))
