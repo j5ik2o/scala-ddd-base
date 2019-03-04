@@ -3,15 +3,15 @@ import scala.concurrent.duration._
 val scalaVersion211 = "2.11.12"
 val scalaVersion212 = "2.12.8"
 
-val reactiveRedisVersion     = "1.0.21"
-val reactiveMemcachedVersion = "1.0.6"
-val reactiveDynamoDBVersion  = "1.0.12"
-val circeVersion             = "0.11.1"
-val akkaHttpVersion          = "10.1.7"
-val akkaVersion              = "2.5.19"
-val slickVersion             = "3.2.3"
-val catsVersion              = "1.5.0"
-val monixVersion             = "3.0.0-RC2"
+val reactiveRedisVersion       = "1.0.21"
+val reactiveMemcachedVersion   = "1.0.6"
+val reactiveAwsDynamoDBVersion = "1.0.2"
+val circeVersion               = "0.11.1"
+val akkaHttpVersion            = "10.1.7"
+val akkaVersion                = "2.5.19"
+val slickVersion               = "3.2.3"
+val catsVersion                = "1.5.0"
+val monixVersion               = "3.0.0-RC2"
 
 val dbDriver    = "com.mysql.jdbc.Driver"
 val dbName      = "dddbase"
@@ -149,7 +149,7 @@ lazy val dynamodb = (project in file("nosql/dynamodb"))
     coreSettings ++ Seq(
       name := "scala-ddd-base-dynamodb",
       libraryDependencies ++= Seq(
-        "com.github.j5ik2o" %% "reactive-dynamodb-v2-monix" % reactiveDynamoDBVersion
+        "com.github.j5ik2o" %% "reactive-aws-dynamodb-v2-monix" % reactiveAwsDynamoDBVersion
       )
     )
   )
@@ -267,15 +267,15 @@ lazy val example = (project in file("example"))
         .value,
       compile in Compile := ((compile in Compile) dependsOn (generateAll in generator)).value,
       libraryDependencies ++= Seq(
-        "org.wvlet.airframe" %% "airframe"                % "0.64",
-        "com.google.guava"   % "guava"                    % "27.0.1-jre",
-        "io.circe"           %% "circe-core"              % circeVersion,
-        "io.circe"           %% "circe-generic"           % circeVersion,
-        "io.circe"           %% "circe-parser"            % circeVersion,
-        "com.github.j5ik2o"  %% "reactive-dynamodb-test"  % reactiveDynamoDBVersion % Test,
-        "com.github.j5ik2o"  %% "reactive-redis-test"     % reactiveRedisVersion % Test,
-        "com.github.j5ik2o"  %% "reactive-memcached-test" % reactiveMemcachedVersion % Test,
-        "com.typesafe.akka"  %% "akka-testkit"            % akkaVersion % Test
+        "org.wvlet.airframe" %% "airframe"                   % "0.64",
+        "com.google.guava"   % "guava"                       % "27.0.1-jre",
+        "io.circe"           %% "circe-core"                 % circeVersion,
+        "io.circe"           %% "circe-generic"              % circeVersion,
+        "io.circe"           %% "circe-parser"               % circeVersion,
+        "com.github.j5ik2o"  %% "reactive-aws-dynamodb-test" % reactiveAwsDynamoDBVersion % Test,
+        "com.github.j5ik2o"  %% "reactive-redis-test"        % reactiveRedisVersion % Test,
+        "com.github.j5ik2o"  %% "reactive-memcached-test"    % reactiveMemcachedVersion % Test,
+        "com.typesafe.akka"  %% "akka-testkit"               % akkaVersion % Test
       ),
       parallelExecution in Test := false,
       skip in publish := true

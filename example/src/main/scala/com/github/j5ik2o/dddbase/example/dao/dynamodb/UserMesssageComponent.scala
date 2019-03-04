@@ -3,8 +3,8 @@ package com.github.j5ik2o.dddbase.example.dao.dynamodb
 import java.time.{ Instant, ZoneId, ZonedDateTime }
 
 import com.github.j5ik2o.dddbase.dynamodb.DynamoDBDaoSupport
-import com.github.j5ik2o.reactive.dynamodb.model._
-import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.model._
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
 import monix.eval.Task
 
 trait UserMessageComponent extends DynamoDBDaoSupport {

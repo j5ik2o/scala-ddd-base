@@ -1,6 +1,6 @@
 package com.github.j5ik2o.dddbase.dynamodb
-import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
-import monix.eval.Task
+
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
 
 trait DynamoDBDaoSupport {
 

@@ -5,9 +5,10 @@ import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport }
-import com.github.j5ik2o.reactive.dynamodb.model._
-import com.github.j5ik2o.reactive.dynamodb.monix.DynamoDBTaskClientV2
-import com.github.j5ik2o.reactive.dynamodb.{ DynamoDBAsyncClientV2, DynamoDBEmbeddedSpecSupport }
+import com.github.j5ik2o.reactive.aws.dynamodb.model._
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.DynamoDBAsyncClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.DynamoDBEmbeddedSpecSupport
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpec, Matchers }
