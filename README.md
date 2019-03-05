@@ -61,7 +61,7 @@ The supported ORM/KVS/Cache is below.
 - SkinnyORM(JDBC)
 - Redis([reactive-redis](https://github.com/j5ik2o/reactive-redis))
 - Memcached([reactive-memcached](https://github.com/j5ik2o/reactive-memcached))
-- DynamoDB([reactive-dynamodb](https://github.com/j5ik2o/reactive-dynamodb))
+- DynamoDB([reactive-aws-dynamodb](https://github.com/j5ik2o/reactive-aws-client/tree/master/reactive-aws-dynamodb))
 - Memory([Guava Cache](https://github.com/google/guava))
 
 ## Example
