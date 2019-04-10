@@ -9,8 +9,10 @@ trait AggregateChunkReadFeature
     extends AggregateChunkReader[ReaderT[Task, DBSession, ?]]
     with AggregateBaseReadFeature {
 
-  override def resolveMultiWithOffsetLimit(offset: Option[Long],
-                                           limit: Long): ReaderT[Task, DBSession, AggregatesChunk[AggregateType]] =
+  override def resolveMultiWithOffsetLimit(
+      offset: Option[Long],
+      limit: Long
+  ): ReaderT[Task, DBSession, AggregatesChunk[AggregateType]] =
     ReaderT[Task, DBSession, AggregatesChunk[AggregateType]] { implicit dbSession: DBSession =>
       val index = offset.map(_.toInt).getOrElse(0)
       for {

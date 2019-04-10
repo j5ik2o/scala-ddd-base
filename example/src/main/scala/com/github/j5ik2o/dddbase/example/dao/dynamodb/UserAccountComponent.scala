@@ -8,15 +8,16 @@ import monix.eval.Task
 
 trait UserAccountComponent extends DynamoDBDaoSupport {
 
-  case class UserAccountRecord(id: String,
-                               status: String,
-                               email: String,
-                               password: String,
-                               firstName: String,
-                               lastName: String,
-                               createdAt: java.time.ZonedDateTime,
-                               updatedAt: Option[java.time.ZonedDateTime])
-      extends SoftDeletableRecord[String] {
+  case class UserAccountRecord(
+      id: String,
+      status: String,
+      email: String,
+      password: String,
+      firstName: String,
+      lastName: String,
+      createdAt: java.time.ZonedDateTime,
+      updatedAt: Option[java.time.ZonedDateTime]
+  ) extends SoftDeletableRecord[String] {
     override type This = UserAccountRecord
     override def withStatus(value: String): UserAccountRecord =
       copy(status = value)

@@ -10,12 +10,13 @@ case class UserMessageId(userId: Long, messageId: Long) extends AggregateId {
   override val value = (userId, messageId)
 }
 
-case class UserMessage(id: UserMessageId,
-                       status: Status,
-                       message: String,
-                       createdAt: ZonedDateTime,
-                       updatedAt: Option[ZonedDateTime])
-    extends Aggregate {
+case class UserMessage(
+    id: UserMessageId,
+    status: Status,
+    message: String,
+    createdAt: ZonedDateTime,
+    updatedAt: Option[ZonedDateTime]
+) extends Aggregate {
   override type IdType        = UserMessageId
   override type AggregateType = UserMessage
   override protected val tag: ClassTag[UserMessage] = classTag[UserMessage]

@@ -47,18 +47,20 @@ object UserAccountRepository {
   )(implicit actorSystem: ActorSystem): UserAccountRepository[OnMemcached] =
     new UserAccountRepositoryOnMemcached(expireDuration)
 
-  def onMemory(concurrencyLevel: Option[Int] = None,
-               expireAfterAccess: Option[Duration] = None,
-               expireAfterWrite: Option[Duration] = None,
-               initialCapacity: Option[Int] = None,
-               maximumSize: Option[Int] = None,
-               maximumWeight: Option[Int] = None,
-               recordStats: Option[Boolean] = None,
-               refreshAfterWrite: Option[Duration] = None,
-               softValues: Option[Boolean] = None,
-               ticker: Option[Ticker] = None,
-               weakKeys: Option[Boolean] = None,
-               weakValues: Option[Boolean] = None): UserAccountRepository[OnMemory] =
+  def onMemory(
+      concurrencyLevel: Option[Int] = None,
+      expireAfterAccess: Option[Duration] = None,
+      expireAfterWrite: Option[Duration] = None,
+      initialCapacity: Option[Int] = None,
+      maximumSize: Option[Int] = None,
+      maximumWeight: Option[Int] = None,
+      recordStats: Option[Boolean] = None,
+      refreshAfterWrite: Option[Duration] = None,
+      softValues: Option[Boolean] = None,
+      ticker: Option[Ticker] = None,
+      weakKeys: Option[Boolean] = None,
+      weakValues: Option[Boolean] = None
+  ): UserAccountRepository[OnMemory] =
     new UserAccountRepositoryOnMemory(
       concurrencyLevel,
       expireAfterAccess,

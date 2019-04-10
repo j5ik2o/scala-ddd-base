@@ -22,15 +22,16 @@ trait UserAccountComponent extends RedisDaoSupport {
     ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneId.systemDefault())
   }
 
-  case class UserAccountRecord(id: String,
-                               status: String,
-                               email: String,
-                               password: String,
-                               firstName: String,
-                               lastName: String,
-                               createdAt: java.time.ZonedDateTime,
-                               updatedAt: Option[java.time.ZonedDateTime])
-      extends SoftDeletableRecord {
+  case class UserAccountRecord(
+      id: String,
+      status: String,
+      email: String,
+      password: String,
+      firstName: String,
+      lastName: String,
+      createdAt: java.time.ZonedDateTime,
+      updatedAt: Option[java.time.ZonedDateTime]
+  ) extends SoftDeletableRecord {
     override type This = UserAccountRecord
     override def withStatus(value: String): UserAccountRecord =
       copy(status = value)
@@ -42,8 +43,10 @@ trait UserAccountComponent extends RedisDaoSupport {
 
     val DELETED = "deleted"
 
-    private def internalSet(record: UserAccountRecord,
-                            expire: Duration): ReaderT[Task, RedisConnection, Result[Unit]] = {
+    private def internalSet(
+        record: UserAccountRecord,
+        expire: Duration
+    ): ReaderT[Task, RedisConnection, Result[Unit]] = {
       expire match {
         case e if e.isFinite() && e.lt(1 seconds) =>
           redisClient.pSetEx(record.id, FiniteDuration(expire._1, expire._2), toJsonString(record))
