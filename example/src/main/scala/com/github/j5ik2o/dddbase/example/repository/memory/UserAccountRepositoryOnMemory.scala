@@ -9,19 +9,20 @@ import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 
-class UserAccountRepositoryOnMemory(concurrencyLevel: Option[Int] = None,
-                                    expireAfterAccess: Option[Duration] = None,
-                                    expireAfterWrite: Option[Duration] = None,
-                                    initialCapacity: Option[Int] = None,
-                                    maximumSize: Option[Int] = None,
-                                    maximumWeight: Option[Int] = None,
-                                    recordStats: Option[Boolean] = None,
-                                    refreshAfterWrite: Option[Duration] = None,
-                                    softValues: Option[Boolean] = None,
-                                    ticker: Option[Ticker] = None,
-                                    weakKeys: Option[Boolean] = None,
-                                    weakValues: Option[Boolean] = None)
-    extends UserAccountRepository[OnMemory]
+class UserAccountRepositoryOnMemory(
+    concurrencyLevel: Option[Int] = None,
+    expireAfterAccess: Option[Duration] = None,
+    expireAfterWrite: Option[Duration] = None,
+    initialCapacity: Option[Int] = None,
+    maximumSize: Option[Int] = None,
+    maximumWeight: Option[Int] = None,
+    recordStats: Option[Boolean] = None,
+    refreshAfterWrite: Option[Duration] = None,
+    softValues: Option[Boolean] = None,
+    ticker: Option[Ticker] = None,
+    weakKeys: Option[Boolean] = None,
+    weakValues: Option[Boolean] = None
+) extends UserAccountRepository[OnMemory]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature
     with AggregateMultiWriteFeature

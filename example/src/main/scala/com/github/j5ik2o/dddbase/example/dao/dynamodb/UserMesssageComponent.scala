@@ -11,12 +11,13 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
 
   case class UserMessageRecordId(userId: Long, messageId: Long)
 
-  case class UserMessageRecord(id: UserMessageRecordId,
-                               status: String,
-                               message: String,
-                               createdAt: java.time.ZonedDateTime,
-                               updatedAt: Option[java.time.ZonedDateTime])
-      extends SoftDeletableRecord[UserMessageRecordId] {
+  case class UserMessageRecord(
+      id: UserMessageRecordId,
+      status: String,
+      message: String,
+      createdAt: java.time.ZonedDateTime,
+      updatedAt: Option[java.time.ZonedDateTime]
+  ) extends SoftDeletableRecord[UserMessageRecordId] {
     override type This = UserMessageRecord
     override def withStatus(value: String): UserMessageRecord =
       copy(status = value)
@@ -90,11 +91,13 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
 
     override def get(id: UserMessageRecordId): Task[Option[UserMessageRecord]] = {
       client
-        .getItem(tableName,
-                 Map(
-                   "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
-                   "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
-                 ))
+        .getItem(
+          tableName,
+          Map(
+            "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+            "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
+          )
+        )
         .flatMap { response =>
           if (response.isSuccessful) {
             Task.pure {
@@ -163,11 +166,13 @@ trait UserMessageComponent extends DynamoDBDaoSupport {
 
     override def delete(id: UserMessageRecordId): Task[Long] = {
       client
-        .deleteItem(tableName,
-                    Map(
-                      "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
-                      "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
-                    ))
+        .deleteItem(
+          tableName,
+          Map(
+            "UserId"    -> AttributeValue().withNumber(Some(id.userId.toString)),
+            "MessageId" -> AttributeValue().withNumber(Some(id.messageId.toString))
+          )
+        )
         .flatMap { response =>
           if (response.isSuccessful)
             Task.pure(1L)

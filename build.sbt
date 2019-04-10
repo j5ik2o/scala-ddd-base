@@ -85,7 +85,6 @@ val coreSettings = Seq(
     Credentials(ivyCredentials) :: Nil
   },
   scalafmtOnCompile in ThisBuild := true,
-  scalafmtTestOnCompile in ThisBuild := true,
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases"),
@@ -98,6 +97,14 @@ val coreSettings = Seq(
     "org.scalacheck"    %% "scalacheck"       % "1.14.0" % Test,
     "ch.qos.logback"    % "logback-classic"   % "1.2.3"  % Test,
     "com.github.j5ik2o" %% "scalatestplus-db" % "1.0.7"  % Test
+  ),
+  dependencyOverrides ++= Seq(
+    "org.typelevel" %%  "cats-core" % "1.5.0",
+    "io.netty" % "netty-codec-http" % "4.1.32.Final",
+    "io.netty" % "netty-handler" % "4.1.32.Final",
+    "org.reactivestreams" % "reactive-streams" % "1.0.2",
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0",
+    "com.typesafe" % "config" % "1.3.3"
   ),
   addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.9" cross CrossVersion.binary)
 ) // ++ scalaStyleSettings

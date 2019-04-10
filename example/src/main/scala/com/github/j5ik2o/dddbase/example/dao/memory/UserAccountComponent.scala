@@ -13,6 +13,7 @@ trait GuavaMemoryDaoSupport extends MemoryDaoSupport {
   val DELETED = "deleted"
 
   object GuavaCacheBuilder {
+
     def build[K, V <: SoftDeletableRecord](
         concurrencyLevel: Option[Int] = None,
         expireAfterAccess: Option[Duration] = None,
@@ -124,15 +125,16 @@ trait GuavaMemoryDaoSupport extends MemoryDaoSupport {
 
 trait UserAccountComponent extends GuavaMemoryDaoSupport {
 
-  case class UserAccountRecord(id: String,
-                               status: String,
-                               email: String,
-                               password: String,
-                               firstName: String,
-                               lastName: String,
-                               createdAt: java.time.ZonedDateTime,
-                               updatedAt: Option[java.time.ZonedDateTime])
-      extends SoftDeletableRecord {
+  case class UserAccountRecord(
+      id: String,
+      status: String,
+      email: String,
+      password: String,
+      firstName: String,
+      lastName: String,
+      createdAt: java.time.ZonedDateTime,
+      updatedAt: Option[java.time.ZonedDateTime]
+  ) extends SoftDeletableRecord {
     override type This = UserAccountRecord
     override def withStatus(value: String): UserAccountRecord =
       copy(status = value)
@@ -140,20 +142,22 @@ trait UserAccountComponent extends GuavaMemoryDaoSupport {
 
   case class UserAccountDao(cache: Cache[String, UserAccountRecord])
       extends GuavaCacheDao[String, UserAccountRecord](cache) {
-    def this(concurrencyLevel: Option[Int] = None,
-             expireAfterAccess: Option[Duration] = None,
-             expireAfterWrite: Option[Duration] = None,
-             initialCapacity: Option[Int] = None,
-             maximumSize: Option[Int] = None,
-             maximumWeight: Option[Int] = None,
-             recordStats: Option[Boolean] = None,
-             refreshAfterWrite: Option[Duration] = None,
-             removalListener: Option[RemovalNotification[String, UserAccountRecord] => Unit] = None,
-             softValues: Option[Boolean] = None,
-             ticker: Option[Ticker] = None,
-             weakKeys: Option[Boolean] = None,
-             weakValues: Option[Boolean] = None,
-             weigher: Option[(String, UserAccountRecord) => Int] = None) = {
+    def this(
+        concurrencyLevel: Option[Int] = None,
+        expireAfterAccess: Option[Duration] = None,
+        expireAfterWrite: Option[Duration] = None,
+        initialCapacity: Option[Int] = None,
+        maximumSize: Option[Int] = None,
+        maximumWeight: Option[Int] = None,
+        recordStats: Option[Boolean] = None,
+        refreshAfterWrite: Option[Duration] = None,
+        removalListener: Option[RemovalNotification[String, UserAccountRecord] => Unit] = None,
+        softValues: Option[Boolean] = None,
+        ticker: Option[Ticker] = None,
+        weakKeys: Option[Boolean] = None,
+        weakValues: Option[Boolean] = None,
+        weigher: Option[(String, UserAccountRecord) => Int] = None
+    ) = {
       this(
         GuavaCacheBuilder
           .build[String, UserAccountRecord](
