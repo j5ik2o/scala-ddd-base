@@ -3,22 +3,30 @@ jobs:
   build:
     environment:
       - JAVA_OPTS: "-XX:ReservedCodeCacheSize=256M -Xms1g -Xmx3g -Xss2m"
+      - AWS_REGION: "ap-northeast-1"
+    branches:
+      only:
+        - /feature\/.*/
     machine: true
     steps:
       - run:
           command: |
-            sudo apt-get update -qq && sudo apt-get install -y libaio1 libevent-dev
+            sudo apt-get update -qq
+            sudo apt-get install -y libaio1 libevent-dev
             sudo apt-get install -y software-properties-common
             sudo add-apt-repository -y ppa:webupd8team/java
             sudo apt-get update -qq
             echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
             sudo apt-get install -y oracle-java8-installer
-            sudo apt-get install -y sbt
+            sudo apt-get install -y maven git
+            echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+            sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+            sudo apt-get update
+            sudo apt-get install sbt
       - checkout
       - restore_cache:
           key: scala-library-dependencies-{{ checksum "build.sbt" }}
-      - run: sbt ++2.11.12 test:compile && sbt ++2.12.8 test:compile
+      - run: sbt +test
       - save_cache:
           paths: [ "~/.sbt/boot", "~/.ivy2", "~/.wixMySQL" ]
           key: scala-library-dependencies-{{ checksum "build.sbt" }}
-      - run: sbt ++2.11.12 test && sbt ++2.12.8 test
