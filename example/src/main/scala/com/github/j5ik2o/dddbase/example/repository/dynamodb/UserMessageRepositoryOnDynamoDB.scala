@@ -4,10 +4,10 @@ import com.github.j5ik2o.dddbase.dynamodb._
 import com.github.j5ik2o.dddbase.example.dao.dynamodb.UserMessageComponent
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ OnDynamoDB, UserMessageRepository }
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
 import monix.eval.Task
 
-class UserMessageRepositoryOnDynamoDB(client: DynamoDBTaskClientV2)
+class UserMessageRepositoryOnDynamoDB(client: DynamoDbMonixClient)
     extends UserMessageRepository[OnDynamoDB]
     with AggregateSingleReadFeature
     with AggregateSingleWriteFeature

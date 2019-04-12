@@ -1,6 +1,6 @@
 package com.github.j5ik2o.dddbase.dynamodb
 
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
 
 trait DynamoDBDaoSupport {
 
@@ -16,7 +16,7 @@ trait DynamoDBDaoSupport {
 
   trait Dao[M[_], ID, R <: Record[ID]] {
 
-    protected def client: DynamoDBTaskClientV2
+    protected def client: DynamoDbMonixClient
 
     def put(record: R): M[Long]
 

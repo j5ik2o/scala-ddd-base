@@ -5,15 +5,15 @@ import java.time.ZonedDateTime
 
 import com.github.j5ik2o.dddbase.example.model._
 import com.github.j5ik2o.dddbase.example.repository.{ IdGenerator, SpecSupport }
-import com.github.j5ik2o.reactive.aws.dynamodb.model._
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
-import com.github.j5ik2o.reactive.aws.dynamodb.DynamoDBAsyncClientV2
-import com.github.j5ik2o.reactive.aws.dynamodb.DynamoDBEmbeddedSpecSupport
+import com.github.j5ik2o.reactive.aws.dynamodb.implicits._
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
+import com.github.j5ik2o.reactive.aws.dynamodb.{ DynamoDBEmbeddedSpecSupport, DynamoDbAsyncClient }
 import monix.execution.Scheduler.Implicits.global
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ FreeSpec, Matchers }
 import software.amazon.awssdk.auth.credentials.{ AwsBasicCredentials, StaticCredentialsProvider }
-import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
+import software.amazon.awssdk.services.dynamodb.model._
+import software.amazon.awssdk.services.dynamodb.{ DynamoDbAsyncClient => JavaDynamoDbAsyncClient }
 
 import scala.concurrent.duration._
 
@@ -25,7 +25,7 @@ class UserAccountRepositoryOnDynamoDBSpec
     with SpecSupport {
   implicit val pc: PatienceConfig = PatienceConfig(20 seconds, 1 seconds)
 
-  val underlying: DynamoDbAsyncClient = DynamoDbAsyncClient
+  val underlying: JavaDynamoDbAsyncClient = JavaDynamoDbAsyncClient
     .builder()
     .credentialsProvider(
       StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, secretAccessKey))
@@ -57,7 +57,7 @@ class UserAccountRepositoryOnDynamoDBSpec
         updatedAt = Some(ZonedDateTime.now)
       )
 
-  val client: DynamoDBTaskClientV2 = DynamoDBTaskClientV2(DynamoDBAsyncClientV2(underlying))
+  val client: DynamoDbMonixClient = DynamoDbMonixClient(DynamoDbAsyncClient(underlying))
 
   "UserAccountRepositoryOnDynamoDB" - {
     "store" in {
@@ -86,33 +86,31 @@ class UserAccountRepositoryOnDynamoDBSpec
   private def createTable(
       tableName: String
   ): (String, CreateTableResponse) = {
-    val createRequest = CreateTableRequest()
-      .withAttributeDefinitions(
-        Some(
-          Seq(
-            AttributeDefinition()
-              .withAttributeName(Some("Id"))
-              .withAttributeType(Some(AttributeType.S))
-          )
+    val createRequest = CreateTableRequest
+      .builder()
+      .attributeDefinitionsAsScala(
+        Seq(
+          AttributeDefinition
+            .builder()
+            .attributeName("Id")
+            .attributeType(ScalarAttributeType.S).build()
         )
       )
-      .withKeySchema(
-        Some(
-          Seq(
-            KeySchemaElement()
-              .withAttributeName(Some("Id"))
-              .withKeyType(Some(KeyType.HASH))
-          )
+      .keySchemaAsScala(
+        Seq(
+          KeySchemaElement
+            .builder()
+            .attributeName("Id")
+            .keyType(KeyType.HASH).build()
         )
       )
-      .withProvisionedThroughput(
-        Some(
-          ProvisionedThroughput()
-            .withReadCapacityUnits(Some(10L))
-            .withWriteCapacityUnits(Some(10L))
-        )
+      .provisionedThroughput(
+        ProvisionedThroughput
+          .builder()
+          .readCapacityUnits(10L)
+          .writeCapacityUnits(10L).build()
       )
-      .withTableName(Some(tableName))
+      .tableName(tableName).build()
     val createResponse = client
       .createTable(createRequest)
       .runToFuture

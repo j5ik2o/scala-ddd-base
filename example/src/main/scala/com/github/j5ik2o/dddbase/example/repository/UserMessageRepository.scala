@@ -3,7 +3,7 @@ package com.github.j5ik2o.dddbase.example.repository
 import com.github.j5ik2o.dddbase._
 import com.github.j5ik2o.dddbase.example.model.{ UserMessage, UserMessageId }
 import com.github.j5ik2o.dddbase.example.repository.dynamodb.UserMessageRepositoryOnDynamoDB
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
 
 trait UserMessageRepository[M[_]]
     extends AggregateSingleReader[M]
@@ -19,7 +19,7 @@ trait UserMessageRepository[M[_]]
 
 object UserMessageRepository {
 
-  def onDynamoDB(client: DynamoDBTaskClientV2): UserMessageRepository[OnDynamoDB] =
+  def onDynamoDB(client: DynamoDbMonixClient): UserMessageRepository[OnDynamoDB] =
     new UserMessageRepositoryOnDynamoDB(client)
 
 }
