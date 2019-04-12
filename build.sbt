@@ -5,7 +5,7 @@ val scalaVersion212 = "2.12.8"
 
 val reactiveRedisVersion       = "1.0.21"
 val reactiveMemcachedVersion   = "1.0.6"
-val reactiveAwsDynamoDBVersion = "1.0.2"
+val reactiveAwsDynamoDBVersion = "1.1.0"
 val circeVersion               = "0.11.1"
 val akkaHttpVersion            = "10.1.7"
 val akkaVersion                = "2.5.19"
@@ -156,7 +156,7 @@ lazy val dynamodb = (project in file("nosql/dynamodb"))
     coreSettings ++ Seq(
       name := "scala-ddd-base-dynamodb",
       libraryDependencies ++= Seq(
-        "com.github.j5ik2o" %% "reactive-aws-dynamodb-v2-monix" % reactiveAwsDynamoDBVersion
+        "com.github.j5ik2o" %% "reactive-aws-dynamodb-monix" % reactiveAwsDynamoDBVersion
       )
     )
   )

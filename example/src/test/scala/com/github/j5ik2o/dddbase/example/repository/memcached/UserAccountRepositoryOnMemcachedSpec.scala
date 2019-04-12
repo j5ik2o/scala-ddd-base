@@ -33,11 +33,12 @@ class UserAccountRepositoryOnMemcachedSpec
   protected override def beforeAll(): Unit = {
     super.beforeAll()
     val peerConfig = PeerConfig(new InetSocketAddress("127.0.0.1", memcachedTestServer.getPort))
-    connectionPool = MemcachedConnectionPool.ofSingleRoundRobin(sizePerPeer = 3,
-                                                                peerConfig,
-                                                                MemcachedConnection(_, _),
-                                                                reSizer =
-                                                                  Some(DefaultResizer(lowerBound = 1, upperBound = 5)))
+    connectionPool = MemcachedConnectionPool.ofSingleRoundRobin(
+      sizePerPeer = 3,
+      peerConfig,
+      MemcachedConnection(_, _),
+      reSizer = Some(DefaultResizer(lowerBound = 1, upperBound = 5))
+    )
   }
 
   protected override def afterAll(): Unit = {

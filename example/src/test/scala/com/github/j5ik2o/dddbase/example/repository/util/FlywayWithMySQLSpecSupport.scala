@@ -29,8 +29,10 @@ trait FlywayWithMySQLSpecSupport extends FlywayWithMySQLdOneInstancePerSuite wit
         "filesystem:flyway/src/test/resources/rdb-migration"
       ),
       placeholderConfig = Some(
-        PlaceholderConfig(placeholderReplacement = true,
-                          placeholders = Map("engineName" -> "MEMORY", "idSequenceNumberEngineName" -> "MyISAM"))
+        PlaceholderConfig(
+          placeholderReplacement = true,
+          placeholders = Map("engineName" -> "MEMORY", "idSequenceNumberEngineName" -> "MyISAM")
+        )
       )
     )
 

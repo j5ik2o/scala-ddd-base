@@ -2,9 +2,10 @@ package com.github.j5ik2o.dddbase.example.dao.dynamodb
 import java.time.{ Instant, ZoneId, ZonedDateTime }
 
 import com.github.j5ik2o.dddbase.dynamodb.DynamoDBDaoSupport
-import com.github.j5ik2o.reactive.aws.dynamodb.model._
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.implicits._
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
 import monix.eval.Task
+import software.amazon.awssdk.services.dynamodb.model._
 
 trait UserAccountComponent extends DynamoDBDaoSupport {
 
@@ -23,7 +24,7 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
       copy(status = value)
   }
 
-  case class UserAccountDao(client: DynamoDBTaskClientV2)
+  case class UserAccountDao(client: DynamoDbMonixClient)
       extends Dao[Task, String, UserAccountRecord]
       with DaoSoftDeletable[Task, String, UserAccountRecord] {
     val tableName       = "UserAccount"
@@ -34,21 +35,21 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         .putItem(
           tableName,
           Map(
-            "Id"        -> AttributeValue().withString(Some(record.id)),
-            "Status"    -> AttributeValue().withString(Some(record.status)),
-            "Email"     -> AttributeValue().withString(Some(record.email)),
-            "Password"  -> AttributeValue().withString(Some(record.password)),
-            "FirstName" -> AttributeValue().withString(Some(record.firstName)),
-            "LastName"  -> AttributeValue().withString(Some(record.lastName)),
-            "CreatedAt" -> AttributeValue().withNumber(Some(record.createdAt.toInstant.toEpochMilli.toString))
+            "Id"        -> AttributeValue.builder().s(record.id).build(),
+            "Status"    -> AttributeValue.builder().s(record.status).build(),
+            "Email"     -> AttributeValue.builder().s(record.email).build(),
+            "Password"  -> AttributeValue.builder().s(record.password).build(),
+            "FirstName" -> AttributeValue.builder().s(record.firstName).build(),
+            "LastName"  -> AttributeValue.builder().s(record.lastName).build(),
+            "CreatedAt" -> AttributeValue.builder().n(record.createdAt.toInstant.toEpochMilli.toString).build()
           ) ++ record.updatedAt
             .map { s =>
-              Map("UpdatedAt" -> AttributeValue().withNumber(Some(s.toInstant.toEpochMilli.toString)))
+              Map("UpdatedAt" -> AttributeValue.builder().n(s.toInstant.toEpochMilli.toString).build())
             }
             .getOrElse(Map.empty)
         )
         .flatMap { response =>
-          if (response.isSuccessful)
+          if (response.sdkHttpResponse().isSuccessful)
             Task.pure(1L)
           else
             Task.raiseError(new Exception())
@@ -60,33 +61,32 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         .batchWriteItem(
           Map(
             tableName -> records.map { record =>
-              WriteRequest().withPutRequest(
-                Some(
-                  PutRequest().withItem(
-                    Some(
+              WriteRequest
+                .builder().putRequest(
+                  PutRequest
+                    .builder().itemAsScala(
                       Map(
-                        "Id"        -> AttributeValue().withString(Some(record.id)),
-                        "Status"    -> AttributeValue().withString(Some(record.status)),
-                        "Email"     -> AttributeValue().withString(Some(record.email)),
-                        "Password"  -> AttributeValue().withString(Some(record.password)),
-                        "FirstName" -> AttributeValue().withString(Some(record.firstName)),
-                        "LastName"  -> AttributeValue().withString(Some(record.lastName)),
-                        "CreatedAt" -> AttributeValue()
-                          .withNumber(Some(record.createdAt.toInstant.toEpochMilli.toString))
+                        "Id"        -> AttributeValue.builder().s(record.id).build(),
+                        "Status"    -> AttributeValue.builder().s(record.status).build(),
+                        "Email"     -> AttributeValue.builder().s(record.email).build(),
+                        "Password"  -> AttributeValue.builder().s(record.password).build(),
+                        "FirstName" -> AttributeValue.builder().s(record.firstName).build(),
+                        "LastName"  -> AttributeValue.builder().s(record.lastName).build(),
+                        "CreatedAt" -> AttributeValue
+                          .builder()
+                          .n(record.createdAt.toInstant.toEpochMilli.toString).build()
                       ) ++ record.updatedAt
                         .map { s =>
-                          Map("UpdatedAt" -> AttributeValue().withNumber(Some(s.toInstant.toEpochMilli.toString)))
+                          Map("UpdatedAt" -> AttributeValue.builder().n(s.toInstant.toEpochMilli.toString).build())
                         }
                         .getOrElse(Map.empty)
-                    )
-                  )
-                )
-              )
+                    ).build()
+                ).build()
             }
           )
         )
         .flatMap { response =>
-          if (response.isSuccessful) {
+          if (response.sdkHttpResponse().isSuccessful) {
             Task.pure(records.size - response.unprocessedItems.size)
           } else
             Task.raiseError(new Exception())
@@ -94,23 +94,23 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
     }
 
     override def get(id: String): Task[Option[UserAccountRecord]] = {
-      client.getItem(tableName, Map("Id" -> AttributeValue().withString(Some(id)))).flatMap { response =>
-        if (response.isSuccessful) {
+      client.getItem(tableName, Map("Id" -> AttributeValue.builder().s(id).build())).flatMap { response =>
+        if (response.sdkHttpResponse().isSuccessful) {
           Task.pure {
-            response.item.map { item =>
+            response.itemAsScala.map { item =>
               UserAccountRecord(
-                id = item("Id").string.get,
-                status = item("Status").string.get,
-                email = item("Email").string.get,
-                password = item("Password").string.get,
-                firstName = item("FirstName").string.get,
-                lastName = item("LastName").string.get,
-                createdAt = item("CreatedAt").number.map { v =>
+                id = item("Id").s,
+                status = item("Status").s,
+                email = item("Email").s,
+                password = item("Password").s,
+                firstName = item("FirstName").s,
+                lastName = item("LastName").s,
+                createdAt = item("CreatedAt").nAsScala.map { v =>
                   ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
                 }.get,
                 updatedAt = item
                   .get("UpdatedAt")
-                  .flatMap(_.number.map { v =>
+                  .flatMap(_.nAsScala.map { v =>
                     ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
                   })
               )
@@ -125,30 +125,31 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
       client
         .batchGetItem(
           Map(
-            tableName -> KeysAndAttributes()
-              .withKeys(Some(ids.map { id =>
-                Map("Id" -> AttributeValue().withString(Some(id)))
-              }))
+            tableName -> KeysAndAttributes
+              .builder()
+              .keysAsScala(ids.map { id =>
+                Map("Id" -> AttributeValue.builder().s(id).build())
+              }).build()
           )
         )
         .flatMap { response =>
-          if (response.isSuccessful) {
+          if (response.sdkHttpResponse().isSuccessful) {
             Task.pure {
-              response.responses
+              response.responsesAsScala
                 .map { records =>
                   records.values.toSeq.flatMap { records =>
                     records.map { item =>
                       UserAccountRecord(
-                        id = item("Id").string.get,
-                        status = item("Status").string.get,
-                        email = item("Email").string.get,
-                        password = item("Password").string.get,
-                        firstName = item("FirstName").string.get,
-                        lastName = item("LastName").string.get,
-                        createdAt = item("CreatedAt").number.map { v =>
+                        id = item("Id").s,
+                        status = item("Status").s,
+                        email = item("Email").s,
+                        password = item("Password").s,
+                        firstName = item("FirstName").s,
+                        lastName = item("LastName").s,
+                        createdAt = item("CreatedAt").nAsScala.map { v =>
                           ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
                         }.get,
-                        updatedAt = item("UpdatedAt").number.map { v =>
+                        updatedAt = item("UpdatedAt").nAsScala.map { v =>
                           ZonedDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneId.systemDefault())
                         }
                       )
@@ -164,8 +165,8 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
     }
 
     override def delete(id: String): Task[Long] = {
-      client.deleteItem(tableName, Map("Id" -> AttributeValue().withString(Some(id)))).flatMap { response =>
-        if (response.isSuccessful)
+      client.deleteItem(tableName, Map("Id" -> AttributeValue.builder().s(id).build())).flatMap { response =>
+        if (response.sdkHttpResponse().isSuccessful)
           Task.pure(1L)
         else
           Task.raiseError(new Exception())
@@ -177,22 +178,20 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
         .batchWriteItem(
           Map(
             tableName -> ids.map { id =>
-              WriteRequest().withDeleteRequest(
-                Some(
-                  DeleteRequest().withKey(
-                    Some(
+              WriteRequest
+                .builder().deleteRequest(
+                  DeleteRequest
+                    .builder().keyAsScala(
                       Map(
-                        "Id" -> AttributeValue().withString(Some(id))
+                        "Id" -> AttributeValue.builder().s(id).build()
                       )
-                    )
-                  )
-                )
-              )
+                    ).build()
+                ).build()
             }
           )
         )
         .flatMap { response =>
-          if (response.isSuccessful) {
+          if (response.sdkHttpResponse().isSuccessful) {
             Task.pure(ids.size - response.unprocessedItems.size)
           } else
             Task.raiseError(new Exception())
@@ -203,11 +202,11 @@ trait UserAccountComponent extends DynamoDBDaoSupport {
       client
         .updateItem(
           tableName,
-          Map("Id"     -> AttributeValue().withString(Some(id))),
-          Map("Status" -> AttributeValueUpdate().withValue(Some(AttributeValue().withString(Some(DELETED)))))
+          Map("Id"     -> AttributeValue.builder().s(id).build()),
+          Map("Status" -> AttributeValueUpdate.builder().value(AttributeValue.builder().s(DELETED).build()).build())
         )
         .flatMap { response =>
-          if (response.isSuccessful) {
+          if (response.sdkHttpResponse().isSuccessful) {
             Task.pure(1L)
           } else
             Task.raiseError(new Exception)

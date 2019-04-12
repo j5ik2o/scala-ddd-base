@@ -10,7 +10,7 @@ import com.github.j5ik2o.dddbase.example.repository.memory.UserAccountRepository
 import com.github.j5ik2o.dddbase.example.repository.redis.UserAccountRepositoryOnRedis
 import com.github.j5ik2o.dddbase.example.repository.skinny.UserAccountRepositoryBySkinnyImpl
 import com.github.j5ik2o.dddbase.example.repository.slick.UserAccountRepositoryBySlickImpl
-import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDBTaskClientV2
+import com.github.j5ik2o.reactive.aws.dynamodb.monix.DynamoDbMonixClient
 import com.google.common.base.Ticker
 
 import scala.concurrent.duration.Duration
@@ -34,7 +34,7 @@ object UserAccountRepository {
 
   def bySkinny: UserAccountRepository[BySkinny] = new UserAccountRepositoryBySkinnyImpl
 
-  def onDynamoDB(client: DynamoDBTaskClientV2): UserAccountRepository[OnDynamoDB] =
+  def onDynamoDB(client: DynamoDbMonixClient): UserAccountRepository[OnDynamoDB] =
     new UserAccountRepositoryOnDynamoDB(client)
 
   def onRedis(

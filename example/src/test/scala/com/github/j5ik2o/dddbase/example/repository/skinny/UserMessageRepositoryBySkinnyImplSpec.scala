@@ -23,6 +23,7 @@ class UserMessageRepositoryBySkinnyImplSpec
     createdAt = ZonedDateTime.now(),
     updatedAt = None
   )
+
   val userMessages = for (idx <- 1L to 10L)
     yield
       UserMessage(
