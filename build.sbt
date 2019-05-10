@@ -5,7 +5,7 @@ val scalaVersion212 = "2.12.8"
 
 val reactiveRedisVersion       = "1.0.21"
 val reactiveMemcachedVersion   = "1.0.6"
-val reactiveAwsDynamoDBVersion = "1.1.0"
+val reactiveAwsDynamoDBVersion = "1.1.3"
 val circeVersion               = "0.11.1"
 val akkaHttpVersion            = "10.1.7"
 val akkaVersion                = "2.5.19"
